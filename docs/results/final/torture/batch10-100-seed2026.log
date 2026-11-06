@@ -1,0 +1,2 @@
+nexus-torture: mode=batch10 seed=2026 iterations=1..100 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb.exe dir=C:/Users/MY PC/NEXUS_SRINIVAS/torture-runs/final/batch10-100-seed2026

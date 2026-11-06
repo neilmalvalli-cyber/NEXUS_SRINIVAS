@@ -1,0 +1,50 @@
+
+== environment (2026-11-06 19:11:45)
+go version go1.27.3 windows/amd64
+MINGW64_NT-10.0-26200 DESKTOP-DSGLTLJ 3.6.9-b4195d69.x86_64 2026-06-06 17:49 UTC x86_64 Msys
+8058c2d Complete Phase 4: Testing 1
+ M .gitignore
+ M PROMPTS.md
+ M src/internal/cli/cli.go
+ M src/internal/cli/cli_test.go
+ M src/internal/platform/move_windows.go
+ M src/internal/platform/windows_test.go
+ M src/internal/storage/compact.go
+ M src/kvdb/inspect.go
+?? crosscheck/
+?? docs/results/validation/
+?? src/internal/recovery/inspect.go
+?? src/internal/recovery/inspect_test.go
+?? src/internal/storage/compact_determinism_test.go
+
+== gofmt -l src torture crosscheck/main.go (2026-11-06 19:11:46)
+gofmt exit 0 (no file names above = clean)
+
+== go vet ./... (2026-11-06 19:11:46)
+vet ok
+vet ok GOOS=linux
+vet ok GOOS=darwin
+vet ok GOOS=freebsd
+
+== go build ./... (2026-11-06 19:11:49)
+build ok
+build ok linux/arm64
+
+== go test -count=1 ./... (2026-11-06 19:11:52)
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/cmd/kvdb	[no test files]
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/admission	1.036s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/cli	3.914s
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/compaction	[no test files]
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/dberr	[no test files]
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/fileio	0.812s
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/fileio/faultfs	[no test files]
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/format	1.202s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/index	0.649s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/locking	1.153s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/platform	0.900s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery	26.564s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/storage	34.857s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/kvdb	5.325s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/scenarios	128.441s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/torture	0.705s
+go test exit 0

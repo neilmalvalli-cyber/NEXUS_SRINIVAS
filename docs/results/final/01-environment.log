@@ -1,0 +1,34 @@
+go version go1.27.3 windows/amd64
+MINGW64_NT-10.0-26200 DESKTOP-DSGLTLJ 3.6.9-b4195d69.x86_64 2026-06-06 17:49 UTC x86_64 Msys
+8058c2d Complete Phase 4: Testing 1
+git status (uncommitted work is included in this run):
+ M .gitignore
+ M ARCHITECTURE.md
+ M BREAKING.md
+ M PROMPTS.md
+ M README.md
+ M docs/ARCHITECTURE.md
+ M docs/DESIGN.md
+ M docs/RECOVERY.md
+ M docs/TEST_PLAN.md
+ M docs/results/README.md
+ M src/internal/cli/cli.go
+ M src/internal/cli/cli_test.go
+ M src/internal/platform/move_windows.go
+ M src/internal/platform/windows_test.go
+ M src/internal/storage/compact.go
+ M src/kvdb/inspect.go
+?? crosscheck/
+?? docs/FAILURE_GUARANTEES.md
+?? docs/INDEPENDENT_VERIFICATION.md
+?? docs/TORTURE_ARCHITECTURE.md
+?? docs/TORTURE_CLI.md
+?? docs/TORTURE_TEST_PLAN.md
+?? docs/TORTURE_TOOLS.md
+?? docs/results/final/
+?? docs/results/validation/
+?? src/cmd/kvdb-bench/
+?? src/internal/recovery/inspect.go
+?? src/internal/recovery/inspect_test.go
+?? src/internal/storage/compact_determinism_test.go
+?? torture2/

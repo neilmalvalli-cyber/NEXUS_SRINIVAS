@@ -1,7 +1,14 @@
 # Recorded results (Phase 4)
 
+> **Historical record.** These numbers were measured during Phase 4, before
+> the Prompt 10 changes (write-through moves, `check --no-repair`, key-sorted
+> compaction). The re-run against the current code is in
+> [validation/](validation/README.md); prefer it when the two differ. The
+> latest full run (Prompt 12, including Torture Engine 2.0 and the benchmark)
+> is in [final/](final/README.md).
+
 All numbers below were measured on 2026-11-06 on the development machine, with
-the code in this working tree. Nothing here is an estimate.
+the code as it was at commit `8058c2d`. Nothing here is an estimate.
 
 **Environment:** Windows 11 Home 10.0.26200, AMD Ryzen 7 5800H (8 cores / 16
 threads), 32 GB RAM, WD PC SN810 512 GB NVMe SSD, Windows Defender real-time

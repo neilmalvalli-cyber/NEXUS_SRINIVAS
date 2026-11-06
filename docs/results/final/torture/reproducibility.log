@@ -1,0 +1,15 @@
+RESULT: PASS  mode=default seed=31337  passed=20 failed=0 inconclusive=0 of 20  acked=11973 rejected=0 unknown=55 gets=3048  kills-mid-write=20 compact-in-flight=10 torn-tails=0 interrupted-compactions=1 recovery-kills=0/0 closes=0 kills-in-close=0
+run a exit 0
+RESULT: PASS  mode=default seed=31337  passed=20 failed=0 inconclusive=0 of 20  acked=11983 rejected=0 unknown=51 gets=3044  kills-mid-write=20 compact-in-flight=5 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+run b exit 0
+same seed twice, request streams compared:
+iterations=20 seeds-and-kill-times-equal=True writer-streams=60 fully-identical=6 requests-compared=14883 mismatches=0
+compare exit 0
+replay of a recorded failure (mutant corrupt-value, failure kept at iteration 5 of a --keep-going run):
+original:
+value-never-written on key "k0042"
+{"ev":"start","iter":5,"iter_seed":2731518401891682087,"kill_after_ms":143,"pid":2136}
+FAIL at iteration 5 (iteration seed 2731518401891682087, killed after 143 ms with batch+del+put in flight)
+value-never-written on key "k0021"
+RESULT: FAIL  mode=default seed=4040  passed=0 failed=1 inconclusive=0 of 1  acked=254 rejected=0 unknown=3 gets=54  kills-mid-write=1 compact-in-flight=0 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+{"ev":"start","iter":5,"iter_seed":2731518401891682087,"kill_after_ms":143,"pid":15872}

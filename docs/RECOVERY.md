@@ -90,7 +90,11 @@ Precondition: lock held. "Valid"/"sealed" = superblock decodes and
 | A6 | `path` missing, `.old` exists but invalid | `ErrBadFormat`; touch nothing |
 | A7 | `path`, `.old` missing; temps missing/unsealed | Delete unsealed temps; create fresh via `.new`; restart |
 
-All moves use `platform.MoveNoReplace` (`syscall.MoveFile`), never `os.Rename`.
+All moves use `platform.MoveNoReplace` (`MoveFileExW` with `MOVEFILE_WRITE_THROUGH`, never `MOVEFILE_REPLACE_EXISTING`), never `os.Rename`.
+
+`kvdb check --no-repair` (`recovery.Inspect`) walks the same table read-only:
+it reports which rule `Open` would apply and scans the file that is or would
+become the database, but moves, creates, truncates and deletes nothing.
 Restarts are capped at 3.
 
 ## Crash during recovery

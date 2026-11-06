@@ -197,7 +197,9 @@ problem statement, [ASSUME] our interpretation, [OPT] extra.
 | Torture: serve child, ≥ 2 writers, puts/deletes/batches, oracle file, random-ms kill, open → check → dump, compare, 500 default iterations, one line per iteration, stop on first failure with op IDs, `--seed` mandatory and reproducible | [REQ] | `torture/` (run logs in results/); `torture/model_test.go` (checker rejects lost writes, partial batches, garbage, rejected values; accepts legal outcomes); mutation runs in BREAKING.md §4 |
 | Torture modes: large values, large batches, recovery kills, compaction kills, disk full | [REQ] | `--mode large-values`, `large-batch`, `recovery-crash`, `compaction`, `disk-full` |
 | Extra torture modes `concurrent-disjoint`, `same-key`, gets, JSON report | [OPT] | D1, D2 |
-| 32 scenarios A1–F4 | [REQ] | `src/scenarios` (`TestGroupA` … `TestGroupF`), one subtest per scenario |
+| 32 scenarios A1–F4 | [REQ] | `src/scenarios` (`TestGroupA` … `TestGroupF`), one subtest per scenario; and `nexus-torture scenarios` against the real executable |
+| Benchmark: PUT, GET, DELETE, batch throughput, recovery time, compaction time, file size before/after, with OS/CPU/Go/configuration recorded | [OPT] (Prompt 12) | `src/cmd/kvdb-bench`; results in [results/final/BENCHMARK.md](results/final/BENCHMARK.md) |
+| Torture Engine 2.0: independent oracle (acked/rejected/unknown, real-time order, batch atomicity, last-op-wins, reads), real process kill/restart, 12 modes, 32 scenarios, mutation testing, JSONL reports, repro from seed + iteration | [REQ] | `torture2/` — plan and test map in [TORTURE_TEST_PLAN.md](TORTURE_TEST_PLAN.md); tests `go test ./torture2/...` |
 | 1M PUT then 1M DELETE, compaction shrinks the file, writes after compaction | [REQ] (DESIGN §23 #19) | `TestAcceptanceMillionPutDelete` (KVDB_ACCEPTANCE=1) |
 
 ### Official scenarios → tests
@@ -242,3 +244,24 @@ problem statement, [ASSUME] our interpretation, [OPT] extra.
 * `go test -race` (no C compiler on this machine).
 * Power-loss tests (out of the official model; not claimed).
 * Linux/macOS/FreeBSD runtime tests (cross-compiled and vetted only).
+
+## Prompt 10 — competition-readiness hardening (✅ implemented)
+
+Results of the validation run: [results/validation/](results/validation/).
+Design notes: DESIGN change log #33–36.
+
+| Change | Test | What it proves |
+|---|---|---|
+| Windows moves: `MoveFileExW(MOVEFILE_WRITE_THROUGH)`, no replace | `platform.TestMoveFlagsWriteThroughNoReplace` | the exact flag set is `0x8`; `MOVEFILE_REPLACE_EXISTING` (`0x1`) is never passed |
+| | `platform.TestMoveNoReplaceNeverOverwritesWindows` | an existing destination (empty, 3 MiB, held open, read-only, directory) is never overwritten; source and destination unchanged |
+| | `platform.TestMoveNoReplaceExistErrorClass`, existing `TestMoveNoReplace*`, `TestOpenFileBlocksMove` | destination-present is `fs.ErrExist`; open handles still block the move |
+| | `storage.TestCompactCrashSweep`, `TestCompactFaultSweep`; scenarios C3–C5, E4 | compaction crash safety unchanged with the new move |
+| `check --no-repair` | `recovery.TestInspectCleanLog` | valid file: nothing to repair, exact frame/key counts |
+| | `recovery.TestInspectTornTailEveryLength` | every torn length of the last frame: reported with the exact offset and rule, file unchanged; a real `Open` then truncates exactly there |
+| | `recovery.TestInspectMiddleCorruption`, `TestInspectDamagedSnapshotAndSuperblock` | middle corruption and damaged snapshots → `ErrCorruption`, damaged superblock → `ErrBadFormat`, as `Open` does; nothing changed |
+| | `recovery.TestInspectMatchesOpenForEveryLayout` | for all 256 combinations of {missing, valid, unsealed, corrupt} × {path, .compact, .old, .new}: same refusals and same authority rules as `Open`, and "needs repair" exactly when `Open` changes the directory |
+| | every `TestInspect*` (via `inspectUnchanged`) | faultfs trace contains only stat/open/read/size/close/lock/unlock; directory bytes identical before and after; no handle leaked |
+| | `cli.TestCheckNoRepair`, `TestCheckNoRepairLocked` | CLI output and exit codes (OK 0, NEEDS REPAIR 4, CORRUPT/BAD FORMAT/LOCKED 1) for valid, torn, middle-corrupt, damaged-snapshot, damaged-superblock, interrupted-compaction, stale-temp and missing databases; default `check` still repairs |
+| Deterministic compaction | `storage.TestCompactDeterministicOutput` | three different random histories with the same final state and next_seq compact to byte-identical files |
+| | `storage.TestCompactSnapshotSortedEveryPath` | plain (multi-frame), compacting-commit and automatic compaction all write keys in strictly ascending byte order; reopen and later writes work |
+| Independent implementation | `sh crosscheck/run.sh` (9 checks, see docs/INDEPENDENT_VERIFICATION.md) | identical encoding, both directions of read/write, compaction interchange, identical torn-tail and corruption rules, byte-identical compaction |

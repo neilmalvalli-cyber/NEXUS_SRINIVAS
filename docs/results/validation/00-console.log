@@ -1,0 +1,96 @@
+vet ok GOOS=darwin
+vet ok GOOS=freebsd
+
+== go build ./... (2026-11-06 19:11:49)
+build ok
+build ok linux/arm64
+
+== go test -count=1 ./... (2026-11-06 19:11:52)
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/cmd/kvdb	[no test files]
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/admission	1.036s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/cli	3.914s
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/compaction	[no test files]
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/dberr	[no test files]
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/fileio	0.812s
+?   	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/fileio/faultfs	[no test files]
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/format	1.202s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/index	0.649s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/locking	1.153s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/platform	0.900s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery	26.564s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/storage	34.857s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/kvdb	5.325s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/scenarios	128.441s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/torture	0.705s
+go test exit 0
+
+== crosscheck (independent recovery implementation) (2026-11-06 19:14:02)
+crosscheck exit 0
+crosscheck: 9 checks, 0 failed
+
+== targeted tests: windows moves, read-only check, deterministic compaction (2026-11-06 19:14:08)
+targeted exit 0
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/platform	0.924s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery	6.127s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/cli	2.368s
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/storage	25.336s
+
+== 32 official scenarios, full mode (2026-11-06 19:14:35)
+scenarios exit 0
+--- PASS: TestGroupA (91.13s)
+--- PASS: TestGroupB (82.82s)
+--- PASS: TestGroupC (84.58s)
+--- PASS: TestGroupD (254.28s)
+--- PASS: TestGroupE (66.76s)
+--- PASS: TestGroupF (329.26s)
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/scenarios	909.663s
+
+== 1M-key recovery benchmark (KVDB_PERF) (2026-11-06 19:29:45)
+perf exit 0
+    perf_test.go:54: Open of 1000000 keys (37.0 MB): 466.5953ms, heap in use after 196 MB, total allocated 198 MB
+--- PASS: TestOpenMillionKeysTiming (0.85s)
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery	1.785s
+
+== torture --iterations 500 --seed 12345 (2026-11-06 19:29:49)
+exit 0
+RESULT: PASS  passed=500 failed=0 of 500 planned  mode=default seed=12345  acked=155520 rejected=0 unknown=1397  kills-mid-write=500 compact-in-flight=300 torn-tails=0 compaction-resolved=15 recovery-kills-landed=0/0  elapsed=170.1s  report=torture-runs\validation-default-500-seed12345\report.json
+
+== torture --iterations 100 --seed 999 --mode large-values (2026-11-06 19:32:40)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=large-values seed=999  acked=11010 rejected=0 unknown=158  kills-mid-write=59 compact-in-flight=0 torn-tails=0 compaction-resolved=1 recovery-kills-landed=0/0  elapsed=86.0s  report=torture-runs\validation-large-values-100-seed999\report.json
+
+== torture --iterations 100 --seed 13 --mode large-batch (2026-11-06 19:34:06)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=large-batch seed=13  acked=130189 rejected=0 unknown=273  kills-mid-write=100 compact-in-flight=0 torn-tails=0 compaction-resolved=0 recovery-kills-landed=0/0  elapsed=186.3s  report=torture-runs\validation-large-batch-100-seed13\report.json
+
+== torture --iterations 100 --seed 7 --mode compaction (2026-11-06 19:37:13)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=compaction seed=7  acked=43952 rejected=0 unknown=295  kills-mid-write=100 compact-in-flight=85 torn-tails=0 compaction-resolved=5 recovery-kills-landed=0/0  elapsed=78.7s  report=torture-runs\validation-compaction-100-seed7\report.json
+
+== torture --iterations 100 --seed 42 --mode recovery-crash (2026-11-06 19:38:32)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=recovery-crash seed=42  acked=1383 rejected=0 unknown=270  kills-mid-write=99 compact-in-flight=93 torn-tails=0 compaction-resolved=0 recovery-kills-landed=125/206  elapsed=266.6s  report=torture-runs\validation-recovery-crash-100-seed42\report.json
+
+== torture --iterations 100 --seed 11 --mode disk-full (2026-11-06 19:43:01)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=disk-full seed=11  acked=13528 rejected=6821 unknown=292  kills-mid-write=100 compact-in-flight=19 torn-tails=0 compaction-resolved=3 recovery-kills-landed=0/0  elapsed=63.3s  report=torture-runs\validation-disk-full-100-seed11\report.json
+
+== torture --iterations 100 --seed 21 --mode concurrent-disjoint (2026-11-06 19:44:04)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=concurrent-disjoint seed=21  acked=64373 rejected=0 unknown=178  kills-mid-write=98 compact-in-flight=0 torn-tails=0 compaction-resolved=0 recovery-kills-landed=0/0  elapsed=33.4s  report=torture-runs\validation-concurrent-disjoint-100-seed21\report.json
+
+== torture --iterations 100 --seed 22 --mode same-key (2026-11-06 19:44:37)
+exit 0
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=same-key seed=22  acked=49410 rejected=0 unknown=185  kills-mid-write=96 compact-in-flight=0 torn-tails=0 compaction-resolved=1 recovery-kills-landed=0/0  elapsed=35.8s  report=torture-runs\validation-same-key-100-seed22\report.json
+
+== acceptance: 1M PUT, recovery, 1M DELETE, compaction, writes after (2026-11-06 19:45:13)
+acceptance exit 0
+environment: windows/amd64, 16 logical CPUs, go1.27.3, test dir C:\Users\MYPC~1\AppData\Local\Temp\TestAcceptanceMillionPutDelete4164364079\001
+PUT phase: 1000000 individual Put calls (each synced) in 6m20.322s (2629 ops/s, 0.380 ms/op); file 93000032 bytes; keys 1000000; peak heap 141 MiB, peak Go sys 166 MiB
+RECOVERY: Open of 1000000 keys / 93000032 bytes in 661ms (limit 2 s): PASS; peak heap 117 MiB, peak Go sys 166 MiB
+DELETE phase: 1000000 individual Delete calls (each synced) in 6m23.808s (2605 ops/s); file peaked at 101745032 bytes, shrank 9 times by automatic compaction, 1161382 bytes at the end; keys 0; peak heap 285 MiB
+COMPACTION: explicit Compact in 11ms: 1161382 -> 32 bytes; largest file during the workload 101745032 bytes -> 32 bytes (PASS)
+WRITES AFTER COMPACTION: 10000 puts then reopen in 3.718s: 10000 keys, values verified, full-file verify OK: PASS; final file 690032 bytes
+
+== done (2026-11-06 19:58:04)
+script exit 0

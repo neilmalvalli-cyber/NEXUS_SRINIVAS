@@ -1,0 +1,60 @@
+nexus-torture scenarios: full sizes, seed 20261106, kvdb C:\Users\MY PC\AppData\Local\Temp\claude\8bd721bb8349a66b\5535522f-6a01-4088-9d42-4a637e03f8be\scratchpad\validation-v2\bin\kvdb.exe
+[A1] PASS            3.1s  kill points 41     Kill before any bytes of a put reach the file
+[A2] PASS            6.7s  kill points 103    Kill after some bytes of the record are written (torn write)
+[A3] PASS            3.0s  kill points 41     Kill after the record is fully written but before fsync
+[A4] PASS            3.1s  kill points 41     Kill after fsync returns but before put returns success
+[A5] PASS            4.9s  kill points 65     Kill immediately after put returns success
+[A6] PASS            5.8s  kill points 85     Kill during a delete
+[A7] PASS          103.0s  kill points 302    Kill during a put of a 1 MiB value
+[B1] PASS            7.8s  kill points 129    Kill after 3 of 10 batch operations are written
+[B2] PASS           18.1s  kill points 300    Kill after all 10 are written but the commit marker is not
+[B3] PASS            3.1s  kill points 41     Kill after the commit marker is written but before fsync
+[B4] PASS            2.9s  kill points 40     Kill after the batch returns success
+[B5] PASS           11.3s  kill points 185    A batch that puts and deletes the same key
+[B6] PASS          237.6s  kill points 105    A 10,000-op batch killed halfway
+[C1] PASS           62.4s  kill points 51     Kill during open() while it replays the log
+[C2] FAIL          301.8s  kill points 20     Kill during open() while it truncates a torn tail
+     recovery of 01-c2 failed: dump: dump failed: exit 3221225794; stdout: ; stderr: 
+[C3] FAIL            0.0s  kill points 0      Kill during compaction, before the new file replaces the old
+     kvdb open runs\scenarios-full\C3\01-c3\db.kv: exit 3221225794; stdout: ; stderr: 
+[C4] FAIL            0.0s  kill points 0      Kill during compaction, in the middle of the rename/swap
+     kvdb open runs\scenarios-full\C4\01-c4\db.kv: exit 3221225794; stdout: ; stderr: 
+[C5] FAIL            0.0s  kill points 0      Kill after the swap but before temp-file cleanup
+     kvdb open runs\scenarios-full\C5\01-c5\db.kv: exit 3221225794; stdout: ; stderr: 
+[C6] FAIL            0.0s  kill points 0      Kill during close()
+     kvdb open runs\scenarios-full\C6\01-c6\db.kv: exit 3221225794; stdout: ; stderr: 
+[D1] FAIL            0.2s  kill points 0      Two writers on different keys, killed at random
+     engine mode concurrent-disjoint: ERROR iteration 1: serve exited before the kill: 
+     
+[D2] FAIL            0.2s  kill points 0      Two writers on the same key, killed at random
+     engine mode same-key: ERROR iteration 1: serve exited before the kill: 
+     
+[D3] FAIL            1.4s  kill points 0      A long batch and single puts, killed at random
+     engine mode large-batch: ERROR iteration 1: serve exited before the kill: 
+     
+[D4] FAIL            0.8s  kill points 0      A reader during a batch on the same keys
+     engine mode readers: ERROR iteration 1: serve exited before the kill: 
+     
+[E1] FAIL            0.0s  kill points 0      Size cap reached during a single put
+     kvdb open runs\scenarios-full\E1\01-e1\db.kv --max-bytes 8192: exit 3221225794; stdout: ; stderr: 
+[E2] FAIL            0.0s  kill points 0      Cap reached halfway through a batch
+     kvdb open runs\scenarios-full\E2\01-e2\db.kv --max-bytes 8192: exit 3221225794; stdout: ; stderr: 
+[E3] FAIL            0.2s  kill points 0      Cap reached, then process killed
+     engine mode disk-full: ERROR iteration 1: serve exited before the kill: 
+     
+[E4] FAIL            0.0s  kill points 0      Cap reached during compaction
+     kvdb open runs\scenarios-full\E4\01-e4\db.kv --max-bytes 16384: exit 3221225794; stdout: ; stderr: 
+[E5] FAIL            0.0s  kill points 0      Deletes free space, compaction runs, writes succeed again
+     kvdb open runs\scenarios-full\E5\01-e5\db.kv --max-bytes 8192: exit 3221225794; stdout: ; stderr: 
+[F1] FAIL            0.5s  kill points 0      Consecutive random kills and restarts
+     engine mode default: ERROR iteration 1: serve exited before the kill: 
+     
+[F2] FAIL            0.2s  kill points 0      Kill, restart, kill during recovery, again
+     load: write |1: The pipe has been ended.
+[F3] FAIL            1.2s  kill points 0      1,000,000 keys written, killed, open()
+     load: write |1: The pipe has been ended.
+[F4] FAIL            0.0s  kill points 0      Database file truncated by 1 byte by hand
+     kvdb open runs\scenarios-full\F4\01-f4\db.kv: exit 3221225794; stdout: ; stderr: 
+
+SCENARIOS RESULT: FAIL  14 passed, 18 failed, 0 inconclusive/unsupported, of 32  (780s)
+report: runs\scenarios-full\scenarios.json

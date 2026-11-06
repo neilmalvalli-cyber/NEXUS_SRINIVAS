@@ -1,0 +1,47 @@
+kvdb-bench: n=100000 value-size=100 batch-size=1000 runs=3 seed=1
+  os         windows/amd64
+  go         go1.27.3
+  cpus       16
+  cpu        AMD Ryzen 7 5800H with Radeon Graphics
+  os_version Windows 11 Home Single Language build 26200 (25H2)
+  host       DESKTOP-DSGLTLJ
+
+run 1
+  phase                         ops    seconds          ops/s       p50 us       p99 us  autocmp    file before     file after
+  put                        100000     36.941           2707          518         1161        0                      15500032
+  reopen (recovery)          100000      0.046        2194002                                  0                      15500032
+  get                        100000      0.608         164518                                  0                      15500032
+  batch                      100000      0.553         180946         1034       460836        1                      15498960
+  compact (n live keys)      100000      0.455                                                 0       15498960       12300128
+  delete                     100000     37.636           2657          520         1079        3                       3680926
+  compact (empty)                 0      0.018                                                 0        3680926             32
+
+run 2
+  phase                         ops    seconds          ops/s       p50 us       p99 us  autocmp    file before     file after
+  put                        100000     37.264           2684          520         1057        0                      15500032
+  reopen (recovery)          100000      0.045        2246076                                  0                      15500032
+  get                        100000      0.599         166985                                  0                      15500032
+  batch                      100000      0.562         177790         1005       468762        1                      15498960
+  compact (n live keys)      100000      0.459                                                 0       15498960       12300128
+  delete                     100000     37.488           2668          520         1266        3                       3680926
+  compact (empty)                 0      0.006                                                 0        3680926             32
+
+run 3
+  phase                         ops    seconds          ops/s       p50 us       p99 us  autocmp    file before     file after
+  put                        100000     37.053           2699          520         1064        0                      15500032
+  reopen (recovery)          100000      0.045        2206590                                  0                      15500032
+  get                        100000      0.604         165652                                  0                      15500032
+  batch                      100000      0.539         185650         1000       445476        1                      15498960
+  compact (n live keys)      100000      0.459                                                 0       15498960       12300128
+  delete                     100000     37.372           2676          519         1083        3                       3680926
+  compact (empty)                 0      0.006                                                 0        3680926             32
+
+median of 3 run(s)
+  phase                         ops    seconds          ops/s       p50 us       p99 us  autocmp    file before     file after
+  put                        100000     37.053           2699          520         1064        0                      15500032
+  reopen (recovery)          100000      0.045        2206590                                  0                      15500032
+  get                        100000      0.604         165652                                  0                      15500032
+  batch                      100000      0.553         180946         1034       460836        1                      15498960
+  compact (n live keys)      100000      0.459                                                 0       15498960       12300128
+  delete                     100000     37.488           2668          520         1266        3                       3680926
+  compact (empty)                 0      0.006                                                 0        3680926             32

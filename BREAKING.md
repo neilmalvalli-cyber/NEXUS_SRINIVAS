@@ -44,16 +44,18 @@ frame, and only when its damage reaches exactly EOF.
 
 Compaction (`compactLocked`): write snapshot frames to `.compact` → `Sync` →
 write the superblock **last** → `Sync` → `Close` → close the data handle (Windows
-cannot move an open file) → R1 `MoveFileW(path, path.old)` → R2
-`MoveFileW(path.compact, path)` → directory sync → reopen and fully validate →
-swap the index → R3 delete `.old`. `MoveFileW` (`syscall.MoveFile`) never
-replaces an existing file; `os.Rename` would (it uses
-`MOVEFILE_REPLACE_EXISTING`), so it is never used.
+cannot move an open file) → R1 `MoveFileExW(path, path.old)` → R2
+`MoveFileExW(path.compact, path)` → directory sync → reopen and fully validate →
+swap the index → R3 delete `.old`. `MoveFileExW` is called with
+`MOVEFILE_WRITE_THROUGH` only, so it never replaces an existing file;
+`os.Rename` would (it uses `MOVEFILE_REPLACE_EXISTING`), so it is never used.
+Write-through makes the call return only after the rename is flushed; it is
+not treated as evidence of power-loss durability.
 
 **Directory fsync:** on Linux/macOS/FreeBSD we `fsync` the directory after R2
 and after adopting a file. Windows offers no directory fsync; we do not need one
 for the official model (process death: the rename is in the OS's file-system
-state the moment `MoveFileW` returns), and we do **not** claim survival of a
+state the moment `MoveFileExW` returns), and we do **not** claim survival of a
 power cut on Windows.
 
 ## 3. Known weaknesses
@@ -76,12 +78,20 @@ power cut on Windows.
    recoveries that had to cut a torn tail are rare; torn frames are therefore
    proven by in-process fault injection (scenarios A2, A7, B1, B2, B6), not by
    the torture tool alone.
+7. **The tester cannot aim a kill at an exact instruction.** Torture Engine
+   2.0 kills the real process at random moments, and covers exact crash
+   points (byte k of a frame, between fsync and the reply, every compaction
+   step) by replaying the disk state such a kill leaves. Its oracle can
+   answer INCONCLUSIVE on adversarial histories; that is reported and never
+   counted as a pass ([docs/TORTURE_RESULTS.md](docs/TORTURE_RESULTS.md)).
 
 ## 4. What we tried that failed
 
 * **`os.Rename` for the swap.** On Windows it silently replaces the target
   (`TestOsRenameReplacesOnWindows`). A crash-time adoption could overwrite the
-  only complete file. Replaced by `syscall.MoveFile` (no replace).
+  only complete file. Replaced by `syscall.MoveFile` (no replace), and since
+  Prompt 10 by `MoveFileExW(MOVEFILE_WRITE_THROUGH)` (still no replace;
+  `TestMoveNoReplaceNeverOverwritesWindows`).
 * **Renaming the open data file.** Go opens files without
   `FILE_SHARE_DELETE`, so the move fails with a sharing violation
   (`TestOpenFileBlocksMove`). Fixed by closing the handle before R1 and
@@ -106,6 +116,22 @@ power cut on Windows.
     shadowed paths); they were fixed in the tests, not by weakening the engine.
   - No engine bug was found by the final torture runs (results in
     [docs/results](docs/results)).
+* **Cross-checking against an independent implementation** (teammate
+  recovery package, [docs/INDEPENDENT_VERIFICATION.md](docs/INDEPENDENT_VERIFICATION.md)):
+  - Encoding, torn-tail rules and corruption rules agreed at once. The two
+    implementations were written separately from the same specification.
+  - Compacted files differed only in key order: NEXUS wrote snapshot
+    entries in old-file offset order, which depends on history. Compaction
+    now sorts by key, and the two outputs are byte-identical (`crosscheck`
+    check 8).
+  - The independent `Verify` is read-only, while our `check` repairs before
+    verifying. We kept that default (the spec has `check` run recovery) and
+    added `check --no-repair`, which is proven read-only by faultfs traces,
+    the 256-layout agreement test and byte comparisons.
+  - Our own first version of the cross-check expected six frames and saw
+    five: `del 6` from a second writer ran before `put 6` (different
+    writers run concurrently), and deleting a missing key writes no frame.
+    This was correct engine behaviour; the harness was wrong and was fixed.
 
 ## 5. If we had 24 more hours
 

@@ -1,0 +1,91 @@
+started Fri Nov  6 21:30:46 IST 2026
+go version go1.27.3 windows/amd64
+8058c2d657a0c43a7b76fc293d063b2deb8c8e52
+=== [21:30:46] build: bash -c cd '/c/Users/MY PC/NEXUS_SRINIVAS' && go build -o '/c/Users/MYPC~1/AppData/Local/Temp/claude/8bd721bb8349a66b/5535522f-6a01-4088-9d42-4a637e03f8be/scratchpad/validation-v2/bin/' ./src/cmd/kvdb ./torture2/cmd/nexus-torture ./torture2/mutants/kvdb-mutant
+    exit 0 after 2s
+=== [21:30:48] unit-tests: bash -c cd '/c/Users/MY PC/NEXUS_SRINIVAS' && go test -count=1 -timeout 1800s ./torture2/...
+    exit 0 after 34s
+    | ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/torture2/proc	1.689s
+    | ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/torture2/scenario	1.207s
+    | ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/torture2/workload	9.020s
+=== [21:31:22] run-default-500: ./bin/nexus-torture.exe run --mode default --seed 12345 --iterations 500 --kvdb ./bin/kvdb.exe --dir runs/default-500 --quiet
+    exit 0 after 189s
+    | RESULT: PASS  mode=default seed=12345  passed=500 failed=0 inconclusive=0 of 500  acked=142844 rejected=0 unknown=1365 gets=36038  kills-mid-write=490 compact-in-flight=335 torn-tails=0 interrupted-compactions=25 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 187.8s total, 2.66 iterations/s, restart 12.8 ms avg / 18.1 max, recovery 2.14 ms avg / 4.27 max, oracle 0.72 ms avg / 2.6 max, verify 38.7 ms avg, serve peak 22.2 MiB, tester heap peak 4.9 MiB
+    | report: runs\default-500\summary.json
+=== [21:34:31] mode-batch10: ./bin/nexus-torture.exe run --mode batch10 --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/batch10-100 --quiet
+    exit 0 after 39s
+    | RESULT: PASS  mode=batch10 seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=66347 rejected=0 unknown=271 gets=16810  kills-mid-write=100 compact-in-flight=0 torn-tails=0 interrupted-compactions=1 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 39.1s total, 2.56 iterations/s, restart 17.0 ms avg / 26.2 max, recovery 5.69 ms avg / 10.62 max, oracle 2.40 ms avg / 7.3 max, verify 55.1 ms avg, serve peak 20.3 MiB, tester heap peak 10.9 MiB
+    | report: runs\batch10-100\summary.json
+=== [21:35:10] mode-large-values: ./bin/nexus-torture.exe run --mode large-values --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/large-values-100 --quiet
+    exit 0 after 89s
+    | RESULT: PASS  mode=large-values seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=8530 rejected=0 unknown=184 gets=1510  kills-mid-write=75 compact-in-flight=0 torn-tails=1 interrupted-compactions=1 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 88.5s total, 1.13 iterations/s, restart 20.9 ms avg / 34.2 max, recovery 8.82 ms avg / 17.98 max, oracle 0.14 ms avg / 0.6 max, verify 86.7 ms avg, serve peak 35.6 MiB, tester heap peak 74.9 MiB
+    | report: runs\large-values-100\summary.json
+=== [21:36:39] mode-large-batch: ./bin/nexus-torture.exe run --mode large-batch --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/large-batch-100 --quiet
+    exit 0 after 186s
+    | RESULT: PASS  mode=large-batch seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=103022 rejected=0 unknown=283 gets=17188  kills-mid-write=99 compact-in-flight=0 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 186.4s total, 0.54 iterations/s, restart 30.2 ms avg / 43.0 max, recovery 18.41 ms avg / 29.72 max, oracle 206.99 ms avg / 583.6 max, verify 271.8 ms avg, serve peak 29.4 MiB, tester heap peak 255.1 MiB
+    | report: runs\large-batch-100\summary.json
+=== [21:39:45] mode-concurrent-disjoint: ./bin/nexus-torture.exe run --mode concurrent-disjoint --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/concurrent-disjoint-100 --quiet
+    exit 0 after 40s
+    | RESULT: PASS  mode=concurrent-disjoint seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=68915 rejected=0 unknown=177 gets=12239  kills-mid-write=98 compact-in-flight=0 torn-tails=0 interrupted-compactions=1 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 39.3s total, 2.54 iterations/s, restart 17.8 ms avg / 28.1 max, recovery 6.52 ms avg / 13.76 max, oracle 1.10 ms avg / 2.8 max, verify 58.9 ms avg, serve peak 17.1 MiB, tester heap peak 9.6 MiB
+    | report: runs\concurrent-disjoint-100\summary.json
+=== [21:40:25] mode-same-key: ./bin/nexus-torture.exe run --mode same-key --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/same-key-100 --quiet
+    exit 0 after 38s
+    | RESULT: PASS  mode=same-key seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=46043 rejected=0 unknown=185 gets=5114  kills-mid-write=94 compact-in-flight=0 torn-tails=0 interrupted-compactions=2 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 38.2s total, 2.62 iterations/s, restart 15.3 ms avg / 20.9 max, recovery 3.28 ms avg / 5.89 max, oracle 1.76 ms avg / 5.9 max, verify 46.5 ms avg, serve peak 19.4 MiB, tester heap peak 8.7 MiB
+    | report: runs\same-key-100\summary.json
+=== [21:41:03] mode-readers: ./bin/nexus-torture.exe run --mode readers --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/readers-100 --quiet
+    exit 0 after 88s
+    | RESULT: PASS  mode=readers seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=87179 rejected=0 unknown=98 gets=240679  kills-mid-write=96 compact-in-flight=0 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 87.2s total, 1.15 iterations/s, restart 20.5 ms avg / 34.7 max, recovery 9.56 ms avg / 21.79 max, oracle 297.72 ms avg / 825.7 max, verify 70.6 ms avg, serve peak 20.3 MiB, tester heap peak 15.2 MiB
+    | report: runs\readers-100\summary.json
+=== [21:42:31] mode-compaction: ./bin/nexus-torture.exe run --mode compaction --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/compaction-100 --quiet
+    exit 0 after 84s
+    | RESULT: PASS  mode=compaction seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=36781 rejected=0 unknown=288 gets=3352  kills-mid-write=95 compact-in-flight=89 torn-tails=0 interrupted-compactions=6 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 83.6s total, 1.20 iterations/s, restart 12.9 ms avg / 16.2 max, recovery 2.52 ms avg / 6.79 max, oracle 0.52 ms avg / 1.3 max, verify 42.6 ms avg, serve peak 25.9 MiB, tester heap peak 10.0 MiB
+    | report: runs\compaction-100\summary.json
+=== [21:43:55] mode-recovery-crash: ./bin/nexus-torture.exe run --mode recovery-crash --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/recovery-crash-100 --quiet
+    exit 0 after 284s
+    | RESULT: PASS  mode=recovery-crash seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=1523 rejected=0 unknown=280 gets=422  kills-mid-write=98 compact-in-flight=94 torn-tails=0 interrupted-compactions=0 recovery-kills=153/205 closes=0 kills-in-close=0
+    | PERF: 281.9s total, 0.35 iterations/s, restart 69.1 ms avg / 76.7 max, recovery 55.89 ms avg / 63.85 max, oracle 134.72 ms avg / 158.7 max, verify 1987.5 ms avg, serve peak 60.1 MiB, tester heap peak 68.0 MiB
+    | report: runs\recovery-crash-100\summary.json
+=== [21:48:40] mode-disk-full: ./bin/nexus-torture.exe run --mode disk-full --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/disk-full-100 --quiet
+    exit 0 after 62s
+    | RESULT: PASS  mode=disk-full seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=11554 rejected=5558 unknown=299 gets=916  kills-mid-write=100 compact-in-flight=19 torn-tails=0 interrupted-compactions=4 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 62.8s total, 1.59 iterations/s, restart 13.1 ms avg / 16.7 max, recovery 2.41 ms avg / 4.27 max, oracle 0.24 ms avg / 1.1 max, verify 42.6 ms avg, serve peak 23.4 MiB, tester heap peak 4.6 MiB
+    | report: runs\disk-full-100\summary.json
+=== [21:49:42] mode-close-reopen: ./bin/nexus-torture.exe run --mode close-reopen --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/close-reopen-100 --quiet
+    exit 0 after 36s
+    | RESULT: PASS  mode=close-reopen seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=28348 rejected=0 unknown=137 gets=7097  kills-mid-write=96 compact-in-flight=70 torn-tails=0 interrupted-compactions=3 recovery-kills=0/0 closes=47 kills-in-close=13
+    | PERF: 36.5s total, 2.74 iterations/s, restart 12.4 ms avg / 14.3 max, recovery 1.98 ms avg / 4.14 max, oracle 0.72 ms avg / 2.1 max, verify 38.3 ms avg, serve peak 22.2 MiB, tester heap peak 4.9 MiB
+    | report: runs\close-reopen-100\summary.json
+=== [21:50:19] mode-mixed-long: ./bin/nexus-torture.exe run --mode mixed-long --seed 2026 --iterations 100 --kvdb ./bin/kvdb.exe --dir runs/mixed-long-100 --quiet
+    exit 0 after 529s
+    | RESULT: PASS  mode=mixed-long seed=2026  passed=100 failed=0 inconclusive=0 of 100  acked=339876 rejected=0 unknown=376 gets=85035  kills-mid-write=100 compact-in-flight=68 torn-tails=0 interrupted-compactions=5 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 528.7s total, 0.19 iterations/s, restart 15.8 ms avg / 22.9 max, recovery 3.89 ms avg / 7.91 max, oracle 9.25 ms avg / 21.8 max, verify 56.0 ms avg, serve peak 32.3 MiB, tester heap peak 36.4 MiB
+    | report: runs\mixed-long-100\summary.json
+=== [21:59:08] mutants: ./bin/nexus-torture.exe mutants --mutant ./bin/kvdb-mutant.exe --dir runs/mutants --iterations 40 --seed 777
+    exit 0 after 8s
+    |   wrong-unknown    as expected  iteration=1   kind=rejected-write-visible
+    |   bad-recovery     as expected  iteration=1   kind=acknowledged-write-lost
+    |   corrupt-value    as expected  iteration=1   kind=value-never-written
+=== [21:59:16] repro-a: ./bin/nexus-torture.exe run --mode default --seed 31337 --iterations 20 --kvdb ./bin/kvdb.exe --dir runs/repro-a --quiet
+    exit 0 after 8s
+    | RESULT: PASS  mode=default seed=31337  passed=20 failed=0 inconclusive=0 of 20  acked=6457 rejected=0 unknown=53 gets=1605  kills-mid-write=20 compact-in-flight=14 torn-tails=0 interrupted-compactions=2 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 8.6s total, 2.33 iterations/s, restart 13.0 ms avg / 15.2 max, recovery 2.16 ms avg / 3.67 max, oracle 0.93 ms avg / 2.7 max, verify 38.7 ms avg, serve peak 21.3 MiB, tester heap peak 3.7 MiB
+    | report: runs\repro-a\summary.json
+=== [21:59:25] repro-b: ./bin/nexus-torture.exe run --mode default --seed 31337 --iterations 20 --kvdb ./bin/kvdb.exe --dir runs/repro-b --quiet
+    exit 0 after 8s
+    | RESULT: PASS  mode=default seed=31337  passed=20 failed=0 inconclusive=0 of 20  acked=6445 rejected=0 unknown=56 gets=1584  kills-mid-write=20 compact-in-flight=12 torn-tails=0 interrupted-compactions=1 recovery-kills=0/0 closes=0 kills-in-close=0
+    | PERF: 8.6s total, 2.32 iterations/s, restart 13.1 ms avg / 17.1 max, recovery 2.17 ms avg / 3.69 max, oracle 0.87 ms avg / 1.6 max, verify 39.4 ms avg, serve peak 21.4 MiB, tester heap peak 4.4 MiB
+    | report: runs\repro-b\summary.json
+=== [21:59:33] scenarios-full: ./bin/nexus-torture.exe scenarios --kvdb ./bin/kvdb.exe --dir runs/scenarios-full --full
+    exit 1 after 780s
+    | 
+    | SCENARIOS RESULT: FAIL  14 passed, 18 failed, 0 inconclusive/unsupported, of 32  (780s)
+    | report: runs\scenarios-full\scenarios.json
+finished Fri Nov  6 22:12:33 IST 2026

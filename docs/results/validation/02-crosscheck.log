@@ -1,0 +1,11 @@
+independent implementation: https://github.com/sharanyashetty013-droid/kipdb-recovery.git @ f0d8b9c docs: recovery and compaction crash analysis
+PASS 1 encoding: superblock + PUT frame byte-identical
+PASS 1 encoding: batch frame (PUT+DEL, same key twice) byte-identical
+PASS 2 NEXUS serve writes -> independent Verify
+PASS 3 independent Compact -> kvdb check / check --no-repair / dump
+PASS 4 NEXUS writes after independent compaction
+PASS 5 independent-created file -> NEXUS reads and writes
+PASS 6 torn tail at every byte of the last frame: same valid end, NEXUS repairs
+PASS 7 corruption followed by valid data: both refuse
+PASS 8 NEXUS compaction == independent compaction, byte for byte
+crosscheck: 9 checks, 0 failed

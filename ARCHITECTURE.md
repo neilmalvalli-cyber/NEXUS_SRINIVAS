@@ -10,7 +10,7 @@ and Windows API decisions: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```mermaid
 flowchart LR
   subgraph Clients
-    CLI["kvdb CLI<br/>open put get del batch dump check"]
+    CLI["kvdb CLI<br/>open put get del batch dump check [--no-repair] serve"]
     SERVE["kvdb serve<br/>one goroutine + queue per writer<br/>ACK only after nil"]
     TORT["torture tool<br/>separate process, own oracle log"]
     API["Go API: package kvdb"]
@@ -43,10 +43,10 @@ flowchart LR
     LOCKF[("path.lock")]
   end
   LOG -- "WriteFile + FlushFileBuffers" --> DATA
-  CMP -- "write, Sync, MoveFileW" --> TMP
+  CMP -- "write, Sync, MoveFileExW" --> TMP
   CMP --> DATA
   SCAN -- "read, Truncate + Sync" --> DATA
-  AUT -- "MoveFileW (no replace)" --> TMP
+  AUT -- "MoveFileExW (no replace)" --> TMP
   LCK --> LOCKF
 ```
 
@@ -65,7 +65,37 @@ Source: [diagrams/architecture.mmd](diagrams/architecture.mmd).
 | Compaction | `storage.Log.compactLocked` (`src/internal/storage/compact.go`) | Snapshot to `.compact`, two non-replacing renames, validation, swap. |
 | Recovery | `src/internal/recovery` | Lock, authority table A1–A7, scan, tail rules, truncation. |
 | Locks | `src/internal/locking`, `storage.Log.mu` | Process lock file; in-process `sync.RWMutex`. |
-| Platform | `src/internal/platform` | `MoveNoReplace` = `syscall.MoveFile`; Windows error codes; `SyncDir`. |
+| Platform | `src/internal/platform` | `MoveNoReplace` = `MoveFileExW(MOVEFILE_WRITE_THROUGH)`, never `MOVEFILE_REPLACE_EXISTING`; Windows error codes; `SyncDir`. |
+
+## Design trade-offs
+
+Each choice below was made for crash safety and simplicity in a 24-hour
+build. The costs are real and are listed next to the reasons.
+
+| Choice | Why | What it costs |
+|---|---|---|
+| **Go, standard library only** | Memory safety, with garbage-collection pauses that are small next to an `fsync` at this scale; direct access to the Windows API through `syscall` (`CreateFile` share modes, `FlushFileBuffers`, `MoveFileExW`); one static binary per platform; built-in testing, fuzzing and cross-compilation; no third-party code to audit. | No `-race` detector on this machine (it needs cgo and a C compiler); less control over memory layout than C or Rust; the index pays Go's per-entry map overhead (about 200 MB of heap for 1,000,000 short keys). |
+| **Append-only log of checksummed frames** | A kill can only damage the end of the file, so recovery reduces to "find the last complete frame". Existing bytes are never overwritten, so an acknowledged write cannot be destroyed by a later one. One frame per write gives batch atomicity for free. | Every overwrite and delete leaves dead bytes; compaction is needed to reclaim them, costs I/O and briefly holds the write lock. Recovery replays the whole log (no checkpoint). |
+| **In-memory hash index** (key → file offset) | O(1) lookups; one disk read per `get`; nothing to keep consistent on disk, because the index is rebuilt from the log on every open. Fewer on-disk structures means fewer crash states to get right. | All keys must fit in RAM. No ordered index: `dump` and `Range` sort keys first, and there are no range queries. Open time grows with the log (0.47 s for 1,000,000 keys here). |
+| **One `sync.RWMutex` per database** | Commits are strictly ordered, so the log, the sequence numbers and the index can never disagree. It is easy to reason about and to test. Reads share the lock. | Writers are serialized, and a writer holds the lock **through** `fsync`, so readers wait for each sync too. There is no group commit, so durable single writes are limited by sync latency (about 2,600 synced puts/s here; `kvdb-bench`). Batches amortize it. |
+| **CRC32C on every superblock, frame header, payload and entry** | Distinguishes a torn write (truncate safely) from real corruption (refuse to open), and lets `get` verify every value it returns. CRC32C has hardware support on x86 and ARM, and the Go standard library uses it, so checking is cheap. | It detects accidental damage only, not deliberate tampering (no cryptographic MAC). A flip in the last frame at the very end of the file is indistinguishable from a torn write. |
+| **Sync before acknowledgement** | It is the only way to keep the promise "acknowledged means it survives a kill": success is returned only after `FlushFileBuffers`/`fsync` returned. If the sync fails, the answer is "outcome unknown", never success. | Write latency equals sync latency (about 0.5 ms per put on this NVMe SSD; far more on spinning disks). Throughput for single writes is bounded accordingly. |
+
+**Current scalability limits.** One process per database (lock file). One
+writer at a time inside that process. The index lives in RAM. Recovery time
+is proportional to the log length, bounded only by automatic compaction
+(file ≥ 4 MiB and more than twice its live size). Values up to 1 MiB, keys up
+to 1 KiB, batches up to 10,000 operations. Compaction rewrites all live data
+while holding the write lock. Tested on one Windows machine; cross-compiled
+and vetted for Linux, macOS and FreeBSD, but not run there.
+
+**What NEXUS deliberately does not support.** Multiple processes on one
+database, network access, replication, transactions across batches, range
+queries or secondary indexes, TTLs, compression, encryption or
+authentication, SQL, and guarantees against power loss or deliberate
+tampering. These are out of scope for a single-node, crash-safe key-value
+store built for this challenge. They are not hidden features waiting to be
+switched on.
 
 ## Binary format and file layout
 
@@ -120,8 +150,8 @@ flowchart TD
   B -- busy after ~1 s --> X[ErrLocked, nothing touched]
   B -- ok --> C{authority A1-A7}
   C -- path valid --> D[use path]
-  C -- path missing, sealed .compact --> E[MoveFileW .compact to path, restart]
-  C -- path missing, valid .old --> F[MoveFileW .old to path, restart]
+  C -- path missing, sealed .compact --> E[MoveFileExW .compact to path, restart]
+  C -- path missing, valid .old --> F[MoveFileExW .old to path, restart]
   C -- nothing --> G[create via .new, restart]
   C -- path invalid --> Y[ErrBadFormat, nothing touched]
   D --> H[scan frames from 32: header CRC, seq, payload CRC, entry CRCs]
@@ -135,10 +165,10 @@ flowchart TD
 ## Compaction and maxBytes
 
 Compaction (`compactLocked`) runs under the exclusive lock: delete stale
-temps → create `path.compact` → write live entries in file-offset order
-(each verified) as frames → `Sync` → superblock **last** → `Sync` → `Close` →
-close the data handle → R1 `MoveFileW(path, path.old)` → R2
-`MoveFileW(path.compact, path)` → `SyncDir` → reopen and fully scan the new file
+temps → create `path.compact` → write live entries **sorted by key** (byte
+order, so identical live state gives identical bytes; each value verified) as frames → `Sync` → superblock **last** → `Sync` → `Close` →
+close the data handle → R1 `MoveFileExW(path, path.old)` → R2
+`MoveFileExW(path.compact, path)` → `SyncDir` → reopen and fully scan the new file
 and compare with the plan → swap file handle, index, end, next_seq → R3 delete
 `.old`. Failures before R1 are definite (nothing changed); after R1 a failure
 with a proven restore is definite, otherwise the handle goes FAILED and the
@@ -178,6 +208,18 @@ shrinks it; otherwise `ErrFull` and nothing changes.
 | `ErrNotFound` | key absent | — |
 
 ## Torture tool
+
+The official tester is **NEXUS Torture Engine 2.0** (`torture2/`, command
+`nexus-torture`). It drives the real `kvdb` executable, kills and restarts it,
+and judges every recovered state with an independent oracle that searches
+for a legal execution (acknowledged, rejected and unknown requests;
+real-time order; batch atomicity; last-op-wins; reads). It also runs the 32
+official scenarios against the real executable and is itself checked by
+mutation testing. Full design:
+[docs/TORTURE_ARCHITECTURE.md](docs/TORTURE_ARCHITECTURE.md).
+
+The first-generation tool below is kept because `go test ./src/scenarios`
+builds and uses it.
 
 `torture/` (separate binary, talks to the engine only through `kvdb serve`
 over pipes):
@@ -234,7 +276,7 @@ the torture mode and seed where it applies. `log.go` = `src/internal/storage/log
 | C1 | Kill during replay | unchanged (scan is read-only) | re-scan | `scan.go` `Scan` | `TestGroupC/C1` (every scan op + 3-crash chains) |
 | C2 | Kill during truncation | tail cut or not | truncate to same offset (idempotent) + Sync | `open.go` `Open` | `TestGroupC/C2` |
 | C3 | Compaction before replace | `path` valid; `.compact` partial or sealed | A1: `path` wins; `.compact` deleted | `compact.go` phase A; `authority.go` `Resolve`, `RemoveStale` | `TestGroupC/C3` (sweep) |
-| C4 | Mid rename/swap | no `path`, `.old` + sealed `.compact` | A3 adopts `.compact` (A4 `.old`); `MoveFileW` never replaces | `compact.go` R1/R2; `authority.go` `adopt` | `TestGroupC/C4` |
+| C4 | Mid rename/swap | no `path`, `.old` + sealed `.compact` | A3 adopts `.compact` (A4 `.old`); `MoveFileExW` never replaces | `compact.go` R1/R2; `authority.go` `adopt` | `TestGroupC/C4` |
 | C5 | After swap, before cleanup | new `path` + `.old` | A1 uses `path`, deletes `.old` | `compact.go` R3; `authority.go` `RemoveStale` | `TestGroupC/C5`; torture `compaction` seed 7 |
 | C6 | Kill during close | all acked frames synced | Close is not a durability point | `log.go` `Close` | `TestGroupC/C6` |
 | D1 | Two writers, different keys | interleaved whole frames | exclusive lock around write+Sync+index | `log.go` `Commit` (`mu.Lock`) | torture `concurrent-disjoint` seed 101 (`TestGroupD/D1`) |
@@ -271,7 +313,7 @@ applied to the index only after the payload CRC and every entry CRC verified;
 a frame with any missing or damaged byte contributes nothing and, being the
 last frame, is truncated. In memory the index is updated only after `Sync`,
 under the exclusive lock, so readers never see part of a batch. Compaction
-writes a new file and switches with `MoveFileW` renames; a compacting commit
+writes a new file and switches with `MoveFileExW` renames; a compacting commit
 is inside the sealed snapshot, so it appears with the swap or not at all.
 
 **3. Recoverability — open() never fails on a file we produced.** Our files
@@ -279,9 +321,31 @@ change only by: appending one frame at a time (I1: only the last can be torn),
 truncating that frame (`Truncate` + `Sync`, to an offset determined by the bytes
 before it, so repeating it is harmless), and compaction, which writes a complete
 `.compact` (superblock written last and synced, so a valid superblock means a
-complete file) and replaces the file with two non-replacing `MoveFileW` calls.
+complete file) and replaces the file with two non-replacing `MoveFileExW` calls.
 At every kill point the authority table finds a complete file: `path` if
 valid; else a sealed `.compact` (A3) or a valid `.old` (A4); else a new
 database (A7). The lock (`CreateFile` share mode 0) guarantees one recovery at
 a time. Every one of these states is produced and reopened by
 `TestGroupC`, `TestGroupE/E4` and `recovery.TestAuthorityTable`.
+
+## Read-only verification and independent cross-checks
+
+* **`kvdb check`** = full recovery (it may cut a torn tail, finish an
+  interrupted compaction and delete stale temps) followed by a re-read of the
+  whole file (`Verify`).
+* **`kvdb check --no-repair`** = `recovery.Inspect`. It takes the lock, walks
+  the authority table without acting (`plan` mirrors `Resolve`), opens the
+  file that is or would become the database **read-only**, and runs the same
+  `Scan`. It prints `OK`, or `NEEDS REPAIR: <what open would change>` with
+  exit code 4; real damage is `CORRUPT` / `BAD FORMAT` either way. Tests prove
+  it performs only stat/open/read/size/close/lock operations
+  (`recovery.TestInspect*`).
+* **Independent implementation:** the teammate recovery package
+  (`kipdb-recovery`) implements the same format separately. `crosscheck/`
+  shows, in both directions, byte-identical encoding, interchangeable files
+  and compaction, and identical torn-tail and corruption decisions
+  ([docs/INDEPENDENT_VERIFICATION.md](docs/INDEPENDENT_VERIFICATION.md)). It
+  is not a NEXUS dependency.
+* **Torture tools:** Torture Engine 2.0 (`torture2/`, `nexus-torture`) is the
+  official tester ([docs/TORTURE_ARCHITECTURE.md](docs/TORTURE_ARCHITECTURE.md));
+  the first-generation `torture/` is used by the Go scenario tests.

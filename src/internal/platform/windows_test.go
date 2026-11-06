@@ -136,3 +136,99 @@ func TestOpenFileBlocksMove(t *testing.T) {
 		t.Fatalf("move after close: %v", err)
 	}
 }
+
+// MoveNoReplace must pass MOVEFILE_WRITE_THROUGH and must never pass
+// MOVEFILE_REPLACE_EXISTING (the no-replace property R1/R2 rely on).
+func TestMoveFlagsWriteThroughNoReplace(t *testing.T) {
+	if moveFlags&movefileWriteThrough == 0 {
+		t.Fatalf("moveFlags %#x lacks MOVEFILE_WRITE_THROUGH", moveFlags)
+	}
+	if moveFlags&movefileReplaceExisting != 0 {
+		t.Fatalf("moveFlags %#x includes MOVEFILE_REPLACE_EXISTING", moveFlags)
+	}
+	if moveFlags != movefileWriteThrough {
+		t.Fatalf("moveFlags = %#x, want exactly MOVEFILE_WRITE_THROUGH (0x8)", moveFlags)
+	}
+}
+
+// An existing destination is never overwritten, whatever it is: an empty
+// file, a large file, a file another process holds open, or a directory.
+// Neither the source nor the destination changes.
+func TestMoveNoReplaceNeverOverwritesWindows(t *testing.T) {
+	big := string(make([]byte, 3<<20))
+	cases := []struct {
+		name  string
+		setup func(t *testing.T, dst string) func()
+	}{
+		{"empty file", func(t *testing.T, dst string) func() { writeFile(t, dst, ""); return func() {} }},
+		{"3 MiB file", func(t *testing.T, dst string) func() { writeFile(t, dst, big); return func() {} }},
+		{"open file", func(t *testing.T, dst string) func() {
+			writeFile(t, dst, "held")
+			f, err := os.Open(dst)
+			if err != nil {
+				t.Fatal(err)
+			}
+			return func() { f.Close() }
+		}},
+		{"read-only file", func(t *testing.T, dst string) func() {
+			writeFile(t, dst, "ro")
+			if err := os.Chmod(dst, 0o444); err != nil {
+				t.Fatal(err)
+			}
+			return func() { os.Chmod(dst, 0o644) }
+		}},
+		{"directory", func(t *testing.T, dst string) func() {
+			if err := os.Mkdir(dst, 0o755); err != nil {
+				t.Fatal(err)
+			}
+			return func() {}
+		}},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			dir := t.TempDir()
+			src, dst := filepath.Join(dir, "db.kv.compact"), filepath.Join(dir, "db.kv")
+			writeFile(t, src, "compacted")
+			undo := c.setup(t, dst)
+			before, _ := os.Stat(dst)
+			var wantDst []byte
+			if !before.IsDir() {
+				wantDst, _ = os.ReadFile(dst)
+			}
+			err := MoveNoReplace(src, dst)
+			undo()
+			if err == nil {
+				t.Fatal("MoveNoReplace replaced an existing destination")
+			}
+			if readFile(t, src) != "compacted" {
+				t.Fatal("source changed")
+			}
+			after, serr := os.Stat(dst)
+			if serr != nil || after.IsDir() != before.IsDir() {
+				t.Fatalf("destination type changed: %v", serr)
+			}
+			if !before.IsDir() {
+				if got, _ := os.ReadFile(dst); string(got) != string(wantDst) {
+					t.Fatal("destination contents changed")
+				}
+			}
+		})
+	}
+}
+
+// The move is reported as fs.ErrExist (not a generic failure) so callers can
+// tell "destination present" from an I/O error.
+func TestMoveNoReplaceExistErrorClass(t *testing.T) {
+	dir := t.TempDir()
+	src, dst := filepath.Join(dir, "a"), filepath.Join(dir, "b")
+	writeFile(t, src, "a")
+	writeFile(t, dst, "b")
+	err := MoveNoReplace(src, dst)
+	if !errors.Is(err, fs.ErrExist) {
+		t.Fatalf("err = %v, want fs.ErrExist", err)
+	}
+	var le *os.LinkError
+	if !errors.As(err, &le) || le.Op != "movefileex" {
+		t.Fatalf("err = %#v, want *os.LinkError from movefileex", err)
+	}
+}

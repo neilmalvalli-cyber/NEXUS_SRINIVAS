@@ -1,0 +1,36 @@
+nexus-torture scenarios: quick sizes, seed 20261106, kvdb C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb.exe
+[A1] PASS            1.0s  kill points 16     Kill before any bytes of a put reach the file
+[A2] PASS            4.8s  kill points 103    Kill after some bytes of the record are written (torn write)
+[A3] PASS            1.0s  kill points 16     Kill after the record is fully written but before fsync
+[A4] PASS            1.0s  kill points 16     Kill after fsync returns but before put returns success
+[A5] PASS            1.5s  kill points 25     Kill immediately after put returns success
+[A6] PASS            3.0s  kill points 60     Kill during a delete
+[A7] PASS           12.8s  kill points 131    Kill during a put of a 1 MiB value
+[B1] PASS            6.0s  kill points 129    Kill after 3 of 10 batch operations are written
+[B2] PASS           15.7s  kill points 300    Kill after all 10 are written but the commit marker is not
+[B3] PASS            1.1s  kill points 16     Kill after the commit marker is written but before fsync
+[B4] PASS            1.0s  kill points 15     Kill after the batch returns success
+[B5] PASS            9.6s  kill points 185    A batch that puts and deletes the same key
+[B6] PASS           26.8s  kill points 15     A 10,000-op batch killed halfway
+[C1] PASS            5.0s  kill points 21     Kill during open() while it replays the log
+[C2] PASS           49.4s  kill points 22     Kill during open() while it truncates a torn tail
+[C3] PASS            5.6s  kill points 102    Kill during compaction, before the new file replaces the old
+[C4] PASS            0.4s  kill points 4      Kill during compaction, in the middle of the rename/swap
+[C5] PASS            9.6s  kill points 14     Kill after the swap but before temp-file cleanup
+[C6] PASS            5.6s  kill points 30     Kill during close()
+[D1] PASS            6.5s  kill points 20     Two writers on different keys, killed at random
+[D2] PASS            7.6s  kill points 20     Two writers on the same key, killed at random
+[D3] PASS           15.5s  kill points 10     A long batch and single puts, killed at random
+[D4] PASS           15.0s  kill points 15     A reader during a batch on the same keys
+[E1] PASS            0.8s  kill points 2      Size cap reached during a single put
+[E2] PASS            0.8s  kill points 3      Cap reached halfway through a batch
+[E3] PASS           10.8s  kill points 15     Cap reached, then process killed
+[E4] PASS            1.9s  kill points 10     Cap reached during compaction
+[E5] PASS            1.3s  kill points 2      Deletes free space, compaction runs, writes succeed again
+[F1] PASS           15.8s  kill points 50     Consecutive random kills and restarts
+[F2] PASS           27.0s  kill points 15     Kill, restart, kill during recovery, again
+[F3] PASS            3.0s  kill points 1      1,000,000 keys written, killed, open()
+[F4] PASS            0.1s  kill points 2      Database file truncated by 1 byte by hand
+
+SCENARIOS RESULT: PASS  32 passed, 0 failed, 0 inconclusive/unsupported, of 32  (267s)
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\scenarios-quick\scenarios.json

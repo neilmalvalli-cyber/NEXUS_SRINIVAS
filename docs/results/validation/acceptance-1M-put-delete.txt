@@ -1,0 +1,6 @@
+environment: windows/amd64, 16 logical CPUs, go1.27.3, test dir C:\Users\MYPC~1\AppData\Local\Temp\TestAcceptanceMillionPutDelete4164364079\001
+PUT phase: 1000000 individual Put calls (each synced) in 6m20.322s (2629 ops/s, 0.380 ms/op); file 93000032 bytes; keys 1000000; peak heap 141 MiB, peak Go sys 166 MiB
+RECOVERY: Open of 1000000 keys / 93000032 bytes in 661ms (limit 2 s): PASS; peak heap 117 MiB, peak Go sys 166 MiB
+DELETE phase: 1000000 individual Delete calls (each synced) in 6m23.808s (2605 ops/s); file peaked at 101745032 bytes, shrank 9 times by automatic compaction, 1161382 bytes at the end; keys 0; peak heap 285 MiB
+COMPACTION: explicit Compact in 11ms: 1161382 -> 32 bytes; largest file during the workload 101745032 bytes -> 32 bytes (PASS)
+WRITES AFTER COMPACTION: 10000 puts then reopen in 3.718s: 10000 keys, values verified, full-file verify OK: PASS; final file 690032 bytes

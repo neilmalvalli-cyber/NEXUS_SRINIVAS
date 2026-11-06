@@ -18,7 +18,14 @@ const (
 	ExitError   = 1 // the operation failed and changed nothing (definite)
 	ExitUsage   = 2 // bad command line
 	ExitUnknown = 3 // ErrOutcomeUnknown: the write may or may not be durable
+	// ExitNeedsRepair: `check --no-repair` found a normal crash state (torn
+	// tail, interrupted compaction, leftover temp files) that a normal open
+	// would repair. Nothing was changed.
+	ExitNeedsRepair = 4
 )
+
+// errNeedsRepair is returned by `check --no-repair` when a repair is needed.
+var errNeedsRepair = errors.New("needs repair")
 
 // Usage is printed for -h, --help and command-line errors.
 const Usage = `usage:
@@ -28,7 +35,7 @@ const Usage = `usage:
   kvdb del   <path> <key> [--max-bytes N]  deleting a missing key is not an error
   kvdb batch <path> <file> [--max-bytes N] one op per line: "put k v" or "del k"; applied atomically
   kvdb dump  <path>                        every key and value, sorted by key
-  kvdb check <path>                        verify the whole file; print OK or the reason
+  kvdb check <path> [--no-repair]          verify the whole file; print OK or the reason
   kvdb serve <path> [--max-bytes N]        read ops from stdin; print "ACK <op-id>" after each durable write
 
 serve input, one per line ("<writer-id> " may be omitted):
@@ -40,7 +47,16 @@ serve input, one per line ("<writer-id> " may be omitted):
 serve output: ACK <op-id> | VALUE <op-id> <value> | NOTFOUND <op-id> | ERR <op-id> <class> <message>
 
 --max-bytes N caps the data file at N bytes for this run (0 = unlimited).
-exit status: 0 ok, 1 failed (nothing changed), 2 usage, 3 outcome unknown.
+
+check runs recovery first, exactly like open: it may discard a torn tail,
+finish an interrupted compaction and delete leftover temp files, then it
+re-reads the whole file. check --no-repair never modifies the database: it
+reads with the same rules, prints OK if nothing needs repair, or
+NEEDS REPAIR: <what open would change> (exit 4); damage that is not a
+normal crash state is CORRUPT / BAD FORMAT either way.
+
+exit status: 0 ok, 1 failed (nothing changed), 2 usage, 3 outcome unknown,
+4 needs repair (check --no-repair only; nothing changed).
 `
 
 // Env is the process environment of one CLI invocation (injectable for tests).
@@ -50,6 +66,8 @@ type Env struct {
 	Stderr io.Writer
 	// Open opens a database; nil means kvdb.Open.
 	Open func(path string, maxBytes int64) (Store, error)
+	// CheckReadOnly runs `check --no-repair`; nil means kvdb.CheckReadOnly.
+	CheckReadOnly func(path string) (kvdb.ReadOnlyCheck, error)
 }
 
 type usageError struct{ msg string }
@@ -63,6 +81,7 @@ type args struct {
 	pos      []string
 	maxBytes int64
 	hasMax   bool
+	noRepair bool // check --no-repair
 }
 
 // parseArgs separates positional arguments from the one flag, --max-bytes,
@@ -90,6 +109,8 @@ func parseArgs(in []string) (args, error) {
 				return a, usagef("--max-bytes: %q is not a non-negative integer", v)
 			}
 			a.maxBytes, a.hasMax = n, true
+		case s == "--no-repair" || s == "-no-repair":
+			a.noRepair = true
 		case s == "-h" || s == "--help":
 			return a, usagef("")
 		case strings.HasPrefix(s, "--"):
@@ -112,6 +133,9 @@ func Run(argv []string, env Env) int {
 			return db, nil
 		}
 	}
+	if env.CheckReadOnly == nil {
+		env.CheckReadOnly = kvdb.CheckReadOnly
+	}
 	if len(argv) == 0 {
 		fmt.Fprint(env.Stderr, Usage)
 		return ExitUsage
@@ -131,6 +155,8 @@ func Run(argv []string, env Env) int {
 		}
 		fmt.Fprint(env.Stderr, Usage)
 		return ExitUsage
+	case errors.Is(err, errNeedsRepair):
+		return ExitNeedsRepair
 	case errors.Is(err, kvdb.ErrOutcomeUnknown):
 		fmt.Fprintf(env.Stderr, "kvdb %s: OUTCOME UNKNOWN (%s): %v\n", cmd, ErrorClass(err), err)
 		return ExitUnknown
@@ -152,6 +178,9 @@ func dispatch(cmd string, a args, env Env) error {
 			return usagef("--max-bytes is not used by %s", cmd)
 		}
 		return nil
+	}
+	if a.noRepair && cmd != "check" {
+		return usagef("--no-repair is only used by check")
 	}
 	switch cmd {
 	case "open":
@@ -332,6 +361,9 @@ func cmdDump(a args, env Env) error {
 }
 
 func cmdCheck(a args, env Env) error {
+	if a.noRepair {
+		return cmdCheckReadOnly(a, env)
+	}
 	db, err := env.Open(a.pos[0], 0)
 	if err != nil {
 		fmt.Fprintf(env.Stdout, "%s: %v\n", checkReason(err), err)
@@ -350,6 +382,30 @@ func cmdCheck(a args, env Env) error {
 	}
 	fmt.Fprintln(env.Stdout, "OK")
 	fmt.Fprintf(env.Stderr, "check: %d keys, %d frames, %d bytes, %d live bytes\n", rep.Keys, rep.Frames, rep.Size, rep.LiveBytes)
+	return nil
+}
+
+// cmdCheckReadOnly is `check --no-repair`: the same authority table and
+// frame scan as open, but nothing is truncated, moved, deleted, created or
+// written. Output: OK (exit 0), NEEDS REPAIR: ... (exit 4), or the same
+// CORRUPT / BAD FORMAT / LOCKED / ERROR lines as check (exit 1).
+func cmdCheckReadOnly(a args, env Env) error {
+	c, err := env.CheckReadOnly(a.pos[0])
+	if err != nil {
+		fmt.Fprintf(env.Stdout, "%s: %v\n", checkReason(err), err)
+		return err
+	}
+	if c.NeedsRepair() {
+		fmt.Fprintf(env.Stdout, "NEEDS REPAIR: %s\n", strings.Join(c.Repairs, "; "))
+		if !c.Missing {
+			fmt.Fprintf(env.Stderr, "check --no-repair: %s verified up to byte %d of %d: %d keys, %d frames; file not modified\n",
+				c.Target, c.End, c.Size, c.Keys, c.Frames)
+		}
+		return errNeedsRepair
+	}
+	fmt.Fprintln(env.Stdout, "OK")
+	fmt.Fprintf(env.Stderr, "check --no-repair: %d keys, %d frames, %d bytes, %d live bytes; nothing to repair; file not modified\n",
+		c.Keys, c.Frames, c.Size, c.LiveBytes)
 	return nil
 }
 

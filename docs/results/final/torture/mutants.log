@@ -1,0 +1,241 @@
+
+=== mutation none (faithful wrapper around the NEXUS library (control)), mode default, up to 15 iterations
+nexus-torture: mode=default seed=777 iterations=1..15 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\none
+
+RESULT: PASS  mode=default seed=777  passed=15 failed=0 inconclusive=0 of 15  acked=4265 rejected=0 unknown=38 gets=1050  kills-mid-write=13 compact-in-flight=10 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=5360 acknowledged=5315 (writes 4011) cleanly-rejected=0 unknown=38  acked-writes-verified-after-restart=4011 reads-verified=1050  batch-atomicity-violations=0 data-integrity-violations=0 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+PERF: 5.0s total, 3.01 iterations/s, restart 11.9 ms avg / 14.4 max, recovery 1.66 ms avg / 2.82 max, oracle 0.71 ms avg / 2.1 max, verify 37.1 ms avg, serve peak 25.8 MiB, tester heap peak 4.2 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\none\summary.json
+--- none: CONTROL PASSED (no false alarm) after 15 iteration(s) in 5.0s; kind=
+
+=== mutation ack-before-sync (ACK sent before the write is durable (written 25 ms later)), mode default, up to 40 iterations
+nexus-torture: mode=default seed=777 iterations=1..40 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\ack-before-sync
+[   1/40] FAIL kill@241ms in-flight=compact+get+get sent=5500 acked=4386 rejected=0 unknown=1 gets=1111 keys=48 file=6667B restart=16.6ms recovery=1.61ms oracle=19.4ms
+
+FAIL at iteration 1 (iteration seed 2624769432733131076, killed after 241 ms with compact+get+get in flight)
+acknowledged-write-lost on key "k0042"
+  expected: consistent with absent from i1-w0-000004 (acked), value#6409cb3b7be1 from i1-w0-000013 (acked), absent from i1-w0-000016 (acked), value#4f0e60f5a071 from i1-w0-000017 (acked), value#8ab7761acb78 from i1-w0-000022 (acked), value#09b425cd65d5 from i1-w0-000024 (acked), value#9b1f4f6188a7 from i1-w0-000036 (acked), value#2055f5a17a37 from i1-w0-000039 (acked), value#5f25406bbe05 from i1-w1-000099 (acked), value#548e57a8c651 from i1-w2-000112 (acked), value#6904fd0f9a85 from i1-w2-000114 (acked), absent from i1-w2-000140 (acked), value#11cb979ecfff from i1-w2-000161 (acked), value#1de3c3376215 from i1-w1-000159 (acked), value#16c429718648 from i1-w0-000164 (acked), value#f8496579fa6a from i1-w1-000206 (acked), value#a2f9e5aa9a99 from i1-w1-000224 (acked), value#ac77a7b6eaac from i1-w1-000230 (acked), value#80454444b235 from i1-w1-000233 (acked), value#f1f826ceb445 from i1-w2-000253 (acked), value#e081f4b89c5c from i1-w2-000268 (acked), value#9a2446c24c89 from i1-w2-000309 (acked), value#82345a19c0a8 from i1-w0-000311 (acked), absent from i1-w0-000316 (acked), value#9127916481ca from i1-w1-000313 (acked), value#295964d0e18a from i1-w0-000318 (acked), value#03517ecaea06 from i1-w2-000337 (acked), value#c7858c7304ad from i1-w2-000346 (acked), absent from i1-w1-000334 (acked), value#824dbc428142 from i1-w2-000350 (acked), value#272ba4d21073 from i1-w1-000344 (acked), value#2a5bba49c43f from i1-w1-000397 (acked), value#955fb130102d from i1-w1-000411 (acked), value#464ca40e4c17 from i1-w0-000432 (acked), value#22573faeaf1c from i1-w2-000445 (acked), value#f0e3cbce5d82 from i1-w0-000435 (acked), absent from i1-w1-000434 (acked), absent from i1-w2-000448 (acked), value#937520fb6acc from i1-w2-000451 (acked), value#ef5a48bf5005 from i1-w0-000461 (acked), value#8aed71688349 from i1-w1-000468 (acked), value#72eadd9009c0 from i1-w1-000471 (acked), value#0991646f4f81 from i1-w0-000477 (acked), value#786b92e94f62 from i1-w0-000489 (acked), value#0cb8e5ff4803 from i1-w0-000490 (acked), value#2875d81534f6 from i1-w0-000498 (acked), value#7472699d4cd5 from i1-w2-000510 (acked), value#1c98e6927893 from i1-w1-000497 (acked), value#062e29117213 from i1-w0-000511 (acked), absent from i1-w0-000535 (acked), absent from i1-w1-000541 (acked), value#d605e3021a00 from i1-w1-000548 (acked), value#5a2d164e53be from i1-w2-000563 (acked), absent from i1-w0-000595 (acked), value#bed723031124 from i1-w0-000598 (acked), value#5775b749d663 from i1-w1-000596 (acked), absent from i1-w0-000604 (acked), absent from i1-w2-000630 (acked), absent from i1-w0-000637 (acked), value#8d27d1fc78da from i1-w1-000635 (acked), absent from i1-w1-000639 (acked), value#64dfcd6efe33 from i1-w2-000681 (acked), value#d074d3c23525 from i1-w0-000670 (acked), value#b73c61295e5f from i1-w1-000671 (acked), absent from i1-w0-000699 (acked), value#40485df393ed from i1-w1-000704 (acked), value#c1a9a3b9b44f from i1-w0-000713 (acked), value#8f556c438f64 from i1-w0-000722 (acked), value#adcdcbc6a683 from i1-w2-000751 (acked), value#50b74851d2ca from i1-w0-000735 (acked), absent from i1-w2-000768 (acked), value#b572580d3c02 from i1-w2-000778 (acked), value#339084f32866 from i1-w0-000766 (acked), absent from i1-w2-000804 (acked), value#24f3e6e5edcc from i1-w1-000786 (acked), value#093cb0ce4749 from i1-w0-000793 (acked), absent from i1-w0-000814 (acked), value#ceb802f4e0c1 from i1-w0-000820 (acked), absent from i1-w2-000845 (acked), value#e5d61e6ac046 from i1-w1-000828 (acked), value#d034714e3dc2 from i1-w1-000833 (acked), value#eb727e1b95d8 from i1-w0-000852 (acked), value#519d7f45620c from i1-w2-000876 (acked), absent from i1-w1-000858 (acked), value#e528a7799e96 from i1-w1-000861 (acked), value#711b28df94e5 from i1-w1-000865 (acked), value#2e1649ace0c3 from i1-w2-000891 (acked), value#d97c49f50464 from i1-w1-000883 (acked), value#8ab03f77f7a0 from i1-w2-000923 (acked), value#80a77012acfd from i1-w1-000903 (acked), value#873e5f75a3f6 from i1-w2-000929 (acked), value#cfd78648cbb1 from i1-w1-000913 (acked), value#e023999d2efe from i1-w2-000939 (acked), value#564b54638625 from i1-w1-000928 (acked), value#b8204949ee8e from i1-w0-000940 (acked), value#981197a1865d from i1-w2-000963 (acked), value#3d5db9ae051e from i1-w1-000978 (acked), value#7999bd807067 from i1-w2-001008 (acked), absent from i1-w1-000997 (acked), value#b3cb674a4af7 from i1-w0-001007 (acked), value#7fe0dd50dfea from i1-w0-001013 (acked), absent from i1-w1-001013 (acked), value#4b3b13b31e1e from i1-w1-001015 (acked), value#db668db863ff from i1-w0-001026 (acked), absent from i1-w1-001023 (acked), value#cbd36061974d from i1-w2-001045 (acked), value#80eebd932216 from i1-w2-001048 (acked), value#64f144c17731 from i1-w1-001046 (acked), absent from i1-w1-001059 (acked), value#116074b11edc from i1-w2-001090 (acked), value#7c7863f05540 from i1-w0-001074 (acked), value#363554fcfd5d from i1-w2-001115 (acked), value#22b7156fced4 from i1-w1-001099 (acked), value#38746065e498 from i1-w2-001120 (acked), value#d021fecc877d from i1-w0-001107 (acked), absent from i1-w1-001124 (acked), value#3a155752d4b4 from i1-w0-001136 (acked), value#ac32816777c9 from i1-w1-001138 (acked), value#6233b9a090f4 from i1-w2-001159 (acked), value#95ca3c7b704a from i1-w2-001172 (acked), value#fd9b326a9f75 from i1-w0-001162 (acked), value#239209d9e8de from i1-w1-001164 (acked), value#717bdf7ff44d from i1-w2-001184 (acked), value#c01924dde37a from i1-w0-001182 (acked), value#fb1a85300162 from i1-w2-001198 (acked), value#c16b08f29257 from i1-w1-001186 (acked), value#285ecfc6663e from i1-w0-001191 (acked), value#4e59d965e115 from i1-w2-001204 (acked), value#2deb3018fbdf from i1-w0-001217 (acked), absent from i1-w1-001223 (acked), value#6bfc62ef21f5 from i1-w1-001224 (acked), value#1b2bafcbc57b from i1-w2-001244 (acked), value#20ab40899012 from i1-w1-001245 (acked), absent from i1-w1-001253 (acked), value#972ef95fb5a2 from i1-w0-001258 (acked), value#a17361d62b93 from i1-w1-001257 (acked), value#4d07de54f5b2 from i1-w1-001281 (acked), value#70daaf7592d9 from i1-w0-001295 (acked), absent from i1-w2-001322 (acked), value#72a7d3ee602a from i1-w1-001306 (acked), absent from i1-w2-001333 (acked), value#895bfd5b51ca from i1-w0-001360 (acked), value#e47aa7a831c1 from i1-w2-001373 (acked), value#05ecd7518e65 from i1-w1-001358 (acked), value#455407500e47 from i1-w2-001377 (acked), value#bf2ed4b22736 from i1-w1-001361 (acked), value#544921a56ba2 from i1-w2-001383 (acked), absent from i1-w2-001384 (acked), value#19a27a771fdf from i1-w0-001381 (acked), value#2f531787b30e from i1-w0-001387 (acked), absent from i1-w1-001382 (acked), absent from i1-w2-001409 (acked), value#f6bc2d8072b1 from i1-w2-001413 (acked), value#251833dd46cc from i1-w2-001424 (acked), value#bda4082bb424 from i1-w2-001430 (acked), value#9931bca7e62f from i1-w0-001422 (acked), value#7cd2391acdb6 from i1-w0-001429 (acked), value#e49d4b30c058 from i1-w0-001433 (acked), value#e8aa5b458f40 from i1-w1-001429 (acked), absent from i1-w0-001451 (acked), value#85afb6a0a95f from i1-w0-001456 (acked), value#424e237f4da8 from i1-w0-001459 (acked), value#a99b3e5daf7c from i1-w1-001486 (acked), value#48f420330faf from i1-w0-001494 (acked), value#891d404888b9 from i1-w2-001507 (acked), value#ecfcdf787f66 from i1-w2-001511 (acked), absent from i1-w1-001523 (acked), value#21cab5e4036c from i1-w1-001536 (acked), value#b7f06138da56 from i1-w1-001543 (acked), value#7264d864e540 from i1-w1-001557 (acked), value#450e3ce8c16d from i1-w1-001563 (acked), value#0738c2314157 from i1-w0-001574 (acked), value#f93f81656211 from i1-w2-001589 (acked), value#9fd6012bff3d from i1-w2-001604 (acked), value#dbf4f5e5830f from i1-w0-001600 (acked), absent from i1-w0-001602 (acked), value#6cd29bdafd3f from i1-w0-001604 (acked), absent from i1-w1-001599 (acked), absent from i1-w2-001626 (acked), value#3cd739d7e572 from i1-w2-001630 (acked), value#91b55d4a9910 from i1-w2-001639 (acked), value#ecd275148df8 from i1-w0-001632 (acked), value#de73450de3d2 from i1-w1-001635 (acked), value#a01a8d804c73 from i1-w2-001665 (acked), value#566f5f77d990 from i1-w2-001683 (acked), value#b84e40e89deb from i1-w0-001686 (acked), absent from i1-w2-001704 (acked), value#cac3f7dd9bf4 from i1-w0-001705 (acked), value#8c22ebc1f612 from i1-w0-001721 (acked), value#5563069bbe65 from i1-w0-001738 (acked), value#fbbd60fa3c48 from i1-w1-001754 (acked), absent from i1-w2-001775 (acked), value#32c86990aa90 from i1-w1-001776 (acked), value#f49c87c8ec7b from i1-w0-001789 (acked), value#bdc464640374 from i1-w1-001799 (acked), value#91cf5c20e9d2 from i1-w2-001838 (acked), value#7f10fc800a7d from i1-w1-001823 (acked) (in a legal order)
+  found:    value#91cf5c20e9d2
+  recovered value#91cf5c20e9d2 comes from i1-w2-001838, but i1-w1-001823 wrote this key after i1-w2-001838 completed and was acknowledged
+  no legal order exists; these constraints form a cycle:
+    i1-w1-001823 [put acked, writer w1, sent at 229.147ms, reply at 229.147ms key="k0042" -> value#7f10fc800a7d]
+      must take effect before i1-w2-001838 [batch acked, writer w2, sent at 228.632ms, reply at 228.632ms 13 ops]  (both wrote key "k0042" and the recovered value of "k0042" comes from the second)
+    i1-w2-001838 [batch acked, writer w2, sent at 228.632ms, reply at 228.632ms 13 ops]
+      must take effect before i1-w1-001823 [put acked, writer w1, sent at 229.147ms, reply at 229.147ms key="k0042" -> value#7f10fc800a7d]  (real time: the first was acknowledged before the second was sent)
+  requests on key "k0042" (baseline absent):
+    i1-w0-001433 [batch acked, writer w0, sent at 194.333ms, reply at 194.333ms 11 ops] -> value#e49d4b30c058
+    i1-w1-001429 [put acked, writer w1, sent at 194.333ms, reply at 194.333ms key="k0042" -> value#e8aa5b458f40] -> value#e8aa5b458f40
+    i1-w0-001451 [batch acked, writer w0, sent at 196.418ms, reply at 196.418ms 19 ops] -> absent
+    i1-w0-001456 [batch acked, writer w0, sent at 196.418ms, reply at 196.418ms 11 ops] -> value#85afb6a0a95f
+    i1-w0-001459 [put acked, writer w0, sent at 196.418ms, reply at 196.418ms key="k0042" -> value#424e237f4da8] -> value#424e237f4da8
+    i1-w1-001486 [put acked, writer w1, sent at 198.605ms, reply at 198.605ms key="k0042" -> value#a99b3e5daf7c] -> value#a99b3e5daf7c
+    i1-w0-001494 [put acked, writer w0, sent at 198.605ms, reply at 198.605ms key="k0042" -> value#48f420330faf] -> value#48f420330faf
+    i1-w2-001507 [put acked, writer w2, sent at 198.605ms, reply at 198.605ms key="k0042" -> value#891d404888b9] -> value#891d404888b9
+    i1-w2-001511 [batch acked, writer w2, sent at 199.130ms, reply at 199.130ms 17 ops] -> value#ecfcdf787f66
+    i1-w1-001523 [del acked, writer w1, sent at 200.700ms, reply at 200.700ms key="k0042" -> absent] -> absent
+    i1-w1-001536 [batch acked, writer w1, sent at 201.210ms, reply at 201.210ms 13 ops] -> value#21cab5e4036c
+    i1-w1-001543 [put acked, writer w1, sent at 201.721ms, reply at 201.721ms key="k0042" -> value#b7f06138da56] -> value#b7f06138da56
+    i1-w1-001557 [batch acked, writer w1, sent at 202.241ms, reply at 202.241ms 18 ops] -> value#7264d864e540
+    i1-w1-001563 [batch acked, writer w1, sent at 202.241ms, reply at 202.241ms 9 ops] -> value#450e3ce8c16d
+    i1-w0-001574 [batch acked, writer w0, sent at 202.803ms, reply at 202.803ms 2 ops] -> value#0738c2314157
+    i1-w2-001589 [batch acked, writer w2, sent at 213.127ms, reply at 213.127ms 17 ops] -> value#f93f81656211
+    i1-w2-001604 [put acked, writer w2, sent at 214.173ms, reply at 214.173ms key="k0042" -> value#9fd6012bff3d] -> value#9fd6012bff3d
+    i1-w0-001600 [batch acked, writer w0, sent at 214.694ms, reply at 214.694ms 14 ops] -> value#dbf4f5e5830f
+    i1-w0-001602 [del acked, writer w0, sent at 214.694ms, reply at 214.694ms key="k0042" -> absent] -> absent
+    i1-w0-001604 [batch acked, writer w0, sent at 214.694ms, reply at 214.694ms 5 ops] -> value#6cd29bdafd3f
+    i1-w1-001599 [batch acked, writer w1, sent at 214.694ms, reply at 214.694ms 6 ops] -> absent
+    i1-w2-001626 [batch acked, writer w2, sent at 215.222ms, reply at 215.222ms 10 ops] -> absent
+    i1-w2-001630 [batch acked, writer w2, sent at 215.744ms, reply at 215.744ms 15 ops] -> value#3cd739d7e572
+    i1-w2-001639 [batch acked, writer w2, sent at 215.744ms, reply at 216.261ms 9 ops] -> value#91b55d4a9910
+    i1-w0-001632 [batch acked, writer w0, sent at 216.261ms, reply at 216.261ms 15 ops] -> value#ecd275148df8
+    i1-w1-001635 [batch acked, writer w1, sent at 216.782ms, reply at 216.782ms 19 ops] -> value#de73450de3d2
+    i1-w2-001665 [batch acked, writer w2, sent at 217.831ms, reply at 217.831ms 10 ops] -> value#a01a8d804c73
+    i1-w2-001683 [batch acked, writer w2, sent at 219.542ms, reply at 220.063ms 4 ops] -> value#566f5f77d990
+    i1-w0-001686 [batch acked, writer w0, sent at 220.588ms, reply at 220.588ms 15 ops] -> value#b84e40e89deb
+    i1-w2-001704 [batch acked, writer w2, sent at 221.107ms, reply at 221.107ms 19 ops] -> absent
+    i1-w0-001705 [batch acked, writer w0, sent at 221.632ms, reply at 221.632ms 8 ops] -> value#cac3f7dd9bf4
+    i1-w0-001721 [batch acked, writer w0, sent at 222.675ms, reply at 222.675ms 9 ops] -> value#8c22ebc1f612
+    i1-w0-001738 [batch acked, writer w0, sent at 223.731ms, reply at 223.731ms 7 ops] -> value#5563069bbe65
+    i1-w1-001754 [batch acked, writer w1, sent at 224.781ms, reply at 224.781ms 15 ops] -> value#fbbd60fa3c48
+    i1-w2-001775 [batch acked, writer w2, sent at 225.303ms, reply at 225.303ms 12 ops] -> absent
+    i1-w1-001776 [batch acked, writer w1, sent at 226.532ms, reply at 226.532ms 15 ops] -> value#32c86990aa90
+    i1-w0-001789 [batch acked, writer w0, sent at 227.056ms, reply at 227.056ms 18 ops] -> value#f49c87c8ec7b
+    i1-w1-001799 [batch acked, writer w1, sent at 227.573ms, reply at 227.573ms 11 ops] -> value#bdc464640374
+    i1-w2-001838 [batch acked, writer w2, sent at 228.632ms, reply at 228.632ms 13 ops] -> value#91cf5c20e9d2
+    i1-w1-001823 [put acked, writer w1, sent at 229.147ms, reply at 229.147ms key="k0042" -> value#7f10fc800a7d] -> value#7f10fc800a7d
+evidence: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\ack-before-sync\failures\iter-1
+reproduce: KVDB_MUTANT=ack-before-sync "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+
+RESULT: FAIL  mode=default seed=777  passed=0 failed=1 inconclusive=0 of 40  acked=4386 rejected=0 unknown=1 gets=1111  kills-mid-write=0 compact-in-flight=1 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=5500 acknowledged=5497 (writes 4137) cleanly-rejected=0 unknown=1  acked-writes-verified-after-restart=0 reads-verified=0  batch-atomicity-violations=0 data-integrity-violations=1 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+  failure: iteration 1 (iteration seed 2624769432733131076) acknowledged-write-lost; reproduce: KVDB_MUTANT=ack-before-sync "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+PERF: 0.4s total, 2.54 iterations/s, restart 16.6 ms avg / 16.6 max, recovery 1.61 ms avg / 1.61 max, oracle 19.43 ms avg / 19.4 max, verify 46.7 ms avg, serve peak 22.6 MiB, tester heap peak 9.1 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\ack-before-sync\summary.json
+--- ack-before-sync: DETECTED after 1 iteration(s) in 0.4s; kind=acknowledged-write-lost
+
+=== mutation drop-acked (every 7th write acknowledged but never written), mode default, up to 40 iterations
+nexus-torture: mode=default seed=777 iterations=1..40 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\drop-acked
+[   1/40] FAIL kill@241ms in-flight=compact+get+put sent=358 acked=276 rejected=0 unknown=2 gets=79 keys=48 file=8549B restart=13.7ms recovery=1.62ms oracle=0.0ms
+
+FAIL at iteration 1 (iteration seed 2624769432733131076, killed after 241 ms with compact+get+put in flight)
+invalid-read on key "k0022"
+  expected: consistent with value#fce6846075a1 from i1-w1-000010 (acked), value#d571f5fb123d from i1-w0-000016 (acked), value#7c659e591747 from i1-w0-000017 (acked), value#205478e06ef2 from i1-w2-000018 (acked), absent from i1-w1-000022 (acked), value#867d0a62261e from i1-w0-000026 (acked), value#b22ab76f47c1 from i1-w1-000031 (acked), value#14cd774b409b from i1-w0-000039 (acked), value#5b691700ff0e from i1-w2-000057 (acked), value#44ac4ff483cb from i1-w2-000072 (acked), value#2d995fb4b06d from i1-w0-000080 (acked), value#d9625dc18996 from i1-w2-000096 (acked), value#005b9a81bf39 from i1-w1-000099 (acked), value#d149cf6c102b from i1-w1-000106 (acked), value#b821bbf7dfac from i1-w2-000111 (acked) (in a legal order)
+  found:    value#b821bbf7dfac
+  read i1-w0-000034 returned absent, but every write that produced that value was certainly overwritten before the read was sent, or started after it returned
+  requests on key "k0022" (baseline absent):
+    i1-w1-000010 [batch acked, writer w1, sent at 23.371ms, reply at 24.654ms 15 ops] -> value#fce6846075a1
+    i1-w0-000016 [batch acked, writer w0, sent at 35.891ms, reply at 37.269ms 20 ops] -> value#d571f5fb123d
+    i1-w0-000017 [batch acked, writer w0, sent at 37.638ms, reply at 38.166ms 16 ops] -> value#7c659e591747
+    i1-w2-000018 [batch acked, writer w2, sent at 37.638ms, reply at 38.679ms 15 ops] -> value#205478e06ef2
+    i1-w1-000022 [del acked, writer w1, sent at 52.672ms, reply at 53.733ms key="k0022" -> absent] -> absent
+    i1-w0-000026 [batch acked, writer w0, sent at 55.471ms, reply at 55.471ms 15 ops] -> value#867d0a62261e
+    i1-w1-000031 [put acked, writer w1, sent at 70.618ms, reply at 71.143ms key="k0022" -> value#b22ab76f47c1] -> value#b22ab76f47c1
+    i1-w0-000039 [batch acked, writer w0, sent at 84.100ms, reply at 85.145ms 9 ops] -> value#14cd774b409b
+    i1-w2-000057 [batch acked, writer w2, sent at 149.698ms, reply at 150.734ms 12 ops] -> value#5b691700ff0e
+    i1-w2-000072 [put acked, writer w2, sent at 169.078ms, reply at 179.594ms key="k0022" -> value#44ac4ff483cb] -> value#44ac4ff483cb
+    i1-w0-000080 [batch acked, writer w0, sent at 195.374ms, reply at 196.422ms 10 ops] -> value#2d995fb4b06d
+    i1-w2-000096 [batch acked, writer w2, sent at 215.219ms, reply at 216.274ms 18 ops] -> value#d9625dc18996
+    i1-w1-000099 [batch acked, writer w1, sent at 218.351ms, reply at 219.416ms 17 ops] -> value#005b9a81bf39
+    i1-w1-000106 [batch acked, writer w1, sent at 222.048ms, reply at 223.636ms 14 ops] -> value#d149cf6c102b
+    i1-w2-000111 [batch acked, writer w2, sent at 224.155ms, reply at 224.679ms 18 ops] -> value#b821bbf7dfac
+evidence: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\drop-acked\failures\iter-1
+reproduce: KVDB_MUTANT=drop-acked "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+
+RESULT: FAIL  mode=default seed=777  passed=0 failed=1 inconclusive=0 of 40  acked=276 rejected=0 unknown=2 gets=79  kills-mid-write=1 compact-in-flight=1 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=358 acknowledged=355 (writes 260) cleanly-rejected=0 unknown=2  acked-writes-verified-after-restart=0 reads-verified=0  batch-atomicity-violations=0 data-integrity-violations=1 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+  failure: iteration 1 (iteration seed 2624769432733131076) invalid-read; reproduce: KVDB_MUTANT=drop-acked "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+PERF: 0.3s total, 3.11 iterations/s, restart 13.7 ms avg / 13.7 max, recovery 1.62 ms avg / 1.62 max, oracle 0.00 ms avg / 0.0 max, verify 42.2 ms avg, serve peak 22.4 MiB, tester heap peak 2.9 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\drop-acked\summary.json
+--- drop-acked: DETECTED after 1 iteration(s) in 0.3s; kind=invalid-read
+
+=== mutation partial-batch (batches applied one operation at a time (not atomic)), mode batch10, up to 40 iterations
+nexus-torture: mode=batch10 seed=777 iterations=1..40 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\partial-batch
+[   1/40] FAIL kill@241ms in-flight=batch+batch+del sent=26 acked=18 rejected=0 unknown=3 gets=5 keys=35 file=14200B restart=13.0ms recovery=1.02ms oracle=0.5ms
+
+FAIL at iteration 1 (iteration seed 2624769432733131076, killed after 241 ms with batch+batch+del in flight)
+partial-batch on key "k0038"
+  expected: consistent with baseline absent, absent from i1-w1-000003 (acked) (in a legal order)
+  found:    absent
+  recovered absent comes from i1-w1-000003, but i1-w0-000007 (outcome unknown, visible on another key so it took effect) was sent after i1-w1-000003 completed and wrote this key
+  no legal order exists; these constraints form a cycle:
+    i1-w0-000007 [batch unknown, writer w0, sent at 201.421ms, no reply 10 ops]
+      must take effect before i1-w1-000003 [batch acked, writer w1, sent at 121.619ms, reply at 146.915ms 10 ops]  (both wrote key "k0038" and the recovered value of "k0038" comes from the second)
+    i1-w1-000003 [batch acked, writer w1, sent at 121.619ms, reply at 146.915ms 10 ops]
+      must take effect before i1-w0-000007 [batch unknown, writer w0, sent at 201.421ms, no reply 10 ops]  (real time: the first was acknowledged before the second was sent)
+  requests on key "k0038" (baseline absent):
+    i1-w1-000003 [batch acked, writer w1, sent at 121.619ms, reply at 146.915ms 10 ops] -> absent
+    i1-w0-000007 [batch unknown, writer w0, sent at 201.421ms, no reply 10 ops] -> value#e6298f267fc7
+evidence: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\partial-batch\failures\iter-1
+reproduce: KVDB_MUTANT=partial-batch "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode batch10 --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+
+RESULT: FAIL  mode=batch10 seed=777  passed=0 failed=1 inconclusive=0 of 40  acked=18 rejected=0 unknown=3 gets=5  kills-mid-write=1 compact-in-flight=0 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=26 acknowledged=23 (writes 18) cleanly-rejected=0 unknown=3  acked-writes-verified-after-restart=0 reads-verified=0  batch-atomicity-violations=1 data-integrity-violations=0 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+  failure: iteration 1 (iteration seed 2624769432733131076) partial-batch; reproduce: KVDB_MUTANT=partial-batch "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode batch10 --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+PERF: 0.3s total, 3.20 iterations/s, restart 13.0 ms avg / 13.0 max, recovery 1.02 ms avg / 1.02 max, oracle 0.50 ms avg / 0.5 max, verify 41.6 ms avg, serve peak 9.5 MiB, tester heap peak 2.0 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\partial-batch\summary.json
+--- partial-batch: DETECTED after 1 iteration(s) in 0.3s; kind=partial-batch
+
+=== mutation wrong-unknown (a durable put reported as a definite failure), mode default, up to 40 iterations
+nexus-torture: mode=default seed=777 iterations=1..40 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\wrong-unknown
+[   1/40] FAIL kill@241ms in-flight=compact+del+put sent=279 acked=199 rejected=22 unknown=3 gets=55 keys=54 file=17091B restart=15.0ms recovery=1.57ms oracle=0.0ms
+
+FAIL at iteration 1 (iteration seed 2624769432733131076, killed after 241 ms with compact+del+put in flight)
+rejected-write-visible on key "k0062"
+  expected: consistent with value#2172363fdac4 from i1-w1-000001 (acked), value#4ba516c6877b from i1-w2-000008 (acked), value#0b16dc14c703 from i1-w0-000020 (acked), value#ffce9291c765 from i1-w0-000024 (acked), value#62c825743d1c from i1-w0-000039 (acked), value#dd8f2fb209a8 from i1-w0-000042 (acked), absent from i1-w1-000063 (acked) (in a legal order)
+  found:    value#7cea172854f4
+  recovered value#7cea172854f4 was written only by i1-w0-000086, which was REJECTED (failed simulated failure (but the write was made durable))
+  requests on key "k0062" (baseline absent):
+    i1-w1-000001 [batch acked, writer w1, sent at 39.627ms, reply at 40.664ms 14 ops] -> value#2172363fdac4
+    i1-w2-000008 [batch acked, writer w2, sent at 45.317ms, reply at 46.368ms 9 ops] -> value#4ba516c6877b
+    i1-w0-000020 [put acked, writer w0, sent at 86.076ms, reply at 87.122ms key="k0062" -> value#0b16dc14c703] -> value#0b16dc14c703
+    i1-w0-000024 [batch acked, writer w0, sent at 90.247ms, reply at 91.298ms 20 ops] -> value#ffce9291c765
+    i1-w0-000039 [batch acked, writer w0, sent at 114.963ms, reply at 114.963ms 9 ops] -> value#62c825743d1c
+    i1-w0-000042 [put acked, writer w0, sent at 120.721ms, reply at 121.770ms key="k0062" -> value#dd8f2fb209a8] -> value#dd8f2fb209a8
+    i1-w1-000063 [del acked, writer w1, sent at 185.815ms, reply at 186.862ms key="k0062" -> absent] -> absent
+evidence: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\wrong-unknown\failures\iter-1
+reproduce: KVDB_MUTANT=wrong-unknown "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+
+RESULT: FAIL  mode=default seed=777  passed=0 failed=1 inconclusive=0 of 40  acked=199 rejected=22 unknown=3 gets=55  kills-mid-write=1 compact-in-flight=1 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=279 acknowledged=254 (writes 185) cleanly-rejected=22 unknown=3  acked-writes-verified-after-restart=0 reads-verified=0  batch-atomicity-violations=0 data-integrity-violations=1 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+  failure: iteration 1 (iteration seed 2624769432733131076) rejected-write-visible; reproduce: KVDB_MUTANT=wrong-unknown "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+PERF: 0.3s total, 3.10 iterations/s, restart 15.0 ms avg / 15.0 max, recovery 1.57 ms avg / 1.57 max, oracle 0.00 ms avg / 0.0 max, verify 44.1 ms avg, serve peak 22.8 MiB, tester heap peak 3.5 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\wrong-unknown\summary.json
+--- wrong-unknown: DETECTED after 1 iteration(s) in 0.3s; kind=rejected-write-visible
+
+=== mutation bad-recovery (recovery rolls back the last acknowledged put), mode default, up to 40 iterations
+nexus-torture: mode=default seed=777 iterations=1..40 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\bad-recovery
+[   1/40] FAIL kill@241ms in-flight=batch+del+put sent=129 acked=103 rejected=0 unknown=3 gets=23 keys=50 file=8621B restart=14.5ms recovery=2.08ms oracle=0.5ms
+
+FAIL at iteration 1 (iteration seed 2624769432733131076, killed after 241 ms with batch+del+put in flight)
+acknowledged-write-lost on key "k0040"
+  expected: consistent with baseline absent, value#88d50896664a from i1-w1-000004 (acked), value#4b5f0e60bceb from i1-w0-000005 (acked), value#e28bdf90af75 from i1-w2-000009 (acked), value#5c29afd13e37 from i1-w2-000019 (acked), absent from i1-w0-000026 (acked), value#6a957e3805e2 from i1-w2-000041 (acked), value#c9281d5556a4 from i1-w1-000040 (acked) (in a legal order)
+  found:    absent
+  recovered absent comes from i1-w0-000026, but i1-w2-000041 wrote this key after i1-w0-000026 completed and was acknowledged
+  no legal order exists; these constraints form a cycle:
+    i1-w2-000041 [batch acked, writer w2, sent at 229.287ms, reply at 231.901ms 17 ops]
+      must take effect before i1-w0-000026 [batch acked, writer w0, sent at 144.512ms, reply at 153.072ms 15 ops]  (both wrote key "k0040" and the recovered value of "k0040" comes from the second)
+    i1-w0-000026 [batch acked, writer w0, sent at 144.512ms, reply at 153.072ms 15 ops]
+      must take effect before i1-w2-000041 [batch acked, writer w2, sent at 229.287ms, reply at 231.901ms 17 ops]  (real time: the first was acknowledged before the second was sent)
+  requests on key "k0040" (baseline absent):
+    i1-w1-000004 [batch acked, writer w1, sent at 37.898ms, reply at 42.635ms 16 ops] -> value#88d50896664a
+    i1-w0-000005 [batch acked, writer w0, sent at 38.430ms, reply at 43.151ms 17 ops] -> value#4b5f0e60bceb
+    i1-w2-000009 [batch acked, writer w2, sent at 57.328ms, reply at 58.911ms 5 ops] -> value#e28bdf90af75
+    i1-w2-000019 [batch acked, writer w2, sent at 105.486ms, reply at 107.068ms 6 ops] -> value#5c29afd13e37
+    i1-w0-000026 [batch acked, writer w0, sent at 144.512ms, reply at 153.072ms 15 ops] -> absent
+    i1-w2-000041 [batch acked, writer w2, sent at 229.287ms, reply at 231.901ms 17 ops] -> value#6a957e3805e2
+    i1-w1-000040 [put acked, writer w1, sent at 230.340ms, reply at 232.441ms key="k0040" -> value#c9281d5556a4] -> value#c9281d5556a4
+evidence: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\bad-recovery\failures\iter-1
+reproduce: KVDB_MUTANT=bad-recovery "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+
+RESULT: FAIL  mode=default seed=777  passed=0 failed=1 inconclusive=0 of 40  acked=103 rejected=0 unknown=3 gets=23  kills-mid-write=1 compact-in-flight=0 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=129 acknowledged=126 (writes 95) cleanly-rejected=0 unknown=3  acked-writes-verified-after-restart=0 reads-verified=0  batch-atomicity-violations=0 data-integrity-violations=1 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+  failure: iteration 1 (iteration seed 2624769432733131076) acknowledged-write-lost; reproduce: KVDB_MUTANT=bad-recovery "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+PERF: 0.3s total, 3.17 iterations/s, restart 14.5 ms avg / 14.5 max, recovery 2.08 ms avg / 2.08 max, oracle 0.51 ms avg / 0.5 max, verify 43.4 ms avg, serve peak 23.0 MiB, tester heap peak 3.3 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\bad-recovery\summary.json
+--- bad-recovery: DETECTED after 1 iteration(s) in 0.3s; kind=acknowledged-write-lost
+
+=== mutation corrupt-value (every 6th put stores a value with one byte changed), mode default, up to 40 iterations
+nexus-torture: mode=default seed=777 iterations=1..40 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe dir=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\corrupt-value
+[   1/40] FAIL kill@241ms in-flight=compact+del+put sent=364 acked=280 rejected=0 unknown=3 gets=81 keys=46 file=10316B restart=14.8ms recovery=1.04ms oracle=0.0ms
+
+FAIL at iteration 1 (iteration seed 2624769432733131076, killed after 241 ms with compact+del+put in flight)
+value-never-written on key "k0046"
+  expected: consistent with value#12c1c61f5901 from i1-w1-000001 (acked), value#c9bdef9cb932 from i1-w2-000010 (acked), value#7eada48792ad from i1-w2-000021 (acked), value#9374fe25d063 from i1-w0-000022 (acked), value#d77b4f6ffa31 from i1-w2-000029 (acked), value#44f3e234b67a from i1-w1-000029 (acked), value#7b91593be7dd from i1-w0-000045 (acked), value#edbfee3d3453 from i1-w0-000069 (acked), absent from i1-w1-000074 (acked), value#1d3f83acd416 from i1-w2-000104 (acked) (in a legal order)
+  found:    value#02e5a08a7cb5
+  recovered value#02e5a08a7cb5, a value no request ever wrote to this key (corrupted, torn or foreign value)
+  requests on key "k0046" (baseline absent):
+    i1-w1-000001 [batch acked, writer w1, sent at 15.114ms, reply at 16.199ms 14 ops] -> value#12c1c61f5901
+    i1-w2-000010 [put acked, writer w2, sent at 22.994ms, reply at 23.511ms key="k0046" -> value#c9bdef9cb932] -> value#c9bdef9cb932
+    i1-w2-000021 [batch acked, writer w2, sent at 52.701ms, reply at 54.269ms 10 ops] -> value#7eada48792ad
+    i1-w0-000022 [batch acked, writer w0, sent at 54.786ms, reply at 55.826ms 15 ops] -> value#9374fe25d063
+    i1-w2-000029 [batch acked, writer w2, sent at 68.871ms, reply at 69.396ms 19 ops] -> value#d77b4f6ffa31
+    i1-w1-000029 [batch acked, writer w1, sent at 68.871ms, reply at 70.450ms 19 ops] -> value#44f3e234b67a
+    i1-w0-000045 [batch acked, writer w0, sent at 108.051ms, reply at 112.163ms 16 ops] -> value#7b91593be7dd
+    i1-w0-000069 [put acked, writer w0, sent at 150.770ms, reply at 151.815ms key="k0046" -> value#edbfee3d3453] -> value#edbfee3d3453
+    i1-w1-000074 [batch acked, writer w1, sent at 178.466ms, reply at 179.517ms 16 ops] -> absent
+    i1-w2-000104 [put acked, writer w2, sent at 217.607ms, reply at 218.132ms key="k0046" -> value#1d3f83acd416] -> value#1d3f83acd416
+evidence: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\corrupt-value\failures\iter-1
+reproduce: KVDB_MUTANT=corrupt-value "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+
+RESULT: FAIL  mode=default seed=777  passed=0 failed=1 inconclusive=0 of 40  acked=280 rejected=0 unknown=3 gets=81  kills-mid-write=1 compact-in-flight=1 torn-tails=0 interrupted-compactions=0 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=364 acknowledged=361 (writes 264) cleanly-rejected=0 unknown=3  acked-writes-verified-after-restart=0 reads-verified=0  batch-atomicity-violations=0 data-integrity-violations=1 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+  failure: iteration 1 (iteration seed 2624769432733131076) value-never-written; reproduce: KVDB_MUTANT=corrupt-value "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\nexus-torture.exe" run --mode default --seed 777 --iteration 1 --kvdb "C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb-mutant.exe"
+PERF: 0.3s total, 3.13 iterations/s, restart 14.8 ms avg / 14.8 max, recovery 1.04 ms avg / 1.04 max, oracle 0.00 ms avg / 0.0 max, verify 44.1 ms avg, serve peak 22.6 MiB, tester heap peak 3.9 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\mutants\corrupt-value\summary.json
+--- corrupt-value: DETECTED after 1 iteration(s) in 0.3s; kind=value-never-written
+
+MUTATION RESULT: every mutation detected, control passed
+  none             as expected  iteration=0   kind=
+  ack-before-sync  as expected  iteration=1   kind=acknowledged-write-lost
+  drop-acked       as expected  iteration=1   kind=invalid-read
+  partial-batch    as expected  iteration=1   kind=partial-batch
+  wrong-unknown    as expected  iteration=1   kind=rejected-write-visible
+  bad-recovery     as expected  iteration=1   kind=acknowledged-write-lost
+  corrupt-value    as expected  iteration=1   kind=value-never-written

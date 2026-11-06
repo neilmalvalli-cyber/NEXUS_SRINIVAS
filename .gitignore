@@ -4,3 +4,4 @@ kvdb.exe
 *.out
 /testdata/fuzz/
 torture-runs/
+crosscheck/.recovery/

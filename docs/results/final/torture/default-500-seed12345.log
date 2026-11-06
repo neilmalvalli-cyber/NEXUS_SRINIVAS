@@ -1,0 +1,7 @@
+nexus-torture: mode=default seed=12345 iterations=1..500 writers=3 readers=0 kill=5..600ms max-bytes=0
+  kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\bin\kvdb.exe dir=C:/Users/MY PC/NEXUS_SRINIVAS/torture-runs/final/default-500-seed12345
+
+RESULT: PASS  mode=default seed=12345  passed=500 failed=0 inconclusive=0 of 500  acked=157731 rejected=0 unknown=1351 gets=39609  kills-mid-write=488 compact-in-flight=321 torn-tails=0 interrupted-compactions=7 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=198834 acknowledged=197340 (writes 148100) cleanly-rejected=0 unknown=1351  acked-writes-verified-after-restart=148100 reads-verified=39609  batch-atomicity-violations=0 data-integrity-violations=0 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+PERF: 180.5s total, 2.77 iterations/s, restart 11.6 ms avg / 15.8 max, recovery 1.44 ms avg / 3.22 max, oracle 0.76 ms avg / 3.6 max, verify 35.5 ms avg, serve peak 24.0 MiB, tester heap peak 5.5 MiB
+report: C:\Users\MY PC\NEXUS_SRINIVAS\torture-runs\final\default-500-seed12345\summary.json

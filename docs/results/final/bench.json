@@ -1,0 +1,344 @@
+{
+  "tool": "kvdb-bench 1.0",
+  "started": "2026-11-06T23:09:00+05:30",
+  "machine": {
+    "cpu": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64",
+    "os_version": "Windows 11 Home Single Language build 26200 (25H2)"
+  },
+  "config": {
+    "api": "in-process src/kvdb",
+    "batch_size": 1000,
+    "durability": "every put/delete/batch synced before it returns",
+    "n": 100000,
+    "runs": 3,
+    "seed": 1,
+    "value_size": 100
+  },
+  "runs": [
+    {
+      "run": 1,
+      "phases": [
+        {
+          "phase": "put",
+          "ops": 100000,
+          "seconds": 36.9411317,
+          "ops_per_sec": 2707.009650167269,
+          "latency_per_call": {
+            "p50_us": 518.3,
+            "p99_us": 1160.8,
+            "max_us": 12050.6
+          },
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "reopen (recovery)",
+          "ops": 100000,
+          "seconds": 0.0455788,
+          "ops_per_sec": 2194002.4748347914,
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "get",
+          "ops": 100000,
+          "seconds": 0.6078354,
+          "ops_per_sec": 164518.22319002807,
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "batch",
+          "ops": 100000,
+          "seconds": 0.5526509,
+          "ops_per_sec": 180946.05473364834,
+          "latency_per_call": {
+            "p50_us": 1033.5,
+            "p99_us": 460836.1,
+            "max_us": 460836.1
+          },
+          "automatic_compactions": 1,
+          "file_bytes_after": 15498960,
+          "keys_after": 100000
+        },
+        {
+          "phase": "compact (n live keys)",
+          "ops": 100000,
+          "seconds": 0.4549469,
+          "ops_per_sec": 0,
+          "file_bytes_before": 15498960,
+          "file_bytes_after": 12300128,
+          "keys_after": 100000
+        },
+        {
+          "phase": "delete",
+          "ops": 100000,
+          "seconds": 37.6363646,
+          "ops_per_sec": 2657.004762888284,
+          "latency_per_call": {
+            "p50_us": 519.5,
+            "p99_us": 1078.9,
+            "max_us": 295291.3
+          },
+          "automatic_compactions": 3,
+          "file_bytes_after": 3680926,
+          "keys_after": 0
+        },
+        {
+          "phase": "compact (empty)",
+          "ops": 0,
+          "seconds": 0.0180452,
+          "ops_per_sec": 0,
+          "file_bytes_before": 3680926,
+          "file_bytes_after": 32,
+          "keys_after": 0
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "phases": [
+        {
+          "phase": "put",
+          "ops": 100000,
+          "seconds": 37.2641691,
+          "ops_per_sec": 2683.5429962666203,
+          "latency_per_call": {
+            "p50_us": 519.7,
+            "p99_us": 1056.6,
+            "max_us": 10256.8
+          },
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "reopen (recovery)",
+          "ops": 100000,
+          "seconds": 0.0445221,
+          "ops_per_sec": 2246075.5445048637,
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "get",
+          "ops": 100000,
+          "seconds": 0.598857,
+          "ops_per_sec": 166984.77265858126,
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "batch",
+          "ops": 100000,
+          "seconds": 0.5624602,
+          "ops_per_sec": 177790.3574332904,
+          "latency_per_call": {
+            "p50_us": 1005.3,
+            "p99_us": 468762.4,
+            "max_us": 468762.4
+          },
+          "automatic_compactions": 1,
+          "file_bytes_after": 15498960,
+          "keys_after": 100000
+        },
+        {
+          "phase": "compact (n live keys)",
+          "ops": 100000,
+          "seconds": 0.4591619,
+          "ops_per_sec": 0,
+          "file_bytes_before": 15498960,
+          "file_bytes_after": 12300128,
+          "keys_after": 100000
+        },
+        {
+          "phase": "delete",
+          "ops": 100000,
+          "seconds": 37.488283,
+          "ops_per_sec": 2667.5001359758194,
+          "latency_per_call": {
+            "p50_us": 520.3,
+            "p99_us": 1265.6,
+            "max_us": 276587.5
+          },
+          "automatic_compactions": 3,
+          "file_bytes_after": 3680926,
+          "keys_after": 0
+        },
+        {
+          "phase": "compact (empty)",
+          "ops": 0,
+          "seconds": 0.0058202,
+          "ops_per_sec": 0,
+          "file_bytes_before": 3680926,
+          "file_bytes_after": 32,
+          "keys_after": 0
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "phases": [
+        {
+          "phase": "put",
+          "ops": 100000,
+          "seconds": 37.0534125,
+          "ops_per_sec": 2698.806756327774,
+          "latency_per_call": {
+            "p50_us": 520.5,
+            "p99_us": 1063.8,
+            "max_us": 10275.8
+          },
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "reopen (recovery)",
+          "ops": 100000,
+          "seconds": 0.0453188,
+          "ops_per_sec": 2206589.7596582435,
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "get",
+          "ops": 100000,
+          "seconds": 0.6036754,
+          "ops_per_sec": 165651.9381111107,
+          "file_bytes_after": 15500032,
+          "keys_after": 100000
+        },
+        {
+          "phase": "batch",
+          "ops": 100000,
+          "seconds": 0.5386478,
+          "ops_per_sec": 185650.06670406897,
+          "latency_per_call": {
+            "p50_us": 999.8,
+            "p99_us": 445476.3,
+            "max_us": 445476.3
+          },
+          "automatic_compactions": 1,
+          "file_bytes_after": 15498960,
+          "keys_after": 100000
+        },
+        {
+          "phase": "compact (n live keys)",
+          "ops": 100000,
+          "seconds": 0.458506,
+          "ops_per_sec": 0,
+          "file_bytes_before": 15498960,
+          "file_bytes_after": 12300128,
+          "keys_after": 100000
+        },
+        {
+          "phase": "delete",
+          "ops": 100000,
+          "seconds": 37.3722261,
+          "ops_per_sec": 2675.7838757697123,
+          "latency_per_call": {
+            "p50_us": 519.2,
+            "p99_us": 1082.8,
+            "max_us": 270161.9
+          },
+          "automatic_compactions": 3,
+          "file_bytes_after": 3680926,
+          "keys_after": 0
+        },
+        {
+          "phase": "compact (empty)",
+          "ops": 0,
+          "seconds": 0.0057747,
+          "ops_per_sec": 0,
+          "file_bytes_before": 3680926,
+          "file_bytes_after": 32,
+          "keys_after": 0
+        }
+      ]
+    }
+  ],
+  "median_of_runs": [
+    {
+      "phase": "put",
+      "ops": 100000,
+      "seconds": 37.0534125,
+      "ops_per_sec": 2698.806756327774,
+      "latency_per_call": {
+        "p50_us": 520.5,
+        "p99_us": 1063.8,
+        "max_us": 10275.8
+      },
+      "file_bytes_after": 15500032,
+      "keys_after": 100000
+    },
+    {
+      "phase": "reopen (recovery)",
+      "ops": 100000,
+      "seconds": 0.0453188,
+      "ops_per_sec": 2206589.7596582435,
+      "file_bytes_after": 15500032,
+      "keys_after": 100000
+    },
+    {
+      "phase": "get",
+      "ops": 100000,
+      "seconds": 0.6036754,
+      "ops_per_sec": 165651.9381111107,
+      "file_bytes_after": 15500032,
+      "keys_after": 100000
+    },
+    {
+      "phase": "batch",
+      "ops": 100000,
+      "seconds": 0.5526509,
+      "ops_per_sec": 180946.05473364834,
+      "latency_per_call": {
+        "p50_us": 1033.5,
+        "p99_us": 460836.1,
+        "max_us": 460836.1
+      },
+      "automatic_compactions": 1,
+      "file_bytes_after": 15498960,
+      "keys_after": 100000
+    },
+    {
+      "phase": "compact (n live keys)",
+      "ops": 100000,
+      "seconds": 0.458506,
+      "ops_per_sec": 0,
+      "file_bytes_before": 15498960,
+      "file_bytes_after": 12300128,
+      "keys_after": 100000
+    },
+    {
+      "phase": "delete",
+      "ops": 100000,
+      "seconds": 37.488283,
+      "ops_per_sec": 2667.5001359758194,
+      "latency_per_call": {
+        "p50_us": 520.3,
+        "p99_us": 1265.6,
+        "max_us": 276587.5
+      },
+      "automatic_compactions": 3,
+      "file_bytes_after": 3680926,
+      "keys_after": 0
+    },
+    {
+      "phase": "compact (empty)",
+      "ops": 0,
+      "seconds": 0.0058202,
+      "ops_per_sec": 0,
+      "file_bytes_before": 3680926,
+      "file_bytes_after": 32,
+      "keys_after": 0
+    }
+  ],
+  "notes": [
+    "NVMe SSD, Windows Defender real-time protection on"
+  ],
+  "total_seconds": 229.1480332
+}

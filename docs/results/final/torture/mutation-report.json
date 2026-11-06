@@ -1,0 +1,130 @@
+{
+  "mutant": "C:/Users/MY PC/NEXUS_SRINIVAS/torture-runs/final/bin/kvdb-mutant.exe",
+  "seed": 777,
+  "outcomes": [
+    {
+      "mutation": "none",
+      "simulates": "faithful wrapper around the NEXUS library (control)",
+      "mode": "default",
+      "expected_failure_kinds": null,
+      "engine_result": "PASS",
+      "detected": false,
+      "as_expected": true,
+      "iterations_run": 15,
+      "seconds": 4.9828444
+    },
+    {
+      "mutation": "ack-before-sync",
+      "simulates": "ACK sent before the write is durable (written 25 ms later)",
+      "mode": "default",
+      "expected_failure_kinds": [
+        "acknowledged-write-lost",
+        "partial-batch",
+        "no-legal-order"
+      ],
+      "engine_result": "FAIL",
+      "detected": true,
+      "as_expected": true,
+      "detected_at_iteration": 1,
+      "failure_kind": "acknowledged-write-lost",
+      "failure": "acknowledged-write-lost on key \"k0042\"\n  expected: consistent with absent from i1-w0-000004 (acked), value#6409cb3b7be1 from i1-w0-000013 (acked), absent from i1-w0-000016 (acked), value#4f0e60f5a071 from i1-w0-000017 (acked), value#8ab7761acb78 from i1-w0-000022 (acked), value#09b425cd65d5 from i1-w0-000024 (acked), value#9b1f4f6188a7 from i1-w0-000036 (acked), value#2055f5a17a37 from i1-w0-000039 (acked), value#5f25406bbe05 from i1-w1-000099 (acked), value#548e57a8c651 from i1-w2-000112 (acked), value#6904fd0f9a85 from i1-w2-000114 (acked), absent from i1-w2-000140 (acked), value#11cb979ecff...",
+      "iterations_run": 1,
+      "seconds": 0.3971562,
+      "repro": "KVDB_MUTANT=ack-before-sync \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\nexus-torture.exe\" run --mode default --seed 777 --iteration 1 --kvdb \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\kvdb-mutant.exe\""
+    },
+    {
+      "mutation": "drop-acked",
+      "simulates": "every 7th write acknowledged but never written",
+      "mode": "default",
+      "expected_failure_kinds": [
+        "acknowledged-write-lost",
+        "invalid-read",
+        "no-legal-order"
+      ],
+      "engine_result": "FAIL",
+      "detected": true,
+      "as_expected": true,
+      "detected_at_iteration": 1,
+      "failure_kind": "invalid-read",
+      "failure": "invalid-read on key \"k0022\"\n  expected: consistent with value#fce6846075a1 from i1-w1-000010 (acked), value#d571f5fb123d from i1-w0-000016 (acked), value#7c659e591747 from i1-w0-000017 (acked), value#205478e06ef2 from i1-w2-000018 (acked), absent from i1-w1-000022 (acked), value#867d0a62261e from i1-w0-000026 (acked), value#b22ab76f47c1 from i1-w1-000031 (acked), value#14cd774b409b from i1-w0-000039 (acked), value#5b691700ff0e from i1-w2-000057 (acked), value#44ac4ff483cb from i1-w2-000072 (acked), value#2d995fb4b06d from i1-w0-000080 (acked), value#d9625dc18996 from i1-w2-000096 (acked), valu...",
+      "iterations_run": 1,
+      "seconds": 0.323942,
+      "repro": "KVDB_MUTANT=drop-acked \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\nexus-torture.exe\" run --mode default --seed 777 --iteration 1 --kvdb \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\kvdb-mutant.exe\""
+    },
+    {
+      "mutation": "partial-batch",
+      "simulates": "batches applied one operation at a time (not atomic)",
+      "mode": "batch10",
+      "expected_failure_kinds": [
+        "partial-batch",
+        "acknowledged-write-lost",
+        "invalid-read",
+        "no-legal-order"
+      ],
+      "engine_result": "FAIL",
+      "detected": true,
+      "as_expected": true,
+      "detected_at_iteration": 1,
+      "failure_kind": "partial-batch",
+      "failure": "partial-batch on key \"k0038\"\n  expected: consistent with baseline absent, absent from i1-w1-000003 (acked) (in a legal order)\n  found:    absent\n  recovered absent comes from i1-w1-000003, but i1-w0-000007 (outcome unknown, visible on another key so it took effect) was sent after i1-w1-000003 completed and wrote this key\n  no legal order exists; these constraints form a cycle:\n    i1-w0-000007 [batch unknown, writer w0, sent at 201.421ms, no reply 10 ops]\n      must take effect before i1-w1-000003 [batch acked, writer w1, sent at 121.619ms, reply at 146.915ms 10 ops]  (both wrote key \"k0038\" a...",
+      "iterations_run": 1,
+      "seconds": 0.3154112,
+      "repro": "KVDB_MUTANT=partial-batch \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\nexus-torture.exe\" run --mode batch10 --seed 777 --iteration 1 --kvdb \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\kvdb-mutant.exe\""
+    },
+    {
+      "mutation": "wrong-unknown",
+      "simulates": "a durable put reported as a definite failure",
+      "mode": "default",
+      "expected_failure_kinds": [
+        "rejected-write-visible",
+        "invalid-read"
+      ],
+      "engine_result": "FAIL",
+      "detected": true,
+      "as_expected": true,
+      "detected_at_iteration": 1,
+      "failure_kind": "rejected-write-visible",
+      "failure": "rejected-write-visible on key \"k0062\"\n  expected: consistent with value#2172363fdac4 from i1-w1-000001 (acked), value#4ba516c6877b from i1-w2-000008 (acked), value#0b16dc14c703 from i1-w0-000020 (acked), value#ffce9291c765 from i1-w0-000024 (acked), value#62c825743d1c from i1-w0-000039 (acked), value#dd8f2fb209a8 from i1-w0-000042 (acked), absent from i1-w1-000063 (acked) (in a legal order)\n  found:    value#7cea172854f4\n  recovered value#7cea172854f4 was written only by i1-w0-000086, which was REJECTED (failed simulated failure (but the write was made durable))\n  requests on key \"k0062\" (base...",
+      "iterations_run": 1,
+      "seconds": 0.3253806,
+      "repro": "KVDB_MUTANT=wrong-unknown \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\nexus-torture.exe\" run --mode default --seed 777 --iteration 1 --kvdb \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\kvdb-mutant.exe\""
+    },
+    {
+      "mutation": "bad-recovery",
+      "simulates": "recovery rolls back the last acknowledged put",
+      "mode": "default",
+      "expected_failure_kinds": [
+        "acknowledged-write-lost",
+        "no-legal-order"
+      ],
+      "engine_result": "FAIL",
+      "detected": true,
+      "as_expected": true,
+      "detected_at_iteration": 1,
+      "failure_kind": "acknowledged-write-lost",
+      "failure": "acknowledged-write-lost on key \"k0040\"\n  expected: consistent with baseline absent, value#88d50896664a from i1-w1-000004 (acked), value#4b5f0e60bceb from i1-w0-000005 (acked), value#e28bdf90af75 from i1-w2-000009 (acked), value#5c29afd13e37 from i1-w2-000019 (acked), absent from i1-w0-000026 (acked), value#6a957e3805e2 from i1-w2-000041 (acked), value#c9281d5556a4 from i1-w1-000040 (acked) (in a legal order)\n  found:    absent\n  recovered absent comes from i1-w0-000026, but i1-w2-000041 wrote this key after i1-w0-000026 completed and was acknowledged\n  no legal order exists; these constraints ...",
+      "iterations_run": 1,
+      "seconds": 0.3179187,
+      "repro": "KVDB_MUTANT=bad-recovery \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\nexus-torture.exe\" run --mode default --seed 777 --iteration 1 --kvdb \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\kvdb-mutant.exe\""
+    },
+    {
+      "mutation": "corrupt-value",
+      "simulates": "every 6th put stores a value with one byte changed",
+      "mode": "default",
+      "expected_failure_kinds": [
+        "value-never-written",
+        "invalid-read"
+      ],
+      "engine_result": "FAIL",
+      "detected": true,
+      "as_expected": true,
+      "detected_at_iteration": 1,
+      "failure_kind": "value-never-written",
+      "failure": "value-never-written on key \"k0046\"\n  expected: consistent with value#12c1c61f5901 from i1-w1-000001 (acked), value#c9bdef9cb932 from i1-w2-000010 (acked), value#7eada48792ad from i1-w2-000021 (acked), value#9374fe25d063 from i1-w0-000022 (acked), value#d77b4f6ffa31 from i1-w2-000029 (acked), value#44f3e234b67a from i1-w1-000029 (acked), value#7b91593be7dd from i1-w0-000045 (acked), value#edbfee3d3453 from i1-w0-000069 (acked), absent from i1-w1-000074 (acked), value#1d3f83acd416 from i1-w2-000104 (acked) (in a legal order)\n  found:    value#02e5a08a7cb5\n  recovered value#02e5a08a7cb5, a value ...",
+      "iterations_run": 1,
+      "seconds": 0.321629,
+      "repro": "KVDB_MUTANT=corrupt-value \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\nexus-torture.exe\" run --mode default --seed 777 --iteration 1 --kvdb \"C:\\Users\\MY PC\\NEXUS_SRINIVAS\\torture-runs\\final\\bin\\kvdb-mutant.exe\""
+    }
+  ],
+  "all_as_expected": true
+}

@@ -48,8 +48,8 @@ type snapshotPlan struct {
 
 // planSnapshot lists the live state with commit applied (nil for a plain
 // compaction) and groups it into frames of at most MaxFrameOps entries and
-// SnapshotFramePayload bytes. Items copied from the log are ordered by
-// offset so the copy reads the old file sequentially. Callers hold mu.
+// SnapshotFramePayload bytes. All items are ordered by key (byte order) so
+// the output is deterministic. Callers hold mu.
 func (l *Log) planSnapshot(commit []format.Entry) *snapshotPlan {
 	final := make(map[string]int, len(commit)) // key -> index of its last op in commit
 	for i, e := range commit {
@@ -62,12 +62,17 @@ func (l *Log) planSnapshot(commit []format.Entry) *snapshotPlan {
 		}
 		return true
 	})
-	sort.Slice(p.items, func(i, j int) bool { return p.items[i].loc.Off < p.items[j].loc.Off })
 	for i, e := range commit {
 		if final[string(e.Key)] == i && e.Op == format.OpPut {
 			p.items = append(p.items, snapItem{key: string(e.Key), value: e.Value})
 		}
 	}
+	// Deterministic output: every snapshot lists its keys in ascending byte
+	// order (Go string order), whatever the history, map order or commit
+	// order. Two databases with the same live state and the same next
+	// sequence number therefore compact to byte-identical files. Keys are
+	// unique here (log keys touched by commit were skipped above).
+	sort.Slice(p.items, func(i, j int) bool { return p.items[i].key < p.items[j].key })
 	p.size = format.SuperblockSize
 	for i := 0; i < len(p.items); {
 		j, payload := i, uint64(0)

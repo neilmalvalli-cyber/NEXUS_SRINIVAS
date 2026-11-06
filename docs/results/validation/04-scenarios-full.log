@@ -1,0 +1,209 @@
+=== RUN   TestGroupA
+=== RUN   TestGroupA/A1
+    harness_test.go:80: A1: Kill before any bytes of a put reach the file
+          expected: Key absent (or holds its previous value)
+          method: faultfs crash at the put's first write to the data file, before any byte is written; reopen
+    harness_test.go:59: existing key keeps its previous value; a new key stays absent; file size unchanged
+=== RUN   TestGroupA/A2
+    harness_test.go:80: A2: Kill after some bytes of the record are written but not all (torn write)
+          expected: Key absent or previous value; the torn bytes are ignored, never returned as a value
+          method: faultfs crash in the middle of the frame write, keeping 1, 16, 31, 32, 33, 43 bytes and all but 1 byte; reopen (recovery truncates the torn tail)
+    harness_test.go:59: frame is 59 bytes; 7 torn lengths; every reopen returned the previous value and cut the file back to its committed end
+=== RUN   TestGroupA/A3
+    harness_test.go:80: A3: Kill after the record is fully written but before fsync
+          expected: Either outcome is acceptable (success was not returned); must not corrupt anything else
+          method: faultfs crash at the Sync of the data file (all frame bytes written, Sync not called); also crash right after the write returns
+    harness_test.go:59: outcomes map[new:2] (z untouched in every case)
+=== RUN   TestGroupA/A4
+    harness_test.go:80: A4: Kill after fsync returns but before put returns success to the caller
+          expected: Key present with the new value
+          method: faultfs crash immediately after the data file's Sync returned (CrashAfter on Sync); reopen
+=== RUN   TestGroupA/A5
+    harness_test.go:80: A5: Kill immediately after put returns success
+          expected: Key present with the new value. No exceptions
+          method: (1) in-process: Commit returns nil, then a crash on the next file operation; (2) real process: `kvdb serve`, kill (TerminateProcess) the moment `ACK` is read, 20 times; reopen
+    harness_test.go:59: 20/20 acknowledged puts present after kill-on-ACK of the serve process
+=== RUN   TestGroupA/A6
+    harness_test.go:80: A6: Kill during a delete
+          expected: Key either still present with old value, or absent. Never a corrupted value
+          method: faultfs crash before, in the middle of (9 bytes kept) and after every file operation of Delete; reopen after each
+    harness_test.go:59: 2 operations x 3 crash modes: outcomes map[absent:4 present:2]
+=== RUN   TestGroupA/A7
+    harness_test.go:80: A7: Kill during a put of a 1 MB value
+          expected: Same rules as A1 to A5, with a large value spanning many disk blocks
+          method: faultfs crash at every file operation of a 1 MiB put, with torn writes keeping 0, 4 KiB, 512 KiB and all-but-1 bytes of each write, and after each; plus torture --mode large-values (real kills)
+    harness_test.go:59: 3 operations, outcomes map[new (1 MiB, byte-exact):3 old:7]
+    harness_test.go:59: torture --mode large-values --seed 999 --iterations 100: passed 100/100, acked 11178, rejected 0, unknown 159, kills with a write in flight 59, compaction in flight 0, torn tails discarded 1, interrupted compactions resolved 0, recovery kills landed 0/0, full errors 0, max open 13.1 ms, 88.4s
+--- PASS: TestGroupA (91.13s)
+    --- PASS: TestGroupA/A1 (0.02s)
+    --- PASS: TestGroupA/A2 (0.08s)
+    --- PASS: TestGroupA/A3 (0.02s)
+    --- PASS: TestGroupA/A4 (0.01s)
+    --- PASS: TestGroupA/A5 (2.12s)
+    --- PASS: TestGroupA/A6 (0.05s)
+    --- PASS: TestGroupA/A7 (88.79s)
+=== RUN   TestGroupB
+=== RUN   TestGroupB/B1
+    harness_test.go:80: B1: Kill after 3 of 10 operations in a batch are written
+          expected: None of the 10 are visible
+          method: faultfs crash during the batch frame write keeping exactly the header and the first 3 entries (and 3.5 entries); reopen
+    harness_test.go:59: 3 complete entries (110 bytes incl. header) on disk: none visible after reopen
+=== RUN   TestGroupB/B2
+    harness_test.go:80: B2: Kill after all 10 are written but the commit marker is not
+          expected: None of the 10 are visible
+          method: NEXUS has no separate marker: the commit marker is the frame header's payload_len + payload CRC32C, valid only once every payload byte is present. Executed as (a) all 10 entries written but the frame's final byte missing, (b) all 10 entries on disk but the 32-byte header (the marker) zeroed; reopen
+    harness_test.go:59: (a) 291 of 292 bytes: none visible; (b) entries present, header zeroed: rule C2 truncates, none visible
+=== RUN   TestGroupB/B3
+    harness_test.go:80: B3: Kill after the commit marker is written but before fsync
+          expected: Either all or none. Never some
+          method: faultfs crash at the data file's Sync after the complete frame was written, and right after the write; reopen
+    harness_test.go:59: outcomes map[all:2]
+=== RUN   TestGroupB/B4
+    harness_test.go:80: B4: Kill after the batch returns success
+          expected: All 10 visible
+          method: (1) Commit returns nil, then crash on the next operation; (2) real process: serve batch of 10, kill on ACK; reopen
+    harness_test.go:59: all 10 visible in both variants
+=== RUN   TestGroupB/B5
+    harness_test.go:80: B5: A batch that puts key X and deletes key X in the same batch
+          expected: Define the ordering in your README and honour it after a crash
+          method: Defined order: operations apply in order, the last one on a key wins. Batches [put X, del X], [del Y, put Y], [put Z=1, put Z=2] committed then crash; plus a crash sweep over every operation of such a batch: the result is always old state or the ordered result
+    harness_test.go:59: after commit+crash: X absent, Y=2, Z=2; sweep of 2 ops: map[old:2 ordered result:4]
+=== RUN   TestGroupB/B6
+    harness_test.go:80: B6: A batch of 10,000 operations, killed halfway
+          expected: None visible. Recovery still completes in under 2 seconds
+          method: database with 1,000,000 keys; faultfs crash halfway through writing a 10,000-op batch frame (and with half of its bytes on disk); reopen timed (kvdb.Open: lock, authority, full scan with CRC checks, index rebuild, truncation); plus torture --mode large-batch
+    harness_test.go:59: 1,000,000-key file 43003232 bytes; 10,000-op frame 220032 bytes, 110016 on disk at the kill; recovery 493ms, discarded tail 110016 bytes (rule C4); 0 of 10,000 visible
+    harness_test.go:59: torture --mode large-batch --seed 61 --iterations 50: passed 50/50, acked 48648, rejected 0, unknown 140, kills with a write in flight 50, compaction in flight 0, torn tails discarded 0, interrupted compactions resolved 0, recovery kills landed 0/0, full errors 0, max open 24.0 ms, 80.5s
+--- PASS: TestGroupB (82.82s)
+    --- PASS: TestGroupB/B1 (0.03s)
+    --- PASS: TestGroupB/B2 (0.02s)
+    --- PASS: TestGroupB/B3 (0.02s)
+    --- PASS: TestGroupB/B4 (0.04s)
+    --- PASS: TestGroupB/B5 (0.06s)
+    --- PASS: TestGroupB/B6 (82.63s)
+=== RUN   TestGroupC
+=== RUN   TestGroupC/C1
+    harness_test.go:80: C1: Kill during open() while it is replaying the log
+          expected: The next open() succeeds and reaches the same correct state
+          method: database with 40 frames and a torn tail; faultfs crash at every read of the recovery scan (and every other recovery operation before truncation), then a normal open; also chains of 3 consecutive crashed recoveries
+    harness_test.go:59: 13 single crash points during replay + 20 chains of 3 crashed recoveries: every final open reached the same 25-key state
+=== RUN   TestGroupC/C2
+    harness_test.go:80: C2: Kill during open() while it is truncating or repairing a torn tail
+          expected: The next open() succeeds
+          method: faultfs crash before and after the Truncate of the torn tail, and before and after the Sync that follows it; reopen
+    harness_test.go:59: 4 crash points around truncation: every next open succeeded with the same state
+=== RUN   TestGroupC/C3
+    harness_test.go:80: C3: Kill during compaction, before the new file replaces the old
+          expected: Old file is still authoritative, all data intact
+          method: faultfs crash before/torn/after every operation of Compact before rename R1 (creating, writing and syncing .compact); reopen; .compact must be cleaned up
+    harness_test.go:59: crash points by phase:op map[before-R1:close:6 before-R1:create:3 before-R1:read:150 before-R1:remove:6 before-R1:sync:6 before-R1:write:6]; all data intact, no leftovers
+=== RUN   TestGroupC/C4
+    harness_test.go:80: C4: Kill during compaction, in the middle of the rename or swap
+          expected: Exactly one of old or new is authoritative, both are complete, nothing is lost
+          method: faultfs crash before and after R1 (path -> .old), between R1 and R2, before and after R2 (.compact -> path); reopen (authority rules A3-A6 pick the complete file)
+    harness_test.go:59: crash points by phase:op map[R1:move:3 R2:move:3]; all data intact, exactly one data file after reopen
+=== RUN   TestGroupC/C5
+    harness_test.go:80: C5: Kill during compaction, after swap but before cleanup of temporary files
+          expected: Data intact. Leftover temp files are cleaned up or ignored on the next open()
+          method: faultfs crash at every operation after R2 (directory sync, reopen and validation of the new file, removal of .old); reopen
+    harness_test.go:59: crash points by phase:op map[after-R2:openrw:3 after-R2:read:6 after-R2:remove:3 after-R2:size:3 after-R2:syncdir:3]; data intact, .old removed by the next open
+    harness_test.go:59: torture --mode compaction --seed 7 --iterations 100: passed 100/100, acked 41425, rejected 0, unknown 291, kills with a write in flight 100, compaction in flight 85, torn tails discarded 0, interrupted compactions resolved 4, recovery kills landed 0/0, full errors 0, max open 3.7 ms, 80.9s
+=== RUN   TestGroupC/C6
+    harness_test.go:80: C6: Kill during close()
+          expected: Same as a kill at any other time. close() is not special
+          method: faultfs crash before/after closing the data file and before/after releasing the lock during Close, after acknowledged writes; reopen
+    harness_test.go:59: 4 crash points in Close: all acknowledged writes present, the next open succeeds (lock released by the OS)
+--- PASS: TestGroupC (84.58s)
+    --- PASS: TestGroupC/C1 (0.23s)
+    --- PASS: TestGroupC/C2 (0.05s)
+    --- PASS: TestGroupC/C3 (2.59s)
+    --- PASS: TestGroupC/C4 (0.26s)
+    --- PASS: TestGroupC/C5 (81.36s)
+    --- PASS: TestGroupC/C6 (0.05s)
+=== RUN   TestGroupD
+=== RUN   TestGroupD/D1
+    harness_test.go:80: D1: Two writers putting different keys, killed at random
+          expected: Every acknowledged put from either writer is present
+          method: torture --mode concurrent-disjoint: 2 concurrent writers on disjoint keys through serve, TerminateProcess at a random ms, open/check/dump vs the oracle
+    harness_test.go:59: torture --mode concurrent-disjoint --seed 101 --iterations 100: passed 100/100, acked 77358, rejected 0, unknown 183, kills with a write in flight 97, compaction in flight 0, torn tails discarded 0, interrupted compactions resolved 0, recovery kills landed 0/0, full errors 0, max open 11.5 ms, 41.2s
+=== RUN   TestGroupD/D2
+    harness_test.go:80: D2: Two writers putting the same key, killed at random
+          expected: The key holds a value that one of the writers actually wrote. Never a mix of two values
+          method: torture --mode same-key: 2 writers put unique 1-64 KiB values to one key; the oracle identifies every recovered value by hash
+    harness_test.go:59: torture --mode same-key --seed 202 --iterations 100: passed 100/100, acked 46678, rejected 0, unknown 187, kills with a write in flight 95, compaction in flight 0, torn tails discarded 0, interrupted compactions resolved 0, recovery kills landed 0/0, full errors 0, max open 79.7 ms, 35.0s
+=== RUN   TestGroupD/D3
+    harness_test.go:80: D3: One writer in a long batch, another doing single puts, killed at random
+          expected: Batch is all-or-nothing. Single puts that were acknowledged are present
+          method: torture --mode large-batch: writer 0 sends 10,000-op batches, writers 1-2 single puts/deletes (some on the batch's keys)
+    harness_test.go:59: torture --mode large-batch --seed 303 --iterations 100: passed 100/100, acked 105141, rejected 0, unknown 277, kills with a write in flight 100, compaction in flight 0, torn tails discarded 0, interrupted compactions resolved 0, recovery kills landed 0/0, full errors 0, max open 24.0 ms, 166.9s
+=== RUN   TestGroupD/D4
+    harness_test.go:80: D4: A reader calling get during a batch on the same keys (no crash)
+          expected: Reader sees the state before the batch or after it. Never in between
+          method: in-process: a writer commits 2,000 batches that set keys k0-k9 to generation g (64 KiB values); 4 readers call Get on all keys and Range (consistent snapshot) concurrently; every value must be a complete generation value, per-key generations never go back, and every Range snapshot holds one generation for all 10 keys
+    harness_test.go:59: 2,000 batches; 20010 gets and 2001 snapshots checked; no torn value, no regression, no mixed snapshot
+--- PASS: TestGroupD (254.28s)
+    --- PASS: TestGroupD/D1 (41.23s)
+    --- PASS: TestGroupD/D2 (35.07s)
+    --- PASS: TestGroupD/D3 (166.99s)
+    --- PASS: TestGroupD/D4 (11.00s)
+=== RUN   TestGroupE
+=== RUN   TestGroupE/E1
+    harness_test.go:80: E1: File size cap reached during a single put
+          expected: put returns an error. Database still readable. Previous data intact
+          method: max_bytes 64 KiB; puts of 400-byte values until ErrFull; the rejected put must leave the file byte-identical, the handle usable for reads, and the data intact after reopen; repeated through `kvdb put --max-bytes`
+    harness_test.go:59: 157 keys stored up to the cap (file 65376 of 65536 bytes); over-cap put -> ErrFull, file byte-identical; CLI prints "kvdb put: ERROR (full): kvdb: database full: commit of 4055 bytes does not fit max_bytes 65536 (file 65376 bytes, compacted with the commit: 69399 bytes)"
+=== RUN   TestGroupE/E2
+    harness_test.go:80: E2: Cap reached halfway through a batch
+          expected: Batch returns an error. None of its operations are visible
+          method: (a) admission: a batch whose frame does not fit max_bytes -> ErrFull before any byte is written; (b) the disk reports out-of-space halfway through writing the batch frame (faultfs partial write + ERROR_DISK_FULL) -> rollback truncate, ErrFull; reopen
+    harness_test.go:59: (a) ErrFull, nothing written; (b) 3156 of 6312 bytes written then disk-full: ErrFull, rolled back, none of 20 visible, next write OK
+=== RUN   TestGroupE/E3
+    harness_test.go:80: E3: Cap reached, then process killed
+          expected: Restart succeeds. All previously acknowledged data intact
+          method: (1) in-process: fill to ErrFull, then crash; reopen; (2) torture --mode disk-full: serve --max-bytes 256 KiB, writers hit ErrFull, TerminateProcess at random; file never above the cap
+    harness_test.go:59: torture --mode disk-full --seed 404 --iterations 100: passed 100/100, acked 12997, rejected 6512, unknown 296, kills with a write in flight 99, compaction in flight 14, torn tails discarded 0, interrupted compactions resolved 7, recovery kills landed 0/0, full errors 6512, max open 4.2 ms, 64.8s
+=== RUN   TestGroupE/E4
+    harness_test.go:80: E4: Cap reached during compaction
+          expected: Compaction fails or completes. Either way, no data lost and database still opens
+          method: (a) the disk reports out-of-space while compaction writes .compact -> ErrFull, .compact removed; (b) a compacting commit whose result exceeds max_bytes -> ErrFull; (c) crash at every operation of a compacting commit triggered by the cap; reopen each
+    harness_test.go:59: (a) ErrFull, .compact removed, data intact; (b) ErrFull; (c) 37 operations of the compacting commit crashed: map[new:15 old:59]
+=== RUN   TestGroupE/E5
+    harness_test.go:80: E5: After deletes free up space, compaction runs, writes succeed again
+          expected: Database is usable again without manual intervention
+          method: max_bytes 64 KiB: fill until ErrFull, delete 80% of keys (delete-only commits on a full file), then new puts succeed (admission runs a compacting commit by itself); reopen
+    harness_test.go:59: filled 157 keys to the cap, deleted 125, then 78 new puts succeeded with no manual step; file 47452 <= 65536 bytes
+--- PASS: TestGroupE (66.76s)
+    --- PASS: TestGroupE/E1 (0.12s)
+    --- PASS: TestGroupE/E2 (0.12s)
+    --- PASS: TestGroupE/E3 (64.95s)
+    --- PASS: TestGroupE/E4 (1.27s)
+    --- PASS: TestGroupE/E5 (0.21s)
+=== RUN   TestGroupF
+=== RUN   TestGroupF/F1
+    harness_test.go:80: F1: 500 consecutive random kills and restarts
+          expected: Invariant holds after every single one
+          method: torture --mode default --iterations 500 (quick mode: 30): 3 writers, puts/deletes/batches/gets/compactions through serve, TerminateProcess at a random 5-600 ms, open/check/dump vs the oracle after every kill
+    harness_test.go:59: torture --mode default --seed 12345 --iterations 500: passed 500/500, acked 152631, rejected 0, unknown 1400, kills with a write in flight 493, compaction in flight 321, torn tails discarded 0, interrupted compactions resolved 18, recovery kills landed 0/0, full errors 0, max open 40.2 ms, 178.6s
+=== RUN   TestGroupF/F2
+    harness_test.go:80: F2: Kill, restart, kill during recovery, restart, kill during recovery again
+          expected: Invariant holds. Recovery is idempotent
+          method: (1) in-process: torn database, recovery crashed at a random operation twice in a row (100 chains), then a full recovery; (2) torture --mode recovery-crash: 200,000-key database, after each serve kill `kvdb open` is killed 1-3 times at a random point of its run time
+    harness_test.go:59: 100 chains of 2 crashed recoveries over 15 recovery operations: same state, and a further recovery leaves the file byte-identical
+    harness_test.go:59: torture --mode recovery-crash --seed 42 --iterations 50: passed 50/50, acked 577, rejected 0, unknown 134, kills with a write in flight 50, compaction in flight 47, torn tails discarded 0, interrupted compactions resolved 0, recovery kills landed 74/107, full errors 0, max open 66.7 ms, 134.2s
+=== RUN   TestGroupF/F3
+    harness_test.go:80: F3: 1,000,000 keys written, process killed, open() called
+          expected: Recovery completes in under 2 seconds, all acknowledged keys present
+          method: `kvdb serve` child receives 100 acknowledged batches of 10,000 puts (1,000,000 keys), then more writes are sent and the process is killed (TerminateProcess); `kvdb open` (timed, as printed and wall-clock), `kvdb check`, `kvdb dump` verifies every acknowledged key and value
+    harness_test.go:59: 1000000 acknowledged keys; file 45016084 bytes; `kvdb open` printed recovery_ms=443.4 (process wall time 464ms incl. start-up), keys=1000084 (acked + any completed unacknowledged puts); dump verified all 1000000 values
+=== RUN   TestGroupF/F4
+    harness_test.go:80: F4: Database file truncated by 1 byte at the end by hand
+          expected: open() succeeds. At most the last unacknowledged record is lost
+          method: 10 acknowledged puts; os.Truncate(size-1); `kvdb open` and `kvdb check` succeed; the last record (now torn) is gone, the other 9 are intact, file cut back to the 9th frame
+    harness_test.go:59: open printed "keys=9 recovery_ms=8.990 size=455" and stderr "recovery: discarded a torn 46-byte tail (rule C4); it was never acknowledged"; 9 of 10 keys present, last record dropped
+--- PASS: TestGroupF (329.26s)
+    --- PASS: TestGroupF/F1 (178.64s)
+    --- PASS: TestGroupF/F2 (137.72s)
+    --- PASS: TestGroupF/F3 (12.72s)
+    --- PASS: TestGroupF/F4 (0.05s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/scenarios	909.663s

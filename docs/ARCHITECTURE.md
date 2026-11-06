@@ -58,7 +58,7 @@ Checked in the installed `GOROOT/src` and by tests on this machine, 2026-11-06:
 
 | Need | Finding | Decision |
 |---|---|---|
-| Non-overwriting move (R1, R2, adoptions) | `os.Rename` = `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)`: **silently replaces** (pinned by `TestOsRenameReplacesOnWindows`). Public `syscall.MoveFile` (`MoveFileW`) fails with `fs.ErrExist` if the destination exists. | **`platform.MoveNoReplace` → `syscall.MoveFile`.** `os.Rename` is forbidden for these moves. |
+| Non-overwriting move (R1, R2, adoptions) | `os.Rename` = `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)`: **silently replaces** (pinned by `TestOsRenameReplacesOnWindows`). Public `syscall.MoveFile` (`MoveFileW`) fails with `fs.ErrExist` if the destination exists. | **`platform.MoveNoReplace` → `MoveFileExW(MOVEFILE_WRITE_THROUGH)`** (since Prompt 10; before: `syscall.MoveFile`). `MOVEFILE_REPLACE_EXISTING` is never passed. `os.Rename` is forbidden for these moves. |
 | Moving an open file | Go opens files without `FILE_SHARE_DELETE`; moving a file while it is open fails with a sharing violation (pinned by `TestOpenFileBlocksMove`). | Close the data-file handle before R1 (DESIGN §10.2 step 10). Retry sharing violations with bounded backoff in the caller. |
 | Process lock (`.lock`) | `LockFileEx` is only in `internal/syscall/windows` (not importable). `syscall.CreateFile` with share mode 0 gives an exclusive handle; a second open fails with `ERROR_SHARING_VIOLATION` (pinned by `TestExclusiveShareModeLock`). | Exclusive share mode, held until Close or process death; never delete `.lock`. Limitations in DESIGN §16.1. Implemented in Phase 2 (`locking`). |
 | Flush | `(*os.File).Sync` calls `FlushFileBuffers`. | Use `Sync`. |

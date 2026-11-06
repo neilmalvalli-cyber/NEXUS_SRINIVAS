@@ -1,0 +1,5 @@
+=== RUN   TestOpenMillionKeysTiming
+    perf_test.go:54: Open of 1000000 keys (37.0 MB): 474.2637ms, heap in use after 196 MB, total allocated 198 MB
+--- PASS: TestOpenMillionKeysTiming (0.83s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery	1.516s

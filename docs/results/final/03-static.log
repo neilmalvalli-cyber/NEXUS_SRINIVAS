@@ -1,0 +1,8 @@
+gofmt -l (excluding the teammate copy crosscheck/.recovery):
+gofmt done
+vet ok windows
+vet ok GOOS=linux
+vet ok GOOS=darwin
+vet ok GOOS=freebsd
+build ok
+build ok linux/arm64

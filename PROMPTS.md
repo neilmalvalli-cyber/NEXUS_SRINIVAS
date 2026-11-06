@@ -1,7 +1,10 @@
 # AI Prompt Log
 
 Every prompt sent to any AI tool for this project is recorded here **unedited**, in
-chronological order, with the tool name and an approximate timestamp (local time).
+chronological order, with the tool name and an approximate timestamp (local time,
+IST = UTC+5:30). Timestamps of the implementation prompts were checked against the
+Claude Code session transcript on 2026-11-06 23:30 and corrected where the earlier
+estimate was off.
 Missing entries cost points (challenge rule §9), so append every new prompt before
 committing work produced from it.
 
@@ -16,6 +19,15 @@ prompts") if they have not been recorded yet.
 _TODO (team): paste the design-review prompts that produced `docs/DESIGN.md` here,
 unedited, with tool name and timestamp._
 
+**Status (checked 2026-11-06 23:30): not recorded yet.** These prompts (the v1 → v5
+architecture review that produced the first part of `docs/DESIGN.md`, sections 1–7,
+brought into this session as an attachment with Prompt 1) were sent in a different
+tool before this repository existed. No copy exists on the development machine: every
+local Claude Code transcript was searched and none contains them. They are not
+reconstructed here, because this log must be unedited. Only the team member who sent
+them can paste them, from that tool's chat history. Sections 8–27 of `docs/DESIGN.md`
+are recorded verbatim below as Prompt 2.
+
 ---
 
 ## Implementation prompts
@@ -23,7 +35,7 @@ unedited, with tool name and timestamp._
 ### Prompt 1
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 12:30 (local time)
+- **Approximate timestamp:** 2026-11-06 12:33 (local time; 07:03 UTC, from the session transcript)
 - **Notes:** The message attached `C:\Users\MY PC\Downloads\DESIGN.md` (copied into this
   repository as `docs/DESIGN.md`) and contained the master prompt below. Full text as sent:
 
@@ -351,7 +363,7 @@ Claude records this prompt in PROMPTS.md. The prompt log is part of the competit
 ### Prompt 1a (answers to Claude's clarifying questions during Prompt 1)
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 12:33 (local time)
+- **Approximate timestamp:** 2026-11-06 12:34 (local time; 07:04 UTC, from the session transcript)
 - **Notes:** Multiple-choice answers given in the app, recorded verbatim.
 
 ```text
@@ -368,7 +380,7 @@ A: New branch named phase1-format
 ### Prompt 1b (message sent while Prompt 1 was running)
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 12:40 (local time)
+- **Approximate timestamp:** 2026-11-06 12:38 (local time; 07:08 UTC, from the session transcript)
 
 ```text
 tell once go is installed
@@ -377,7 +389,7 @@ tell once go is installed
 ### Prompt 2
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 13:00 (local time)
+- **Approximate timestamp:** 2026-11-06 12:50 (local time; 07:19 UTC, from the session transcript)
 - **Notes:** Pasted with no other text; the continuation of DESIGN.md (sections 8–27), appended to `docs/DESIGN.md`. Full text as sent:
 
 ````text
@@ -1278,7 +1290,7 @@ The following invariants must hold throughout implementation.
 ### Prompt 2a (reply to Claude's "Commit Phase 1 plus the design update?" question)
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 13:10 (local time)
+- **Approximate timestamp:** 2026-11-06 12:54 (local time; 07:23 UTC, from the session transcript)
 
 ```text
 Not yet
@@ -1287,7 +1299,7 @@ Not yet
 ### Prompt 3
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 13:15 (local time)
+- **Approximate timestamp:** 2026-11-06 12:55 (local time; 07:25 UTC, from the session transcript)
 - **Notes:** Pasted with no other text. (A local `/autocompact 400000` settings command was run just before it; that command configures the tool and is not a prompt, so it is only noted here.)
 
 ````text
@@ -1314,13 +1326,13 @@ At the end, report any contradictions, unresolved risks and remaining judge ques
 ### Prompt 3a (message about a Supercharge AI screenshot)
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 13:40 (local time)
+- **Approximate timestamp:** 2026-11-06 13:07 (local time; 07:37 UTC, from the session transcript)
 - **Notes:** The message contained only a screenshot of the Supercharge AI start screen showing: "inside a git repository. Navigate to a git repo or run 'git init' first." No text was typed.
 
 ### Prompt 4
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 14:00 (local time)
+- **Approximate timestamp:** 2026-11-06 13:18 (local time; 07:48 UTC, from the session transcript)
 - **Notes:** Pasted with no other text. Full text as sent:
 
 ````text
@@ -1409,7 +1421,7 @@ Prioritize correctness, crash safety and testability over speed.
 ### Prompt 4a
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 (local time), during Phase 2 Stage 1
+- **Approximate timestamp:** 2026-11-06 14:02 (local time; 08:31 UTC, from the session transcript), during Phase 2 Stage 1; the tool call it followed was interrupted at 13:24
 - **Notes:** Sent after interrupting a tool call (a vet run for several OS targets). Full text as sent:
 
 ````text
@@ -1419,7 +1431,7 @@ continue
 ### Prompt 5
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 (local time), after the Phase 2 Stage 1 report
+- **Approximate timestamp:** 2026-11-06 14:13 (local time; 08:42 UTC, from the session transcript), after the Phase 2 Stage 1 report
 - **Notes:** Sent by clicking the "Approve, start Stage 2" button, which answered Claude's question "Do you approve design notes D1–D3 so I can start Stage 2?". The Stage 1 report had named Stage 2 as "the recovery scanner and tail rules C0–C8". Full text as sent:
 
 ````text
@@ -1429,7 +1441,7 @@ Approve, start Stage 2
 ### Prompt 6
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 (local time), after the Phase 2 Stage 2 report
+- **Approximate timestamp:** 2026-11-06 14:26 (local time; 08:56 UTC, from the session transcript), after the Phase 2 Stage 2 report
 - **Notes:** Sent by clicking the "Approve, start Stage 3" button, which answered Claude's question "Do you approve notes E1–E4 so I can start Stage 3 (Put/Get/Delete/Batch/Close)?". Full text as sent:
 
 ````text
@@ -1439,7 +1451,7 @@ Approve, start Stage 3
 ### Prompt 7
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 (local time), after the Phase 2 Stage 3 report
+- **Approximate timestamp:** 2026-11-06 14:37 (local time; 09:06 UTC, from the session transcript), after the Phase 2 Stage 3 report
 - **Notes:** Pasted with no other text. Full text as sent:
 
 ````text
@@ -1460,7 +1472,7 @@ Do not commit or push. Keep PROMPTS.md updated, run the full test suite and stop
 ### Prompt 8
 
 - **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
-- **Approximate timestamp:** 2026-11-06 (local time), after the user committed Phase 3 as 5c9eb13
+- **Approximate timestamp:** 2026-11-06 15:05 (local time; 09:34 UTC, from the session transcript), after the user committed Phase 3 as 5c9eb13
 - **Notes:** Pasted with no other text. Full text as sent:
 
 ````text
@@ -1759,3 +1771,1347 @@ Do not claim Phase 4 is complete if mandatory requirements remain unimplemented 
 Stop for my review before making any commit or push.
 Begin by inspecting the repository and official requirements. Then implement Phase 4 in small, testable stages.
 ````
+
+### Prompt 9
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 18:45 (local time; 13:15 UTC in the session transcript)
+- **Notes:** Pasted with no other text. Recovered verbatim from the Claude Code session transcript (`~/.claude/projects/.../5535522f-....jsonl`, the user message at 13:15:32 UTC), not reconstructed. Produced the integration and competition-readiness audit (no code changes). Full text as sent:
+
+````text
+# NEXUS — COMPLETE INTEGRATION & COMPETITION READINESS AUDIT
+
+You are acting as a senior database systems engineer, storage-engine reviewer, reliability engineer, and competitive programming project auditor.
+
+I have completed my main database engine, NEXUS, and have now received access to two teammates' repositories:
+
+1. **Main database engine (my repository)**
+   - Local path: `C:\Users\MY PC\NEXUS_SRINIVAS`
+   - Language: Go
+   - Windows is the primary judging environment.
+   - All four development phases are implemented, tested and committed.
+
+2. **Torture tester**
+   - Repository: https://github.com/rohitahkumar/Torture-Tool-Two-Pointer-
+   - Owner: rohitahkumar
+   - Repository name: Torture-Tool-Two-Pointer-
+   - Screenshot shows `seeds/`, `src/`, `tests/`, `ARCHITECTURE.md`, `PROMPTS.md`, and a Phase 3.1 oracle-hardening commit.
+
+3. **Recovery and compaction**
+   - Repository: https://github.com/sharanyashetty013-droid/kipdb-recovery
+   - Owner: sharanyashetty013-droid
+   - Repository name: kipdb-recovery
+   - Screenshot shows `docs/`, `recovery/`, `go.mod`, and commits concerning frame recovery, torn-tail handling, and crash-safe compaction.
+
+## CRITICAL INSTRUCTIONS
+
+This is an AUDIT FIRST task.
+
+**DO NOT start integrating, modifying, merging, or rewriting anything yet.**
+
+Do not:
+- Commit or push.
+- Reset, rebase, amend or switch branches.
+- Overwrite existing files.
+- Delete existing work.
+- Modify the main database engine.
+- Modify the frontend.
+- Assume that a repository is correct because its README claims it works.
+- Assume that tests pass because a commit message says they passed.
+
+Preserve all three repositories and their existing commit histories.
+
+If you cannot access a repository, tell me exactly what access or authentication is missing. Do not pretend to have inspected it.
+
+Your task is to investigate, test, compare and report.
+
+---
+
+# PART 1 — UNDERSTAND THE MAIN NEXUS ENGINE
+
+Start by inspecting the main NEXUS repository.
+
+Read:
+- README.md
+- ARCHITECTURE.md
+- BREAKING.md
+- TEST_PLAN.md, if present
+- PROMPTS.md
+- All source code related to storage, recovery, compaction, format, locking, admission and the CLI.
+- All relevant tests.
+
+Understand the exact implementation, not just the documentation.
+
+Establish:
+
+1. Binary file format.
+2. Superblock layout.
+3. Frame header and entry layout.
+4. Checksums and validation.
+5. Sequence-number handling.
+6. Append-only log behaviour.
+7. In-memory hash index.
+8. PUT, GET, DELETE and BATCH implementation.
+9. Sync-before-ACK durability guarantees.
+10. Recovery and torn-tail handling.
+11. Compaction protocol and crash safety.
+12. max_bytes admission and ErrFull behaviour.
+13. Windows process locking.
+14. Error handling, including ErrOutcomeUnknown.
+15. CLI and torture-test integration interfaces.
+
+Document the actual APIs, binary format and expected behaviour.
+
+Treat the main NEXUS engine as the authoritative implementation unless a demonstrable bug is discovered.
+
+# PART 2 — AUDIT THE TORTURE TESTER
+
+This is the highest-priority part of the audit.
+
+The torture tester carries 15 competition points. I want to make it substantially stronger than an ordinary random-operation testing script.
+
+Inspect the entire repository:
+- Source code.
+- Tests.
+- Seed files.
+- Architecture documentation.
+- Oracle implementation.
+- Crash injection implementation.
+- Test runner.
+- Reporting.
+- Commit history.
+
+Do not simply summarise what the author claims.
+
+Determine what the code actually does.
+
+## A. Independent reference model
+
+Investigate whether the tester maintains an independent reference database/model.
+
+It must be capable of tracking the expected state of the database independently of NEXUS.
+
+Check:
+- PUT behaviour.
+- GET behaviour.
+- DELETE behaviour.
+- Repeated writes to the same key.
+- Missing-key deletion.
+- Batch ordering.
+- Atomic batches.
+- Multiple concurrent writers.
+- Operation IDs.
+- Acknowledged versus unacknowledged operations.
+- Recovery after process termination.
+
+Look for oracle weaknesses.
+
+Could the tester accidentally agree with an incorrect database implementation?
+
+Could the tester fail to detect lost acknowledged writes?
+
+Could it incorrectly accept partially applied batches?
+
+Could it report false positives or false negatives?
+
+Evaluate the oracle's independence and correctness.
+
+## B. Official 32 crash scenarios
+
+The competition requires 32 official crash scenarios across groups A–F.
+
+Find the official scenario definitions in the project documentation and compare them against the actual torture tester.
+
+Create a table containing:
+
+| Scenario | Official requirement | Implemented? | Test location | What it verifies | Weakness |
+|---|---|---|---|---|---|
+
+Verify all 32 scenarios individually.
+
+Do not mark a scenario complete simply because a test has a similar name.
+
+Determine whether it genuinely exercises the required failure point and validates the expected result.
+
+Identify:
+- Missing scenarios.
+- Duplicate scenarios.
+- Scenarios that don't actually crash the process.
+- Scenarios that only simulate errors.
+- Scenarios with insufficient post-recovery verification.
+- Scenarios that don't verify acknowledged-write survival.
+- Scenarios that don't check atomicity.
+- Scenarios that don't test the actual NEXUS executable.
+
+## C. Crash injection quality
+
+Inspect how crashes are injected.
+
+Determine whether the tester supports:
+- Crash before a write.
+- Crash after a write.
+- Crash during a partial write.
+- Crash after a successful sync.
+- Crash during batch processing.
+- Crash during compaction.
+- Crash during file renames.
+- Crash during recovery.
+- Restart and verification.
+
+Distinguish carefully between:
+1. Injected I/O errors.
+2. Simulated process crashes.
+3. Actual operating-system process termination.
+
+Determine which are implemented and which are missing.
+
+Evaluate whether the crash mechanism accurately models the competition's process-kill assumptions.
+
+## D. Torture workload quality
+
+Investigate:
+- Random operation generation.
+- Reproducible seeds.
+- Workload size.
+- Key and value sizes.
+- Maximum value size of 1 MB.
+- Batch size up to 10,000 operations.
+- Concurrent writer behaviour.
+- Long-running workloads.
+- Delete-heavy workloads.
+- Compaction workloads.
+- max_bytes exhaustion.
+- Recovery after repeated restarts.
+
+Can a failure be reproduced from a seed?
+
+Can a failed run be replayed exactly?
+
+Does the tester save enough information to reproduce the failure?
+
+## E. Reporting and judge-facing output
+
+Evaluate the current report format.
+
+I want the torture tester to produce a professional, easy-to-understand report showing:
+
+- Total scenarios.
+- Passed scenarios.
+- Failed scenarios.
+- Skipped scenarios.
+- Operations executed.
+- Crashes injected.
+- Recovery cycles.
+- Acknowledged operations checked.
+- Lost acknowledged operations.
+- Atomicity violations.
+- Oracle mismatches.
+- Compaction verification.
+- Final database consistency.
+- Reproducible failure seed.
+- Execution time.
+
+Only report metrics that are genuinely measured.
+
+Identify what the current implementation already reports and what would need to be added.
+
+Recommend a concise judge-facing summary and a detailed machine-readable report, such as JSON, if appropriate.
+
+## F. Torture tester scoring improvements
+
+The objective is to maximise the 15-point torture-tool score.
+
+Rank improvements by:
+- Competition scoring impact.
+- Reliability improvement.
+- Implementation complexity.
+- Risk of introducing bugs.
+- Time required.
+
+Give me the five highest-value improvements.
+
+Do not recommend cosmetic features ahead of correctness.
+
+---
+
+# PART 3 — AUDIT THE RECOVERY REPOSITORY
+
+Inspect the recovery repository's complete implementation.
+
+Determine exactly what the teammate has built.
+
+Investigate:
+- Binary frame scanning.
+- Header validation.
+- Entry validation.
+- CRC32C verification.
+- Sequence-number checks.
+- Torn-tail detection.
+- Middle-of-file corruption handling.
+- Truncation rules.
+- Snapshot boundary handling.
+- Superblock validation.
+- Compaction.
+- `.compact`, `.old` and `.new` file handling, if present.
+- Crash-safe file replacement.
+- Windows-specific behaviour.
+- Directory syncing.
+- Recovery performance.
+- Error classification.
+
+Compare it with the recovery and compaction implementation already present in NEXUS.
+
+For each difference, classify it as:
+
+1. Better implementation.
+2. Equivalent implementation.
+3. Missing functionality.
+4. Incompatible implementation.
+5. Potential bug.
+6. Unnecessary duplication.
+
+Pay special attention to whether this repository implements an alternative recovery engine or reusable functionality that can safely be integrated.
+
+Do not merge two recovery implementations merely because they have similar names.
+
+Determine which implementation is safer and why.
+
+---
+
+# PART 4 — INTEGRATION COMPATIBILITY
+
+This is extremely important.
+
+Compare the actual binary formats and APIs across all three repositories.
+
+Create a compatibility matrix:
+
+| Feature | NEXUS | Recovery repo | Torture tester | Compatible? |
+|---|---|---|---|---|
+
+Check:
+- Magic numbers.
+- Version numbers.
+- Superblock size.
+- Frame header size.
+- Entry header size.
+- Byte order.
+- CRC32C algorithm.
+- CRC coverage.
+- Frame types.
+- Operation types.
+- Sequence numbering.
+- Batch encoding.
+- Maximum frame size.
+- Snapshot boundaries.
+- File naming.
+- Recovery semantics.
+- CLI arguments.
+- Exit codes.
+- Output formats.
+
+**Do not assume that two implementations are compatible just because both use append-only logs and CRC32C.**
+
+Identify every format mismatch.
+
+Determine whether the torture tester launches the actual NEXUS binary or tests a separate implementation.
+
+Determine whether recovery code can be integrated without changing the on-disk format.
+
+---
+
+# PART 5 — OFFICIAL COMPETITION REQUIREMENTS AUDIT
+
+Compare all three repositories against the official competition requirements already provided.
+
+At minimum, verify:
+
+- PUT.
+- GET.
+- DELETE.
+- BATCH.
+- OPEN.
+- CLOSE.
+- Crash durability.
+- Atomic batch behaviour.
+- Recovery after process kills.
+- No partial or corrupted values.
+- 1 million keys.
+- Recovery under 2 seconds.
+- Values up to 1 MB.
+- Batches up to 10,000 operations.
+- Concurrent writers.
+- Compaction.
+- File shrinkage after 1 million puts followed by 1 million deletes.
+- max_bytes.
+- Clean ErrFull behaviour.
+- Writes after compaction.
+- Mandatory CLI commands.
+- Serve and ACK semantics.
+- 32 crash scenarios.
+- Torture tester.
+- BREAKING.md.
+- Architecture documentation.
+- PROMPTS.md.
+
+Classify every requirement:
+
+- PASS — verified by actual tests.
+- PARTIAL — implemented but inadequately tested.
+- FAIL — missing or incorrect.
+- UNKNOWN — insufficient evidence.
+
+Do not mark documentation as proof of functionality.
+
+---
+
+# PART 6 — TEST EVERYTHING
+
+Run appropriate tests in each repository where possible.
+
+Inspect the available Go versions and dependencies first.
+
+Run:
+- go test ./...
+- go vet ./...
+- go build ./...
+- Relevant race tests if supported.
+- Existing torture tests.
+- Existing crash/recovery tests.
+
+Use Windows as the primary compatibility target.
+
+If a test requires Linux, macOS or special privileges, identify that limitation.
+
+For the torture tester, run a small reproducible workload first, then the full suite if safe.
+
+Do not run destructive tests against the only copy of the main NEXUS database.
+
+Use disposable test directories.
+
+Record exact commands and actual output.
+
+Do not claim tests passed unless they were executed successfully.
+
+---
+
+# PART 7 — WHAT IS LEFT TO BUILD?
+
+After the audit, create a detailed remaining-work list.
+
+Separate it into:
+
+### P0 — Critical
+Bugs or incompatibilities that could cause lost data, incorrect recovery, false torture-test results, or failure to satisfy mandatory requirements.
+
+### P1 — High-value
+Improvements that could significantly improve competition scoring, especially torture testing and crash verification.
+
+### P2 — Useful
+Performance, reporting, reproducibility and usability improvements.
+
+### P3 — Optional
+Cosmetic or additional features that do not materially improve scoring.
+
+For every item include:
+- What needs to change.
+- Why it matters.
+- Which repository/file it affects.
+- How to implement it.
+- How to test it.
+- Risk level.
+- Estimated effort.
+
+---
+
+# PART 8 — INTEGRATION PLAN
+
+Propose a safe integration plan.
+
+Determine:
+1. Which code should be retained from NEXUS.
+2. Which recovery code, if any, should be ported.
+3. Which torture tester code should be retained.
+4. What interfaces need adapters.
+5. What documentation needs updating.
+6. What tests must be rerun after integration.
+
+Give an exact recommended order of integration.
+
+Prefer minimal, isolated changes.
+
+Do not overwrite a working implementation with an unverified teammate implementation.
+
+Do not cherry-pick or merge anything yet.
+
+---
+
+# PART 9 — FINAL REPORT
+
+Present the findings in this structure:
+
+## 1. Executive Summary
+Is NEXUS ready for judging?
+
+## 2. Repository Inventory
+What each teammate actually built.
+
+## 3. Torture Tester Audit
+Detailed findings, 32-scenario matrix, oracle quality and scoring improvements.
+
+## 4. Recovery Audit
+What is implemented and whether it is better, equivalent or incompatible with NEXUS.
+
+## 5. Integration Compatibility
+Exact format and API mismatches.
+
+## 6. Official Requirements Scorecard
+PASS / PARTIAL / FAIL / UNKNOWN.
+
+## 7. Test Results
+Exact commands, results and limitations.
+
+## 8. Critical Bugs and Risks
+Ranked by severity.
+
+## 9. Recommended Improvements
+Prioritise torture tester and crash durability.
+
+## 10. Integration Roadmap
+Step-by-step implementation order.
+
+## 11. Final Readiness Assessment
+Give separate readiness ratings for:
+- Main database engine.
+- Recovery.
+- Torture tester.
+- Integration.
+- Overall competition readiness.
+
+## 12. Immediate Next Actions
+Give me the next five actions in order.
+
+---
+
+# FINAL RULE
+
+Do not make code changes during this audit.
+
+I want an honest engineering review, not reassurance.
+
+If something is weak, say so. If the recovery implementation is redundant, say so. If the torture tester does not adequately prove crash safety, explain exactly why.
+
+Our objective is not merely to have three repositories that compile.
+
+Our objective is to produce one integrated database system that can survive the competition's tests and convincingly prove its correctness to the judges.
+
+**Stop after delivering the complete audit. Wait for my approval before implementing any changes.**
+````
+
+### Prompt 10
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 18:57 (local time; 13:27 UTC in the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the same session transcript. Produced the hardening and evidence work recorded in docs/DESIGN.md change log #33 onward. Full text as sent:
+
+````text
+NEXUS — Complete Competition Readiness Improvement
+Use the latest integration and competition-readiness audit as the source of truth.
+Objective
+Improve every audited component toward a demonstrable 9+/10 standard. Do not chase cosmetic improvements at the expense of correctness. Every change must have tests and measurable evidence.
+1. Protect the existing project
+
+* Inspect all three repositories and the current Git state before changing anything.
+* Preserve existing user changes.
+* Never commit, push, reset, rebase, amend, switch branches, or discard changes.
+* Do not merge the recovery repository into NEXUS.
+* Do not remove working functionality to simplify implementation.
+* Keep Windows as the primary judging platform.
+* Do not claim power-loss durability without evidence.
+
+2. NEXUS engine hardening
+Implement and test:
+A. Windows atomic moves
+
+* Update `src/internal/platform/move_windows.go`.
+* Use `MoveFileExW` with `MOVEFILE_WRITE_THROUGH` only.
+* Preserve no-replace semantics. Never use `MOVEFILE_REPLACE_EXISTING`.
+* Add tests proving an existing destination is never overwritten.
+* Run compaction crash scenarios C3–C5.
+
+B. Read-only verification
+
+* Add an optional `--no-repair` mode to `check`.
+* Default `check` must retain its current recovery-and-repair behavior.
+* Read-only mode must never truncate, rewrite, compact, or otherwise modify the database.
+* Test valid files, torn tails, middle corruption, and damaged snapshots.
+* Clearly explain the difference in CLI help and README.
+
+C. Deterministic compaction
+
+* Sort keys during compaction.
+* Ensure deterministic output for identical logical database contents.
+* Verify that sorted output remains compatible with existing NEXUS files and the independent recovery implementation.
+* Test reopening and writing after compaction.
+
+3. Torture tester — highest priority
+The NEXUS Go torture tool is currently the proven official tester. Keep it as the official competition tool unless the Rust tool is fully implemented and independently validated.
+For the Rust tool, investigate and address:
+
+* Main function is currently a stub.
+* Add a real iteration loop.
+* Add a working NEXUS process adapter.
+* Correctly interpret `ERR ... unknown|io` as an unknown outcome, not as a definite no-effect operation.
+* Mix iteration number into every random stream.
+* Fix oracle scalability through early pruning and define what an inconclusive result means.
+* Support values up to 1 MiB without hex doubling exceeding the engine limit.
+* Add `--max-bytes`.
+* Add real recovery-crash and compaction modes.
+* Add GET operations.
+* Add official 10-operation and 10,000-operation batch cases.
+* Fix silent writer timeouts and ignored cleanup errors.
+* Ensure every iteration starts from a clean database.
+* Make results reproducible from seed and iteration number.
+
+Do not claim the Rust tool works unless it actually launches NEXUS and validates recovered state.
+If Rust cannot be built or tested because the toolchain is unavailable, document that limitation and keep the Go tool as the official tester. Do not present a non-running Rust tool as a completed deliverable.
+4. Independent recovery verification
+Keep the recovery repository separate.
+Produce reproducible cross-compatibility evidence for:
+
+* NEXUS writes → recovery Verify.
+* Recovery compaction → NEXUS check.
+* NEXUS writes after recovery compaction.
+* Recovery-created files → NEXUS reads and writes.
+* Torn-tail handling.
+* Identical format constants and checksum rules.
+
+Document that the recovery project is an independent implementation, not a component required to run NEXUS.
+5. Competition evidence
+Review and improve:
+
+* README.md
+* ARCHITECTURE.md
+* BREAKING.md
+* TEST_PLAN.md
+* PROMPTS.md
+
+Requirements:
+
+* Every AI prompt must be logged exactly as sent, with tool and approximate time.
+* Find the original Prompt 9 in the actual conversation/tool history. Do not reconstruct or fabricate it.
+* If the original cannot be recovered, clearly document that it remains missing.
+* Credit the recovery and torture-tool teammates accurately.
+* Distinguish measured results from previously recorded results.
+* Explain the 32 official crash scenarios and their outcomes.
+* Include exact commands judges can run.
+* Include reproducible seeds and expected output.
+* Explain durability, ACK semantics, batch atomicity, recovery, compaction and size-cap behavior in plain language.
+* Clearly state known limitations.
+
+6. Final validation
+Run and record:
+
+* `gofmt`
+* `go vet ./...`
+* `go build ./...`
+* `go test -count=1 ./...`
+* All 32 official crash scenarios.
+* Normal torture runs with reproducible seeds.
+* Disk-full mode.
+* 1M-key recovery benchmark.
+* 1M puts followed by 1M deletes, file shrink, and successful writes after compaction.
+* 1 MiB value tests.
+* 10,000-operation batch tests.
+* Concurrent writer tests.
+* Read-only check tests.
+* Windows move and compaction tests.
+* Cross-format compatibility tests.
+
+Do not report a test as passing unless it was actually run. Distinguish tests run today from historical recorded measurements.
+7. Final report
+Provide:
+
+1. Every file changed.
+2. What each fix does.
+3. Exact test commands and results.
+4. Any failures or unverified work.
+5. Updated evidence-based ratings for each component.
+6. Remaining blockers to reaching 9+/10.
+7. Exact commands for the judges' demonstration.
+
+Stop without committing or pushing anything.
+````
+
+
+### Prompt 10a
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 19:57 (local time; 14:27 UTC, from the session transcript)
+- **Notes:** Typed while the Prompt 10 validation script was running.
+
+```text
+how much longer
+```
+
+### Prompt 11
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 20:38 (local time; 15:08 UTC in the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the same session transcript. Produced NEXUS Torture Engine 2.0 (`torture2/`, the `nexus-torture` command) and docs/TORTURE_ARCHITECTURE.md, docs/TORTURE_TEST_PLAN.md, docs/TORTURE_RESULTS.md and docs/TORTURE_CLI.md. Full text as sent:
+
+````text
+PROJECT: NEXUS TORTURE ENGINE 2.0
+Build a new, first-party, competition-grade torture-testing system for NEXUS.
+Objective
+Create a reliable, independent testing framework targeting demonstrable 9.5–10/10 quality.
+Use Go and the standard library wherever practical. Target native Windows first.
+Do not merely rename or cosmetically modify the existing tester. Inspect its architecture and decide which components are worth retaining. The new system must have a clear, independently testable design.
+Repository safety
+
+* Inspect Git status and repository structure first.
+* Preserve all working NEXUS functionality.
+* Do not commit, push, reset, rebase, amend, switch branches or discard changes.
+* Do not modify any teammate's separate repository.
+* Do not merge external torture-tool code.
+* Keep the implementation first-party.
+* Remove unnecessary references to external tester implementations from judge-facing NEXUS documentation, without falsifying project history, deleting required prompt logs or removing legitimate attribution.
+* Keep PROMPTS.md accurate.
+
+1. Independent oracle
+Implement a reference model independent of NEXUS storage internals.
+It must:
+
+* Track submitted operations.
+* Track acknowledged operations.
+* Track definite rejections.
+* Track unknown outcomes.
+* Preserve per-writer ordering.
+* Account for legal concurrency interleavings.
+* Validate recovered database state.
+* Verify batch atomicity.
+* Verify last-operation-wins ordering inside batches.
+* Detect acknowledged-write loss.
+* Detect unexpected partial batches.
+* Distinguish genuine violations from inconclusive results.
+
+Do not simply compare the recovered database against the requests in submission order when operations were concurrent.
+2. Real process management
+The tester must:
+
+* Launch the actual NEXUS executable.
+* Communicate through its real CLI or serve interface.
+* Kill the actual process.
+* Restart the database.
+* Verify recovery after every relevant kill.
+* Record ACKs only when complete ACK responses are received.
+* Correctly classify unknown outcomes.
+* Enforce explicit timeouts.
+* Never silently abandon writers.
+* Clean up temporary files safely.
+* Fail clearly if the executable cannot be launched.
+
+Mock engines may be used for unit tests, never as proof of NEXUS correctness.
+3. Workload generation
+Implement:
+
+* Deterministic seeds.
+* Independent per-iteration random streams.
+* Single PUT and DELETE.
+* GET verification.
+* Missing-key deletion.
+* Batches of 10 operations.
+* Batches of 10,000 operations.
+* Values up to 1 MiB.
+* Concurrent disjoint-key writers.
+* Concurrent same-key writers.
+* Readers operating during batches.
+* Long-running mixed workloads.
+* Disk-full conditions.
+* Compaction workloads.
+* Recovery-crash workloads.
+* Close and reopen tests.
+
+Each failure must be reproducible from its seed and iteration number.
+4. Crash testing
+Support all 32 official scenarios.
+Organize them by official groups A–F. Each scenario must:
+
+* Have a stable ID.
+* Have a clear description.
+* Have an explicit expected invariant.
+* Execute against the real NEXUS executable.
+* Record its kill point and outcome.
+* Verify recovered state.
+* Produce a machine-readable result.
+
+Do not report unsupported scenarios as passing.
+5. Oracle scalability
+The reference checker must support realistic competition workloads.
+
+* Prune impossible candidate histories early.
+* Avoid unnecessary factorial enumeration.
+* Use per-key reasoning where valid.
+* Preserve global ordering constraints where required.
+* Set explicit resource limits.
+* Report inconclusive results distinctly from PASS.
+* Add stress tests for the checker itself.
+
+A timeout or inconclusive result must never count as a pass.
+6. Mutation testing
+Build deliberately broken test binaries or controlled test variants that simulate:
+
+* ACK before durable sync.
+* Dropped acknowledged write.
+* Partial batch application.
+* Incorrect unknown-outcome handling.
+* Incorrect recovery behavior.
+* Corrupted values.
+
+The new tester must detect these mutations.
+Do not modify the official production binary to introduce mutations.
+7. Reporting
+Produce:
+
+* Human-readable terminal summary.
+* JSONL machine-readable event logs.
+* Summary report.
+* Failure reproduction command.
+* Seed and iteration information.
+* Crash location.
+* Acknowledged and unknown operation counts.
+* Recovery duration.
+* Oracle verdict.
+* Minimized failure workload where feasible.
+
+Never report PASS without successful oracle verification.
+8. Performance
+Measure:
+
+* Iterations per second.
+* Process restart time.
+* Recovery duration.
+* Oracle execution time.
+* Memory usage.
+* Total test duration.
+
+Do not compromise correctness for speed.
+9. Documentation
+Write:
+
+* TORTURE_ARCHITECTURE.md
+* TORTURE_TEST_PLAN.md
+* TORTURE_RESULTS.md
+* CLI usage documentation
+
+Explain the tool in language a competition judge can understand.
+10. Validation and acceptance
+Run:
+
+* All 32 official crash scenarios.
+* At least 500 randomized iterations.
+* 100 iterations per specialized mode.
+* 10,000-operation batch tests.
+* 1 MiB value tests.
+* Concurrent writer and reader tests.
+* Disk-full tests.
+* Compaction and recovery-crash tests.
+* Mutation tests.
+* Reproducibility tests.
+* Windows process-kill tests.
+
+Use a clean scratch directory.
+Report exact commands, actual results, failures and limitations.
+Do not invent results or claim unexecuted tests passed.
+Completion report
+Provide:
+
+1. Architecture.
+2. Files created and changed.
+3. Test results.
+4. Mutation detection results.
+5. Performance measurements.
+6. Remaining weaknesses.
+7. Evidence-based rating.
+8. Exact judge demonstration commands.
+
+Do not commit or push.
+````
+
+
+### Prompt 11a
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 22:06 (local time; 16:35 UTC, from the session transcript)
+- **Notes:** Typed while the Prompt 11 validation was running, one minute before Prompt 12.
+
+```text
+how much longer
+```
+
+### Prompt 12
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 22:06 (local time; 16:36 UTC in the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the same session transcript. Sent while the Prompt 11 validation was still running. Produced the verification counters in nexus-torture, the `kvdb-bench` benchmark tool, docs/FAILURE_GUARANTEES.md, the trade-offs section of ARCHITECTURE.md and the final validation run in docs/results/final/. Full text as sent:
+
+````text
+We have approximately 12 hours remaining before the NEXUS database competition.
+After researching the judge's professional background, we want to place additional emphasis on production-grade engineering: reliability, measurable performance, observability, reproducibility, architectural clarity and honest documentation.
+Do NOT redesign or rewrite the database engine. Do NOT introduce unnecessary features.
+First, inspect the current repository, existing tests, documentation and torture tester. Identify what is already implemented. Do not duplicate existing functionality.
+Priority 1 — Torture tester correctness evidence
+Ensure the torture tester reports:
+
+* Total operations attempted.
+* Successfully acknowledged operations.
+* Cleanly rejected operations.
+* Operations with unknown outcomes.
+* Acknowledged writes verified after restart.
+* Batch atomicity violations.
+* Data integrity violations.
+* Recovery failures.
+* Reproducible seed and iteration number for every failure.
+
+An inconclusive or unknown result must never be reported as PASS.
+Test actual NEXUS processes, including killing and restarting them. Use an independent reference model where possible.
+Priority 2 — Reproducible benchmark report
+If benchmarking is not already available, add a simple benchmark command or standalone benchmark tool.
+Measure:
+
+* PUT throughput.
+* GET throughput.
+* DELETE throughput.
+* Batch throughput.
+* Recovery time.
+* Compaction time.
+* File size before and after compaction.
+
+Requirements:
+
+* Use actual measured values.
+* Record OS, CPU, Go version, workload size and test configuration.
+* Make runs reproducible.
+* Do not claim superiority over other databases without fair comparisons.
+* Do not modify core storage behaviour just to improve benchmark numbers.
+
+Priority 3 — Failure guarantees documentation
+Create or improve a concise failure-guarantees table documenting:
+
+* Process killed during PUT.
+* Process killed during BATCH.
+* Torn final frame.
+* Corruption in the middle of the database.
+* Disk full.
+* Crash during compaction.
+* Recovery after restart.
+
+For every case, document expected behaviour, actual test evidence and any limitations.
+Do not claim power-loss safety unless it has actually been tested.
+Priority 4 — Architecture trade-offs
+Ensure ARCHITECTURE.md explains, in simple technical language:
+
+* Why Go was selected.
+* Why append-only storage was selected.
+* Why an in-memory hash index is used.
+* Why a global mutex is used.
+* Why CRC32C is used.
+* Why writes are synced before acknowledgement.
+* Current scalability limitations.
+* What NEXUS deliberately does not support.
+
+Explain trade-offs honestly. Do not present design limitations as advantages.
+Priority 5 — Final validation
+Run:
+
+* All unit and integration tests.
+* All 32 official crash scenarios.
+* The complete torture suite.
+* Cross-implementation verification.
+* Recovery performance test for one million keys.
+* Compaction and disk-full tests.
+* Clean build from scratch.
+
+Save logs and results in the existing validation documentation structure.
+Strict constraints
+
+1. No SQL support, replication, authentication, encryption or new storage formats.
+2. No major refactoring.
+3. No unnecessary frontend work.
+4. Do not remove existing tests, documentation, evidence or AI prompt logs.
+5. Do not fabricate results.
+6. Do not commit or push anything.
+7. Preserve all existing working changes.
+8. If a proposed improvement risks destabilising the project, document it instead of implementing it.
+
+At the end, provide:
+
+* Files changed.
+* Features already present versus newly implemented.
+* Exact tests executed and their results.
+* Remaining limitations.
+* Any issues requiring manual attention.
+
+The goal is to make NEXUS demonstrably reliable, measurable and technically defensible—not simply bigger.
+````
+
+
+### Prompt 13
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 22:18 (local time; 16:48 UTC in the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the same session transcript. Sent while the Prompt 12 final validation was running. Produced docs/PROJECT_AUDIT.md and docs/FRONTEND_INTEGRATION.md (assessment only; no engine change). Full text as sent:
+
+````text
+# NEXUS — Complete Project Audit & Frontend Readiness Assessment
+
+We are approaching the final stage of the NEXUS database competition. The core database engine and testing infrastructure have undergone substantial development.
+
+We are now preparing to build a polished frontend separately using Codex.
+
+Before frontend development progresses, I want you to perform a COMPLETE audit of the current NEXUS repository and tell us exactly where the project stands.
+
+This is an assessment task first. Do not immediately start implementing new features.
+
+## 1. Understand the entire project
+
+Inspect the current repository, including:
+
+- Go database engine.
+- Storage format and binary structures.
+- Indexing implementation.
+- PUT, GET, DELETE and BATCH operations.
+- Recovery mechanism.
+- Crash consistency.
+- Compaction.
+- maxBytes enforcement.
+- Concurrency and locking.
+- CLI implementation.
+- Serve mode and communication protocol.
+- Torture tester.
+- Independent verification tools.
+- Benchmarking infrastructure, if present.
+- Unit and integration tests.
+- Documentation.
+- Validation logs and evidence.
+- Existing frontend-related files, if any.
+
+Do not rely on previous audit reports alone. Inspect the actual current code and repository state.
+
+## 2. Give us an honest completion assessment
+
+Create a comprehensive status report.
+
+For every major component, classify it as:
+
+- COMPLETE — implemented and adequately tested.
+- IMPLEMENTED, NEEDS VALIDATION — exists but evidence is insufficient.
+- PARTIALLY COMPLETE — some functionality remains.
+- NOT IMPLEMENTED — missing.
+- BLOCKED — cannot be completed because of an external dependency.
+
+Cover these categories:
+
+| Component | What to evaluate |
+|---|---|
+| Core engine | Operations and correctness |
+| Binary format | Integrity and validation |
+| Index | Correctness and performance |
+| Recovery | Crash handling and consistency |
+| Compaction | Correctness and crash safety |
+| Concurrency | Race conditions and locking |
+| Disk limits | maxBytes and ErrFull |
+| CLI | All required commands |
+| Serve mode | Protocol and integration readiness |
+| Torture tester | Workload quality and independent oracle |
+| Independent verifier | Cross-implementation compatibility |
+| Benchmarks | Reproducibility and performance |
+| Documentation | Accuracy and completeness |
+| Evidence | Actual logs and reproducible results |
+
+Give each category a percentage completion estimate, but explain how you calculated it. Do not invent percentages simply to make the project look complete.
+
+## 3. Verify the actual test evidence
+
+Inspect available logs and determine:
+
+- Which tests have actually been executed.
+- Which tests passed.
+- Which tests failed.
+- Which tests have not been run.
+- Whether results are reproducible.
+- Whether tests exercise real NEXUS processes.
+- Whether any tests only use mocks.
+- Whether the independent verification is genuinely independent.
+- Whether benchmark results have enough environmental information.
+- Whether the official crash scenarios have sufficient evidence.
+
+Pay particular attention to the torture tester.
+
+A test that completes without crashing is not automatically proof of data correctness.
+
+Identify any gaps in the testing strategy.
+
+Do not rerun extremely expensive tests without first explaining the cost and checking whether recent logs are sufficient.
+
+## 4. Assess whether NEXUS is ready for judging
+
+Evaluate the project against the competition's important requirements:
+
+- Crash survival.
+- Atomic batches.
+- Durable acknowledgements.
+- Recovery correctness.
+- Compaction.
+- maxBytes enforcement.
+- Concurrent writers.
+- Recovery performance for one million keys.
+- Torture testing.
+- Architecture explanation.
+- BREAKING.md.
+- Design extension.
+
+Give us:
+
+1. What is already strong.
+2. What could cause us to lose marks.
+3. What could cause a live demonstration to fail.
+4. What technical questions we may struggle to answer.
+5. What should be fixed before judging.
+6. What should deliberately remain out of scope.
+
+Be critical. We want to discover problems now, not in front of judges.
+
+## 5. FRONTEND INTEGRATION READINESS — VERY IMPORTANT
+
+We are creating the frontend separately using Codex.
+
+The frontend should be a professional, simple dashboard that demonstrates the actual capabilities of NEXUS.
+
+We want these five sections:
+
+1. Overview
+2. Database
+3. Recovery
+4. Torture Lab
+5. Architecture
+
+Inspect the current implementation and determine exactly how the frontend can communicate with NEXUS.
+
+### Investigate the existing interface
+
+Determine:
+
+- Does NEXUS already have a running server mode?
+- How is the server started?
+- What protocol does it use?
+- Is communication over HTTP, TCP, stdin/stdout or something else?
+- What operations can currently be performed through it?
+- What responses and error formats does it return?
+- Can it expose database status?
+- Can it expose key-value records?
+- Can it expose recovery information?
+- Can it expose torture-test results?
+- Can it expose benchmark information?
+- Can it expose compaction information?
+
+Do not assume that functionality exists just because the CLI supports it.
+
+### Create a frontend integration specification
+
+Recommend a clean integration architecture.
+
+If HTTP is already supported, document the existing endpoints.
+
+If HTTP is not supported, recommend the smallest practical adapter that can expose the existing engine without changing its storage format or core semantics.
+
+Provide:
+
+- API endpoint names.
+- HTTP methods, if applicable.
+- Request examples.
+- Response examples.
+- Error responses.
+- Data types.
+- Loading and disconnected states.
+- How the frontend should handle operations in progress.
+- How the frontend can refresh database state.
+- How torture-test progress and results can be displayed.
+
+Clearly distinguish:
+- Existing functionality.
+- Functionality that needs a small adapter.
+- Functionality that would require new engine capabilities.
+
+The frontend must never display fabricated metrics or pretend a mock operation changed the real database.
+
+### Integration principle
+
+The frontend should communicate through a clean service/API layer.
+
+We should be able to use mock data initially and later switch to the real NEXUS backend without rewriting the UI.
+
+Avoid unnecessary changes to the Go engine.
+
+## 6. Evaluate the product as a whole
+
+Imagine you are an experienced software engineering professional evaluating this project.
+
+Would you consider NEXUS a convincing demonstration of database-engine engineering?
+
+Evaluate:
+
+- Technical depth.
+- Reliability.
+- Performance.
+- Architecture.
+- Testing quality.
+- Ease of demonstration.
+- Documentation.
+- Practical usefulness.
+- Limitations and trade-offs.
+
+Tell us what makes the project impressive and what currently makes it less convincing.
+
+Do not recommend adding features simply to increase the feature count.
+
+## 7. Final deliverables
+
+Produce a detailed report with these sections:
+
+1. Executive summary.
+2. Overall project completion percentage.
+3. Component-by-component completion table.
+4. Verified test results.
+5. Unverified claims and missing evidence.
+6. Critical bugs and risks.
+7. Competition readiness assessment.
+8. Frontend integration readiness.
+9. Recommended API/service contract.
+10. Remaining work, ordered by importance.
+11. Features we should NOT add.
+12. Final verdict: Are we ready to proceed with frontend development?
+
+At the end, give us a clear decision:
+
+- READY — frontend can be built against the existing interface.
+- READY WITH A SMALL ADAPTER — only a limited integration layer is required.
+- NOT READY — specific blockers must be fixed first.
+
+## STRICT RULES
+
+- Do not commit or push.
+- Do not reset, rebase, switch branches or discard changes.
+- Do not modify the database engine during this assessment.
+- Preserve all existing work and documentation.
+- Do not invent test results.
+- Do not claim tests passed without evidence.
+- Do not claim API functionality exists without inspecting its implementation.
+- Do not introduce unnecessary dependencies.
+- Do not recommend a major rewrite.
+- Keep the final recommendations practical given our limited remaining time.
+
+We need an honest engineering assessment, not reassurance.
+
+The most important outcome is knowing whether the NEXUS product is sufficiently complete and stable to build a frontend around, and exactly what integration work remains.
+````
+
+### Prompt 14
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 22:28 (local time; 16:57 UTC, from the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the session transcript. Sent while the Prompt 12 final validation was running. Produced an investigation of running and stopped validation tasks (status table in the chat; findings later recorded in docs/TORTURE_RESULTS.md and docs/results/final/README.md). No files were changed for it. Full text as sent:
+
+````text
+Before running any more validation, stop launching additional full test suites.
+I can see multiple validation tasks marked Stopped, while other validation scripts are still running.
+I need you to investigate the current state first.
+
+1. Identify every currently running validation process and its parent process.
+2. Identify why each previously stopped validation task stopped.
+3. Retrieve the actual exit codes and output logs for each stopped task.
+4. Determine whether any tests are still running in the background.
+5. Check whether multiple validation scripts are testing the same components unnecessarily.
+6. Identify which tests have genuinely passed, failed, timed out or remain incomplete.
+7. Check whether the final validation script is waiting on another process or has become stuck.
+
+Do not kill working processes blindly.
+Do not restart the entire validation suite.
+Give me a concise status table showing:
+
+* Test name
+* Status
+* Duration
+* Exit code
+* Reason for stopping/failure
+* Whether its result is trustworthy
+
+Then recommend the smallest remaining set of tests needed to establish final readiness.
+Do not modify the database engine or torture tester during this investigation. Do not commit or push.
+````
+
+### Prompt 15
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 22:31 (local time; 17:01 UTC, from the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the session transcript. Produced docs/results/final/run-targeted.sh, the targeted final validation (logs in docs/results/final/), docs/TORTURE_RESULTS.md, docs/results/final/README.md, and the final-validation tables in README.md and docs/PROJECT_AUDIT.md. Full text as sent:
+
+````text
+Proceed with the optimized validation plan.
+
+1. Let the currently running step 08 finish naturally. Do not interrupt it.
+2. Once it finishes, stop the remaining redundant steps in run-final.sh, provided their results are already covered by trustworthy earlier validation.
+3. Preserve all existing logs and evidence. Do not delete previous validation results.
+4. Run the targeted validation set you proposed:
+   * Default Torture Engine 2.0: 500 iterations, seed 12345.
+   * Mutation testing and 20-iteration detection-rate check.
+   * Reproducibility: two runs with seed 31337 and compare results.
+   * All 32 scenarios in quick mode using the latest nexus-torture build.
+   * kvdb-bench with 100k operations, three runs.
+5. Capture exit codes, logs, seeds, durations and actual results.
+6. Clearly distinguish previous engine validation from current tester validation.
+7. If any test fails, investigate before proceeding. Do not classify inconclusive tests as passing.
+
+Do not change the database engine, make unnecessary tester changes, or commit/push.
+At the end, give me a final validation summary and tell me whether NEXUS is ready for frontend integration and judging.
+````
+
+### Prompt 15a
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 22:48 (local time; 17:18 UTC, from the session transcript)
+- **Notes:** Typed while the targeted validation was running.
+
+```text
+how much longer
+```
+
+### Prompt 15b
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 23:10 (local time; 17:39 UTC, from the session transcript)
+- **Notes:** Typed while the targeted validation was running.
+
+```text
+time left
+```
+
+### Prompt 15c
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 23:25 (local time; 17:54 UTC, from the session transcript)
+- **Notes:** Sent by clicking the "Not yet" button, which answered Claude's question "Commit the working tree now (most of Prompts 10–13 is uncommitted)?". Nothing was committed.
+
+```text
+Not yet
+```
+
+### Prompt 16
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 23:25 (local time; 17:55 UTC, from the session transcript)
+- **Notes:** Typed right after Prompt 15c (the reply in progress was interrupted). Produced this update of PROMPTS.md: Prompts 10a, 11a and 14–16 added, implementation-prompt timestamps checked against the session transcript, and the status of the design-phase section stated.
+
+```text
+fix prompts.md and make sure it is up to date
+```

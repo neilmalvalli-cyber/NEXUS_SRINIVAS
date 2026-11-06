@@ -451,3 +451,153 @@ func TestServeIgnoresIncompleteFinalLine(t *testing.T) {
 	}
 	mustRun(t, "NOTFOUND\n", "get", path, "x")
 }
+
+// dirState returns name -> contents of every file in dir except lock files.
+func dirState(t *testing.T, dir string) map[string]string {
+	t.Helper()
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m := map[string]string{}
+	for _, e := range ents {
+		if strings.HasSuffix(e.Name(), ".lock") {
+			continue
+		}
+		b, err := os.ReadFile(filepath.Join(dir, e.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		m[e.Name()] = string(b)
+	}
+	return m
+}
+
+// checkRO runs `check --no-repair` and fails if any file in the database's
+// directory changed (bytes or names).
+func checkRO(t *testing.T, path string) (int, string, string) {
+	t.Helper()
+	dir := filepath.Dir(path)
+	before := dirState(t, dir)
+	code, out, errs := run(t, "", "check", path, "--no-repair")
+	after := dirState(t, dir)
+	if fmt.Sprint(before) != fmt.Sprint(after) {
+		t.Fatalf("check --no-repair modified files:\nbefore %d files\nafter %d files", len(before), len(after))
+	}
+	return code, out, errs
+}
+
+// check --no-repair on a valid file, a torn tail, middle corruption, a
+// damaged snapshot, a damaged superblock, an interrupted compaction and a
+// missing database: never modifies anything; default check still repairs.
+func TestCheckNoRepair(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "ro.db")
+	for i := 0; i < 5; i++ {
+		mustRun(t, "OK\n", "put", path, fmt.Sprintf("k%d", i), strings.Repeat("v", 100))
+	}
+	// 1. Valid file.
+	code, out, errs := checkRO(t, path)
+	if code != ExitOK || out != "OK\n" || !strings.Contains(errs, "5 keys") || !strings.Contains(errs, "not modified") {
+		t.Fatalf("valid: %d %q %q", code, out, errs)
+	}
+
+	// 2. Torn tail: reported, not cut; the default check then cuts it.
+	good, _ := os.ReadFile(path)
+	if err := os.Truncate(path, int64(len(good)-1)); err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 2; i++ { // twice: still there the second time
+		code, out, errs = checkRO(t, path)
+		if code != ExitNeedsRepair || !strings.HasPrefix(out, "NEEDS REPAIR: open would discard a torn") || !strings.Contains(errs, "4 keys") {
+			t.Fatalf("torn tail: %d %q %q", code, out, errs)
+		}
+	}
+	if fi, _ := os.Stat(path); fi.Size() != int64(len(good)-1) {
+		t.Fatalf("torn tail was cut by --no-repair: size %d", fi.Size())
+	}
+	code, out, _ = run(t, "", "check", path)
+	if code != ExitOK || out != "OK\n" {
+		t.Fatalf("default check after torn tail: %d %q", code, out)
+	}
+	if code, out, _ = checkRO(t, path); code != ExitOK || out != "OK\n" {
+		t.Fatalf("after repair: %d %q", code, out)
+	}
+
+	// 3. Middle corruption (valid frames follow): CORRUPT, exit 1, unchanged.
+	b, _ := os.ReadFile(path)
+	bad := append([]byte(nil), b...)
+	bad[32+32+11+5] ^= 0xff
+	os.WriteFile(path, bad, 0o644)
+	if code, out, _ = checkRO(t, path); code != ExitError || !strings.HasPrefix(out, "CORRUPT") {
+		t.Fatalf("middle corruption: %d %q", code, out)
+	}
+
+	// 4. Damaged snapshot: compact, then flip a byte at the very end of the
+	// compacted snapshot (a torn tail would be legal there only outside it).
+	os.WriteFile(path, b, 0o644)
+	if code, out, errs = run(t, "1 compact\n", "serve", path); code != 0 || !strings.Contains(out, "ACK 1") {
+		t.Fatalf("compact: %d %q %q", code, out, errs)
+	}
+	snap, _ := os.ReadFile(path)
+	bad = append([]byte(nil), snap...)
+	bad[len(bad)-1] ^= 0x01
+	os.WriteFile(path, bad, 0o644)
+	if code, out, _ = checkRO(t, path); code != ExitError || !strings.HasPrefix(out, "CORRUPT") {
+		t.Fatalf("damaged snapshot: %d %q", code, out)
+	}
+
+	// 5. Damaged superblock: BAD FORMAT.
+	bad = append([]byte(nil), snap...)
+	bad[0] ^= 0xff
+	os.WriteFile(path, bad, 0o644)
+	if code, out, _ = checkRO(t, path); code != ExitError || !strings.HasPrefix(out, "BAD FORMAT") {
+		t.Fatalf("damaged superblock: %d %q", code, out)
+	}
+
+	// 6. Interrupted compaction: path gone, sealed .compact present (A3).
+	os.Remove(path)
+	os.WriteFile(path+".compact", snap, 0o644)
+	code, out, _ = checkRO(t, path)
+	if code != ExitNeedsRepair || !strings.Contains(out, "rule A3") {
+		t.Fatalf("interrupted compaction: %d %q", code, out)
+	}
+	if code, out, _ = run(t, "", "check", path); code != ExitOK || out != "OK\n" {
+		t.Fatalf("default check completes the compaction: %d %q", code, out)
+	}
+	mustRun(t, strings.Repeat("v", 100)+"\n", "get", path, "k3") // k4 was the torn tail
+
+	// 7. Leftover temp next to a valid file: reported, not deleted.
+	os.WriteFile(path+".old", snap, 0o644)
+	if code, out, _ = checkRO(t, path); code != ExitNeedsRepair || !strings.Contains(out, "leftover temp file") {
+		t.Fatalf("stale temp: %d %q", code, out)
+	}
+
+	// 8. Missing database: reported, not created.
+	missing := filepath.Join(t.TempDir(), "none.db")
+	if code, out, _ = checkRO(t, missing); code != ExitNeedsRepair || !strings.Contains(out, "create an empty one") {
+		t.Fatalf("missing: %d %q", code, out)
+	}
+	if _, err := os.Stat(missing); err == nil {
+		t.Fatal("--no-repair created the database")
+	}
+
+	// --no-repair belongs to check only.
+	if code, _, _ = run(t, "", "open", path, "--no-repair"); code != ExitUsage {
+		t.Fatalf("open --no-repair: exit %d, want usage", code)
+	}
+}
+
+// --no-repair while another process holds the database: LOCKED, exit 1.
+func TestCheckNoRepairLocked(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "l.db")
+	db, err := kvdb.Open(path, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	code, out, _ := checkRO(t, path)
+	if code != ExitError || !strings.HasPrefix(out, "LOCKED") {
+		t.Fatalf("locked: %d %q", code, out)
+	}
+}

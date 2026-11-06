@@ -1,0 +1,29 @@
+== [2026-11-06 22:15:41] environment
+== [2026-11-06 22:15:42] clean build from scratch (go build -a into an empty directory)
+   -> exit 0 (02-clean-build.log)
+== [2026-11-06 22:15:49] gofmt, go vet (windows linux darwin freebsd), go build ./...
+   -> exit 0 (03-static.log)
+== [2026-11-06 22:15:57] unit and integration tests: go test -count=1 ./...
+   -> exit 0 (04-go-test.log)
+== [2026-11-06 22:18:13] cross-implementation verification (crosscheck)
+   -> exit 0 (05-crosscheck.log)
+== [2026-11-06 22:18:20] targeted: compaction, disk full / size cap, read-only check, Windows moves
+   -> exit 0 (06-targeted.log)
+== [2026-11-06 22:18:47] 1,000,000-key recovery timing (KVDB_PERF)
+   -> exit 0 (07-recovery-1M.log)
+== [2026-11-06 22:18:50] 32 official scenarios, Go fault-injection suite, full mode
+   -> exit 0 (08-scenarios-gotest-full.log)
+== [2026-11-06 22:34:09] Torture Engine 2.0: randomized runs
+   -> exit 0 (torture/default-500-seed12345.log: RESULT: PASS  mode=default seed=12345  passed=500 failed=0 inconclusive=0 of 500  acked=15)
+== [2026-11-06 22:37:15] run-final.sh stopped after the default-500 run (remaining steps covered by docs/results/validation and validation-v2; see README)
+== [2026-11-06 22:37:15] targeted: mutation testing (first detection, 40-iteration budget, seed 777)
+   -> exit 0 (torture/mutants.log)
+== [2026-11-06 22:37:22] targeted: mutation detection rate (20 iterations each, --keep-going, seed 4040)
+   -> exit 0 (torture/mutation-detection-rate.log)
+== [2026-11-06 23:04:13] targeted: reproducibility (seed 31337 twice, streams compared; recorded failure replayed)
+   -> exit 0 (torture/reproducibility.log)
+== [2026-11-06 23:04:32] targeted: 32 official scenarios against the real executable, quick sizes
+   -> exit 0 (torture/scenarios-quick.log: SCENARIOS RESULT: PASS  32 passed, 0 failed, 0 inconclusive/unsupported, of 32  (267s))
+== [2026-11-06 23:08:59] targeted: benchmark: kvdb-bench, 100,000 keys, 3 runs
+   -> exit 0 (09-bench.log)
+== [2026-11-06 23:12:49] targeted: done

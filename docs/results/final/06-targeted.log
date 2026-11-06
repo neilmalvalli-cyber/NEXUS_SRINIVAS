@@ -1,0 +1,760 @@
+=== RUN   TestCompactDeterministicOutput
+--- PASS: TestCompactDeterministicOutput (2.59s)
+=== RUN   TestCompactSnapshotSortedEveryPath
+=== RUN   TestCompactSnapshotSortedEveryPath/plain_multi-frame
+=== RUN   TestCompactSnapshotSortedEveryPath/compacting_commit_under_cap
+=== RUN   TestCompactSnapshotSortedEveryPath/automatic
+--- PASS: TestCompactSnapshotSortedEveryPath (1.48s)
+    --- PASS: TestCompactSnapshotSortedEveryPath/plain_multi-frame (1.27s)
+    --- PASS: TestCompactSnapshotSortedEveryPath/compacting_commit_under_cap (0.07s)
+    --- PASS: TestCompactSnapshotSortedEveryPath/automatic (0.15s)
+=== RUN   TestCompactPreservesLiveStateAndShrinks
+--- PASS: TestCompactPreservesLiveStateAndShrinks (0.09s)
+=== RUN   TestCompactIsNoOpWhenNothingToReclaim
+--- PASS: TestCompactIsNoOpWhenNothingToReclaim (0.09s)
+=== RUN   TestCompactAfterDeletingEverything
+--- PASS: TestCompactAfterDeletingEverything (0.02s)
+=== RUN   TestCompactSplitsFrames
+--- PASS: TestCompactSplitsFrames (0.05s)
+=== RUN   TestAutoCompactTrigger
+--- PASS: TestAutoCompactTrigger (0.16s)
+=== RUN   TestAdmissionCompactingCommitAndFull
+--- PASS: TestAdmissionCompactingCommitAndFull (0.05s)
+=== RUN   TestCompactDiskFullAndCorruptionChangeNothing
+=== RUN   TestCompactDiskFullAndCorruptionChangeNothing/disk-full
+=== RUN   TestCompactDiskFullAndCorruptionChangeNothing/corrupt-live-value
+--- PASS: TestCompactDiskFullAndCorruptionChangeNothing (0.19s)
+    --- PASS: TestCompactDiskFullAndCorruptionChangeNothing/disk-full (0.09s)
+    --- PASS: TestCompactDiskFullAndCorruptionChangeNothing/corrupt-live-value (0.09s)
+=== RUN   TestCompactRetriesSharingViolations
+--- PASS: TestCompactRetriesSharingViolations (0.08s)
+=== RUN   TestCompactingCommitFailedRestoreIsUnknown
+--- PASS: TestCompactingCommitFailedRestoreIsUnknown (0.02s)
+=== RUN   TestCompactCrashSweep
+=== RUN   TestCompactCrashSweep/plain
+=== RUN   TestCompactCrashSweep/compacting-commit
+--- PASS: TestCompactCrashSweep (11.96s)
+    --- PASS: TestCompactCrashSweep/plain (10.90s)
+    --- PASS: TestCompactCrashSweep/compacting-commit (0.98s)
+=== RUN   TestCompactFaultSweep
+=== RUN   TestCompactFaultSweep/plain
+=== RUN   TestCompactFaultSweep/compacting-commit
+--- PASS: TestCompactFaultSweep (8.64s)
+    --- PASS: TestCompactFaultSweep/plain (7.88s)
+    --- PASS: TestCompactFaultSweep/compacting-commit (0.67s)
+=== RUN   TestCompactConcurrentReaders
+--- PASS: TestCompactConcurrentReaders (0.19s)
+=== RUN   TestI1DiskFullRollbackKeepsHandleOpen
+=== RUN   TestI1DiskFullRollbackKeepsHandleOpen/write#0
+=== RUN   TestI1DiskFullRollbackKeepsHandleOpen/write#1
+=== RUN   TestI1DiskFullRollbackKeepsHandleOpen/write#2
+--- PASS: TestI1DiskFullRollbackKeepsHandleOpen (0.04s)
+    --- PASS: TestI1DiskFullRollbackKeepsHandleOpen/write#0 (0.02s)
+    --- PASS: TestI1DiskFullRollbackKeepsHandleOpen/write#1 (0.01s)
+    --- PASS: TestI1DiskFullRollbackKeepsHandleOpen/write#2 (0.01s)
+=== RUN   TestSequenceExhaustionIsErrFull
+--- PASS: TestSequenceExhaustionIsErrFull (0.01s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/storage	26.659s
+=== RUN   TestInspectCleanLog
+--- PASS: TestInspectCleanLog (0.01s)
+=== RUN   TestInspectTornTailEveryLength
+=== RUN   TestInspectTornTailEveryLength/1
+=== RUN   TestInspectTornTailEveryLength/2
+=== RUN   TestInspectTornTailEveryLength/3
+=== RUN   TestInspectTornTailEveryLength/4
+=== RUN   TestInspectTornTailEveryLength/5
+=== RUN   TestInspectTornTailEveryLength/6
+=== RUN   TestInspectTornTailEveryLength/7
+=== RUN   TestInspectTornTailEveryLength/8
+=== RUN   TestInspectTornTailEveryLength/9
+=== RUN   TestInspectTornTailEveryLength/10
+=== RUN   TestInspectTornTailEveryLength/11
+=== RUN   TestInspectTornTailEveryLength/12
+=== RUN   TestInspectTornTailEveryLength/13
+=== RUN   TestInspectTornTailEveryLength/14
+=== RUN   TestInspectTornTailEveryLength/15
+=== RUN   TestInspectTornTailEveryLength/16
+=== RUN   TestInspectTornTailEveryLength/17
+=== RUN   TestInspectTornTailEveryLength/18
+=== RUN   TestInspectTornTailEveryLength/19
+=== RUN   TestInspectTornTailEveryLength/20
+=== RUN   TestInspectTornTailEveryLength/21
+=== RUN   TestInspectTornTailEveryLength/22
+=== RUN   TestInspectTornTailEveryLength/23
+=== RUN   TestInspectTornTailEveryLength/24
+=== RUN   TestInspectTornTailEveryLength/25
+=== RUN   TestInspectTornTailEveryLength/26
+=== RUN   TestInspectTornTailEveryLength/27
+=== RUN   TestInspectTornTailEveryLength/28
+=== RUN   TestInspectTornTailEveryLength/29
+=== RUN   TestInspectTornTailEveryLength/30
+=== RUN   TestInspectTornTailEveryLength/31
+=== RUN   TestInspectTornTailEveryLength/32
+=== RUN   TestInspectTornTailEveryLength/33
+=== RUN   TestInspectTornTailEveryLength/34
+=== RUN   TestInspectTornTailEveryLength/35
+=== RUN   TestInspectTornTailEveryLength/36
+=== RUN   TestInspectTornTailEveryLength/37
+=== RUN   TestInspectTornTailEveryLength/38
+=== RUN   TestInspectTornTailEveryLength/39
+=== RUN   TestInspectTornTailEveryLength/40
+=== RUN   TestInspectTornTailEveryLength/41
+=== RUN   TestInspectTornTailEveryLength/42
+=== RUN   TestInspectTornTailEveryLength/43
+=== RUN   TestInspectTornTailEveryLength/44
+=== RUN   TestInspectTornTailEveryLength/45
+=== RUN   TestInspectTornTailEveryLength/46
+=== RUN   TestInspectTornTailEveryLength/47
+=== RUN   TestInspectTornTailEveryLength/48
+=== RUN   TestInspectTornTailEveryLength/49
+=== RUN   TestInspectTornTailEveryLength/50
+=== RUN   TestInspectTornTailEveryLength/51
+=== RUN   TestInspectTornTailEveryLength/52
+=== RUN   TestInspectTornTailEveryLength/53
+=== RUN   TestInspectTornTailEveryLength/54
+=== RUN   TestInspectTornTailEveryLength/55
+=== RUN   TestInspectTornTailEveryLength/56
+=== RUN   TestInspectTornTailEveryLength/57
+--- PASS: TestInspectTornTailEveryLength (0.87s)
+    --- PASS: TestInspectTornTailEveryLength/1 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/2 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/3 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/4 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/5 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/6 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/7 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/8 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/9 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/10 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/11 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/12 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/13 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/14 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/15 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/16 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/17 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/18 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/19 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/20 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/21 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/22 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/23 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/24 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/25 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/26 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/27 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/28 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/29 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/30 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/31 (0.03s)
+    --- PASS: TestInspectTornTailEveryLength/32 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/33 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/34 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/35 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/36 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/37 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/38 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/39 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/40 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/41 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/42 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/43 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/44 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/45 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/46 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/47 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/48 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/49 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/50 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/51 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/52 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/53 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/54 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/55 (0.02s)
+    --- PASS: TestInspectTornTailEveryLength/56 (0.01s)
+    --- PASS: TestInspectTornTailEveryLength/57 (0.01s)
+=== RUN   TestInspectMiddleCorruption
+=== RUN   TestInspectMiddleCorruption/payload_byte_of_the_middle_frame
+=== RUN   TestInspectMiddleCorruption/payload_byte_of_the_first_frame
+--- PASS: TestInspectMiddleCorruption (0.02s)
+    --- PASS: TestInspectMiddleCorruption/payload_byte_of_the_middle_frame (0.01s)
+    --- PASS: TestInspectMiddleCorruption/payload_byte_of_the_first_frame (0.01s)
+=== RUN   TestInspectDamagedSnapshotAndSuperblock
+--- PASS: TestInspectDamagedSnapshotAndSuperblock (0.02s)
+=== RUN   TestInspectMatchesOpenForEveryLayout
+=== RUN   TestInspectMatchesOpenForEveryLayout/0
+=== RUN   TestInspectMatchesOpenForEveryLayout/1
+=== RUN   TestInspectMatchesOpenForEveryLayout/2
+=== RUN   TestInspectMatchesOpenForEveryLayout/3
+=== RUN   TestInspectMatchesOpenForEveryLayout/4
+=== RUN   TestInspectMatchesOpenForEveryLayout/5
+=== RUN   TestInspectMatchesOpenForEveryLayout/6
+=== RUN   TestInspectMatchesOpenForEveryLayout/7
+=== RUN   TestInspectMatchesOpenForEveryLayout/8
+=== RUN   TestInspectMatchesOpenForEveryLayout/9
+=== RUN   TestInspectMatchesOpenForEveryLayout/10
+=== RUN   TestInspectMatchesOpenForEveryLayout/11
+=== RUN   TestInspectMatchesOpenForEveryLayout/12
+=== RUN   TestInspectMatchesOpenForEveryLayout/13
+=== RUN   TestInspectMatchesOpenForEveryLayout/14
+=== RUN   TestInspectMatchesOpenForEveryLayout/15
+=== RUN   TestInspectMatchesOpenForEveryLayout/16
+=== RUN   TestInspectMatchesOpenForEveryLayout/17
+=== RUN   TestInspectMatchesOpenForEveryLayout/18
+=== RUN   TestInspectMatchesOpenForEveryLayout/19
+=== RUN   TestInspectMatchesOpenForEveryLayout/20
+=== RUN   TestInspectMatchesOpenForEveryLayout/21
+=== RUN   TestInspectMatchesOpenForEveryLayout/22
+=== RUN   TestInspectMatchesOpenForEveryLayout/23
+=== RUN   TestInspectMatchesOpenForEveryLayout/24
+=== RUN   TestInspectMatchesOpenForEveryLayout/25
+=== RUN   TestInspectMatchesOpenForEveryLayout/26
+=== RUN   TestInspectMatchesOpenForEveryLayout/27
+=== RUN   TestInspectMatchesOpenForEveryLayout/28
+=== RUN   TestInspectMatchesOpenForEveryLayout/29
+=== RUN   TestInspectMatchesOpenForEveryLayout/30
+=== RUN   TestInspectMatchesOpenForEveryLayout/31
+=== RUN   TestInspectMatchesOpenForEveryLayout/32
+=== RUN   TestInspectMatchesOpenForEveryLayout/33
+=== RUN   TestInspectMatchesOpenForEveryLayout/34
+=== RUN   TestInspectMatchesOpenForEveryLayout/35
+=== RUN   TestInspectMatchesOpenForEveryLayout/36
+=== RUN   TestInspectMatchesOpenForEveryLayout/37
+=== RUN   TestInspectMatchesOpenForEveryLayout/38
+=== RUN   TestInspectMatchesOpenForEveryLayout/39
+=== RUN   TestInspectMatchesOpenForEveryLayout/40
+=== RUN   TestInspectMatchesOpenForEveryLayout/41
+=== RUN   TestInspectMatchesOpenForEveryLayout/42
+=== RUN   TestInspectMatchesOpenForEveryLayout/43
+=== RUN   TestInspectMatchesOpenForEveryLayout/44
+=== RUN   TestInspectMatchesOpenForEveryLayout/45
+=== RUN   TestInspectMatchesOpenForEveryLayout/46
+=== RUN   TestInspectMatchesOpenForEveryLayout/47
+=== RUN   TestInspectMatchesOpenForEveryLayout/48
+=== RUN   TestInspectMatchesOpenForEveryLayout/49
+=== RUN   TestInspectMatchesOpenForEveryLayout/50
+=== RUN   TestInspectMatchesOpenForEveryLayout/51
+=== RUN   TestInspectMatchesOpenForEveryLayout/52
+=== RUN   TestInspectMatchesOpenForEveryLayout/53
+=== RUN   TestInspectMatchesOpenForEveryLayout/54
+=== RUN   TestInspectMatchesOpenForEveryLayout/55
+=== RUN   TestInspectMatchesOpenForEveryLayout/56
+=== RUN   TestInspectMatchesOpenForEveryLayout/57
+=== RUN   TestInspectMatchesOpenForEveryLayout/58
+=== RUN   TestInspectMatchesOpenForEveryLayout/59
+=== RUN   TestInspectMatchesOpenForEveryLayout/60
+=== RUN   TestInspectMatchesOpenForEveryLayout/61
+=== RUN   TestInspectMatchesOpenForEveryLayout/62
+=== RUN   TestInspectMatchesOpenForEveryLayout/63
+=== RUN   TestInspectMatchesOpenForEveryLayout/64
+=== RUN   TestInspectMatchesOpenForEveryLayout/65
+=== RUN   TestInspectMatchesOpenForEveryLayout/66
+=== RUN   TestInspectMatchesOpenForEveryLayout/67
+=== RUN   TestInspectMatchesOpenForEveryLayout/68
+=== RUN   TestInspectMatchesOpenForEveryLayout/69
+=== RUN   TestInspectMatchesOpenForEveryLayout/70
+=== RUN   TestInspectMatchesOpenForEveryLayout/71
+=== RUN   TestInspectMatchesOpenForEveryLayout/72
+=== RUN   TestInspectMatchesOpenForEveryLayout/73
+=== RUN   TestInspectMatchesOpenForEveryLayout/74
+=== RUN   TestInspectMatchesOpenForEveryLayout/75
+=== RUN   TestInspectMatchesOpenForEveryLayout/76
+=== RUN   TestInspectMatchesOpenForEveryLayout/77
+=== RUN   TestInspectMatchesOpenForEveryLayout/78
+=== RUN   TestInspectMatchesOpenForEveryLayout/79
+=== RUN   TestInspectMatchesOpenForEveryLayout/80
+=== RUN   TestInspectMatchesOpenForEveryLayout/81
+=== RUN   TestInspectMatchesOpenForEveryLayout/82
+=== RUN   TestInspectMatchesOpenForEveryLayout/83
+=== RUN   TestInspectMatchesOpenForEveryLayout/84
+=== RUN   TestInspectMatchesOpenForEveryLayout/85
+=== RUN   TestInspectMatchesOpenForEveryLayout/86
+=== RUN   TestInspectMatchesOpenForEveryLayout/87
+=== RUN   TestInspectMatchesOpenForEveryLayout/88
+=== RUN   TestInspectMatchesOpenForEveryLayout/89
+=== RUN   TestInspectMatchesOpenForEveryLayout/90
+=== RUN   TestInspectMatchesOpenForEveryLayout/91
+=== RUN   TestInspectMatchesOpenForEveryLayout/92
+=== RUN   TestInspectMatchesOpenForEveryLayout/93
+=== RUN   TestInspectMatchesOpenForEveryLayout/94
+=== RUN   TestInspectMatchesOpenForEveryLayout/95
+=== RUN   TestInspectMatchesOpenForEveryLayout/96
+=== RUN   TestInspectMatchesOpenForEveryLayout/97
+=== RUN   TestInspectMatchesOpenForEveryLayout/98
+=== RUN   TestInspectMatchesOpenForEveryLayout/99
+=== RUN   TestInspectMatchesOpenForEveryLayout/100
+=== RUN   TestInspectMatchesOpenForEveryLayout/101
+=== RUN   TestInspectMatchesOpenForEveryLayout/102
+=== RUN   TestInspectMatchesOpenForEveryLayout/103
+=== RUN   TestInspectMatchesOpenForEveryLayout/104
+=== RUN   TestInspectMatchesOpenForEveryLayout/105
+=== RUN   TestInspectMatchesOpenForEveryLayout/106
+=== RUN   TestInspectMatchesOpenForEveryLayout/107
+=== RUN   TestInspectMatchesOpenForEveryLayout/108
+=== RUN   TestInspectMatchesOpenForEveryLayout/109
+=== RUN   TestInspectMatchesOpenForEveryLayout/110
+=== RUN   TestInspectMatchesOpenForEveryLayout/111
+=== RUN   TestInspectMatchesOpenForEveryLayout/112
+=== RUN   TestInspectMatchesOpenForEveryLayout/113
+=== RUN   TestInspectMatchesOpenForEveryLayout/114
+=== RUN   TestInspectMatchesOpenForEveryLayout/115
+=== RUN   TestInspectMatchesOpenForEveryLayout/116
+=== RUN   TestInspectMatchesOpenForEveryLayout/117
+=== RUN   TestInspectMatchesOpenForEveryLayout/118
+=== RUN   TestInspectMatchesOpenForEveryLayout/119
+=== RUN   TestInspectMatchesOpenForEveryLayout/120
+=== RUN   TestInspectMatchesOpenForEveryLayout/121
+=== RUN   TestInspectMatchesOpenForEveryLayout/122
+=== RUN   TestInspectMatchesOpenForEveryLayout/123
+=== RUN   TestInspectMatchesOpenForEveryLayout/124
+=== RUN   TestInspectMatchesOpenForEveryLayout/125
+=== RUN   TestInspectMatchesOpenForEveryLayout/126
+=== RUN   TestInspectMatchesOpenForEveryLayout/127
+=== RUN   TestInspectMatchesOpenForEveryLayout/128
+=== RUN   TestInspectMatchesOpenForEveryLayout/129
+=== RUN   TestInspectMatchesOpenForEveryLayout/130
+=== RUN   TestInspectMatchesOpenForEveryLayout/131
+=== RUN   TestInspectMatchesOpenForEveryLayout/132
+=== RUN   TestInspectMatchesOpenForEveryLayout/133
+=== RUN   TestInspectMatchesOpenForEveryLayout/134
+=== RUN   TestInspectMatchesOpenForEveryLayout/135
+=== RUN   TestInspectMatchesOpenForEveryLayout/136
+=== RUN   TestInspectMatchesOpenForEveryLayout/137
+=== RUN   TestInspectMatchesOpenForEveryLayout/138
+=== RUN   TestInspectMatchesOpenForEveryLayout/139
+=== RUN   TestInspectMatchesOpenForEveryLayout/140
+=== RUN   TestInspectMatchesOpenForEveryLayout/141
+=== RUN   TestInspectMatchesOpenForEveryLayout/142
+=== RUN   TestInspectMatchesOpenForEveryLayout/143
+=== RUN   TestInspectMatchesOpenForEveryLayout/144
+=== RUN   TestInspectMatchesOpenForEveryLayout/145
+=== RUN   TestInspectMatchesOpenForEveryLayout/146
+=== RUN   TestInspectMatchesOpenForEveryLayout/147
+=== RUN   TestInspectMatchesOpenForEveryLayout/148
+=== RUN   TestInspectMatchesOpenForEveryLayout/149
+=== RUN   TestInspectMatchesOpenForEveryLayout/150
+=== RUN   TestInspectMatchesOpenForEveryLayout/151
+=== RUN   TestInspectMatchesOpenForEveryLayout/152
+=== RUN   TestInspectMatchesOpenForEveryLayout/153
+=== RUN   TestInspectMatchesOpenForEveryLayout/154
+=== RUN   TestInspectMatchesOpenForEveryLayout/155
+=== RUN   TestInspectMatchesOpenForEveryLayout/156
+=== RUN   TestInspectMatchesOpenForEveryLayout/157
+=== RUN   TestInspectMatchesOpenForEveryLayout/158
+=== RUN   TestInspectMatchesOpenForEveryLayout/159
+=== RUN   TestInspectMatchesOpenForEveryLayout/160
+=== RUN   TestInspectMatchesOpenForEveryLayout/161
+=== RUN   TestInspectMatchesOpenForEveryLayout/162
+=== RUN   TestInspectMatchesOpenForEveryLayout/163
+=== RUN   TestInspectMatchesOpenForEveryLayout/164
+=== RUN   TestInspectMatchesOpenForEveryLayout/165
+=== RUN   TestInspectMatchesOpenForEveryLayout/166
+=== RUN   TestInspectMatchesOpenForEveryLayout/167
+=== RUN   TestInspectMatchesOpenForEveryLayout/168
+=== RUN   TestInspectMatchesOpenForEveryLayout/169
+=== RUN   TestInspectMatchesOpenForEveryLayout/170
+=== RUN   TestInspectMatchesOpenForEveryLayout/171
+=== RUN   TestInspectMatchesOpenForEveryLayout/172
+=== RUN   TestInspectMatchesOpenForEveryLayout/173
+=== RUN   TestInspectMatchesOpenForEveryLayout/174
+=== RUN   TestInspectMatchesOpenForEveryLayout/175
+=== RUN   TestInspectMatchesOpenForEveryLayout/176
+=== RUN   TestInspectMatchesOpenForEveryLayout/177
+=== RUN   TestInspectMatchesOpenForEveryLayout/178
+=== RUN   TestInspectMatchesOpenForEveryLayout/179
+=== RUN   TestInspectMatchesOpenForEveryLayout/180
+=== RUN   TestInspectMatchesOpenForEveryLayout/181
+=== RUN   TestInspectMatchesOpenForEveryLayout/182
+=== RUN   TestInspectMatchesOpenForEveryLayout/183
+=== RUN   TestInspectMatchesOpenForEveryLayout/184
+=== RUN   TestInspectMatchesOpenForEveryLayout/185
+=== RUN   TestInspectMatchesOpenForEveryLayout/186
+=== RUN   TestInspectMatchesOpenForEveryLayout/187
+=== RUN   TestInspectMatchesOpenForEveryLayout/188
+=== RUN   TestInspectMatchesOpenForEveryLayout/189
+=== RUN   TestInspectMatchesOpenForEveryLayout/190
+=== RUN   TestInspectMatchesOpenForEveryLayout/191
+=== RUN   TestInspectMatchesOpenForEveryLayout/192
+=== RUN   TestInspectMatchesOpenForEveryLayout/193
+=== RUN   TestInspectMatchesOpenForEveryLayout/194
+=== RUN   TestInspectMatchesOpenForEveryLayout/195
+=== RUN   TestInspectMatchesOpenForEveryLayout/196
+=== RUN   TestInspectMatchesOpenForEveryLayout/197
+=== RUN   TestInspectMatchesOpenForEveryLayout/198
+=== RUN   TestInspectMatchesOpenForEveryLayout/199
+=== RUN   TestInspectMatchesOpenForEveryLayout/200
+=== RUN   TestInspectMatchesOpenForEveryLayout/201
+=== RUN   TestInspectMatchesOpenForEveryLayout/202
+=== RUN   TestInspectMatchesOpenForEveryLayout/203
+=== RUN   TestInspectMatchesOpenForEveryLayout/204
+=== RUN   TestInspectMatchesOpenForEveryLayout/205
+=== RUN   TestInspectMatchesOpenForEveryLayout/206
+=== RUN   TestInspectMatchesOpenForEveryLayout/207
+=== RUN   TestInspectMatchesOpenForEveryLayout/208
+=== RUN   TestInspectMatchesOpenForEveryLayout/209
+=== RUN   TestInspectMatchesOpenForEveryLayout/210
+=== RUN   TestInspectMatchesOpenForEveryLayout/211
+=== RUN   TestInspectMatchesOpenForEveryLayout/212
+=== RUN   TestInspectMatchesOpenForEveryLayout/213
+=== RUN   TestInspectMatchesOpenForEveryLayout/214
+=== RUN   TestInspectMatchesOpenForEveryLayout/215
+=== RUN   TestInspectMatchesOpenForEveryLayout/216
+=== RUN   TestInspectMatchesOpenForEveryLayout/217
+=== RUN   TestInspectMatchesOpenForEveryLayout/218
+=== RUN   TestInspectMatchesOpenForEveryLayout/219
+=== RUN   TestInspectMatchesOpenForEveryLayout/220
+=== RUN   TestInspectMatchesOpenForEveryLayout/221
+=== RUN   TestInspectMatchesOpenForEveryLayout/222
+=== RUN   TestInspectMatchesOpenForEveryLayout/223
+=== RUN   TestInspectMatchesOpenForEveryLayout/224
+=== RUN   TestInspectMatchesOpenForEveryLayout/225
+=== RUN   TestInspectMatchesOpenForEveryLayout/226
+=== RUN   TestInspectMatchesOpenForEveryLayout/227
+=== RUN   TestInspectMatchesOpenForEveryLayout/228
+=== RUN   TestInspectMatchesOpenForEveryLayout/229
+=== RUN   TestInspectMatchesOpenForEveryLayout/230
+=== RUN   TestInspectMatchesOpenForEveryLayout/231
+=== RUN   TestInspectMatchesOpenForEveryLayout/232
+=== RUN   TestInspectMatchesOpenForEveryLayout/233
+=== RUN   TestInspectMatchesOpenForEveryLayout/234
+=== RUN   TestInspectMatchesOpenForEveryLayout/235
+=== RUN   TestInspectMatchesOpenForEveryLayout/236
+=== RUN   TestInspectMatchesOpenForEveryLayout/237
+=== RUN   TestInspectMatchesOpenForEveryLayout/238
+=== RUN   TestInspectMatchesOpenForEveryLayout/239
+=== RUN   TestInspectMatchesOpenForEveryLayout/240
+=== RUN   TestInspectMatchesOpenForEveryLayout/241
+=== RUN   TestInspectMatchesOpenForEveryLayout/242
+=== RUN   TestInspectMatchesOpenForEveryLayout/243
+=== RUN   TestInspectMatchesOpenForEveryLayout/244
+=== RUN   TestInspectMatchesOpenForEveryLayout/245
+=== RUN   TestInspectMatchesOpenForEveryLayout/246
+=== RUN   TestInspectMatchesOpenForEveryLayout/247
+=== RUN   TestInspectMatchesOpenForEveryLayout/248
+=== RUN   TestInspectMatchesOpenForEveryLayout/249
+=== RUN   TestInspectMatchesOpenForEveryLayout/250
+=== RUN   TestInspectMatchesOpenForEveryLayout/251
+=== RUN   TestInspectMatchesOpenForEveryLayout/252
+=== RUN   TestInspectMatchesOpenForEveryLayout/253
+=== RUN   TestInspectMatchesOpenForEveryLayout/254
+=== RUN   TestInspectMatchesOpenForEveryLayout/255
+--- PASS: TestInspectMatchesOpenForEveryLayout (3.96s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/0 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/1 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/2 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/3 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/4 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/5 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/6 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/7 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/8 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/9 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/10 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/11 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/12 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/13 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/14 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/15 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/16 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/17 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/18 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/19 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/20 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/21 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/22 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/23 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/24 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/25 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/26 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/27 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/28 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/29 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/30 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/31 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/32 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/33 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/34 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/35 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/36 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/37 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/38 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/39 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/40 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/41 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/42 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/43 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/44 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/45 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/46 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/47 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/48 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/49 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/50 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/51 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/52 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/53 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/54 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/55 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/56 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/57 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/58 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/59 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/60 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/61 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/62 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/63 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/64 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/65 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/66 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/67 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/68 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/69 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/70 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/71 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/72 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/73 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/74 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/75 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/76 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/77 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/78 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/79 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/80 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/81 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/82 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/83 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/84 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/85 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/86 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/87 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/88 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/89 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/90 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/91 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/92 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/93 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/94 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/95 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/96 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/97 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/98 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/99 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/100 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/101 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/102 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/103 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/104 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/105 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/106 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/107 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/108 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/109 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/110 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/111 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/112 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/113 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/114 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/115 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/116 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/117 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/118 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/119 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/120 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/121 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/122 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/123 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/124 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/125 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/126 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/127 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/128 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/129 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/130 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/131 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/132 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/133 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/134 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/135 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/136 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/137 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/138 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/139 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/140 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/141 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/142 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/143 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/144 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/145 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/146 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/147 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/148 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/149 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/150 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/151 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/152 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/153 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/154 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/155 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/156 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/157 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/158 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/159 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/160 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/161 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/162 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/163 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/164 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/165 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/166 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/167 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/168 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/169 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/170 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/171 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/172 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/173 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/174 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/175 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/176 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/177 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/178 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/179 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/180 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/181 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/182 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/183 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/184 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/185 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/186 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/187 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/188 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/189 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/190 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/191 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/192 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/193 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/194 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/195 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/196 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/197 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/198 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/199 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/200 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/201 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/202 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/203 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/204 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/205 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/206 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/207 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/208 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/209 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/210 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/211 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/212 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/213 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/214 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/215 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/216 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/217 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/218 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/219 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/220 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/221 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/222 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/223 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/224 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/225 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/226 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/227 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/228 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/229 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/230 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/231 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/232 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/233 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/234 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/235 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/236 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/237 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/238 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/239 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/240 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/241 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/242 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/243 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/244 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/245 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/246 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/247 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/248 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/249 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/250 (0.01s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/251 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/252 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/253 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/254 (0.02s)
+    --- PASS: TestInspectMatchesOpenForEveryLayout/255 (0.01s)
+=== RUN   TestInspectLocked
+--- PASS: TestInspectLocked (0.01s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery	5.696s
+=== RUN   TestMaxBytesFlag
+--- PASS: TestMaxBytesFlag (0.02s)
+=== RUN   TestServeMaxBytesErrorsAreClean
+--- PASS: TestServeMaxBytesErrorsAreClean (0.04s)
+=== RUN   TestCheckNoRepair
+--- PASS: TestCheckNoRepair (0.10s)
+=== RUN   TestCheckNoRepairLocked
+--- PASS: TestCheckNoRepairLocked (1.02s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/cli	2.445s
+=== RUN   TestMoveNoReplaceMovesWhenDestinationAbsent
+--- PASS: TestMoveNoReplaceMovesWhenDestinationAbsent (0.00s)
+=== RUN   TestMoveNoReplaceRefusesExistingDestination
+--- PASS: TestMoveNoReplaceRefusesExistingDestination (0.01s)
+=== RUN   TestMoveNoReplaceMissingSource
+--- PASS: TestMoveNoReplaceMissingSource (0.00s)
+=== RUN   TestMoveNoReplaceTwoRenameSequence
+--- PASS: TestMoveNoReplaceTwoRenameSequence (0.01s)
+=== RUN   TestOpenFileBlocksMove
+--- PASS: TestOpenFileBlocksMove (0.01s)
+=== RUN   TestMoveFlagsWriteThroughNoReplace
+--- PASS: TestMoveFlagsWriteThroughNoReplace (0.00s)
+=== RUN   TestMoveNoReplaceNeverOverwritesWindows
+=== RUN   TestMoveNoReplaceNeverOverwritesWindows/empty_file
+=== RUN   TestMoveNoReplaceNeverOverwritesWindows/3_MiB_file
+=== RUN   TestMoveNoReplaceNeverOverwritesWindows/open_file
+=== RUN   TestMoveNoReplaceNeverOverwritesWindows/read-only_file
+=== RUN   TestMoveNoReplaceNeverOverwritesWindows/directory
+--- PASS: TestMoveNoReplaceNeverOverwritesWindows (0.05s)
+    --- PASS: TestMoveNoReplaceNeverOverwritesWindows/empty_file (0.01s)
+    --- PASS: TestMoveNoReplaceNeverOverwritesWindows/3_MiB_file (0.02s)
+    --- PASS: TestMoveNoReplaceNeverOverwritesWindows/open_file (0.01s)
+    --- PASS: TestMoveNoReplaceNeverOverwritesWindows/read-only_file (0.01s)
+    --- PASS: TestMoveNoReplaceNeverOverwritesWindows/directory (0.01s)
+=== RUN   TestMoveNoReplaceExistErrorClass
+--- PASS: TestMoveNoReplaceExistErrorClass (0.00s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/platform	0.760s
+=== RUN   TestMaxBytesThroughAPI
+--- PASS: TestMaxBytesThroughAPI (0.50s)
+=== RUN   TestCompactThroughAPI
+--- PASS: TestCompactThroughAPI (0.16s)
+=== RUN   TestKillDuringCompactingCommits
+=== RUN   TestKillDuringCompactingCommits/0
+=== RUN   TestKillDuringCompactingCommits/1
+=== RUN   TestKillDuringCompactingCommits/2
+=== RUN   TestKillDuringCompactingCommits/3
+=== RUN   TestKillDuringCompactingCommits/4
+=== RUN   TestKillDuringCompactingCommits/5
+--- PASS: TestKillDuringCompactingCommits (1.71s)
+    --- PASS: TestKillDuringCompactingCommits/0 (0.32s)
+    --- PASS: TestKillDuringCompactingCommits/1 (0.13s)
+    --- PASS: TestKillDuringCompactingCommits/2 (0.20s)
+    --- PASS: TestKillDuringCompactingCommits/3 (0.28s)
+    --- PASS: TestKillDuringCompactingCommits/4 (0.36s)
+    --- PASS: TestKillDuringCompactingCommits/5 (0.41s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/kvdb	3.177s
