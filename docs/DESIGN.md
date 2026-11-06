@@ -293,6 +293,21 @@ Total 4+1+1+2+8+8+4+4 = **32** ✓.
 - Truncate always goes back to the **frame start** (`end`), never `end + n`.
 - The index and counters are never touched on any failure.
 
+**Implementation notes (Phase 2 Stage 3, 2026-11-06; `src/internal/storage/log.go`, `src/kvdb/db.go`).**
+
+* **F1 — no Sync after the post-Sync-failure truncate.** After a failed `Sync`, the frame is truncated best-effort but **no second `Sync` is issued**, so nothing could be mistaken for a successful retry (T-I1-3: "no retry of Sync"). The result is `ErrOutcomeUnknown` either way, and the next Open re-derives the state from the bytes. *(Approved 2026-11-06.)* Invariants, each pinned by `storage.TestF1SyncFailureInvariants`:
+  1. A failed `Sync` returns `ErrOutcomeUnknown`: never nil (definite success) and never `ErrFull` or another definite error (definite absence).
+  2. The handle enters FAILED and rejects every further operation (Put, Delete, Batch, Get, Compact, even an empty Batch) with `ErrFailed` and no I/O; only Close is accepted.
+  3. Nothing is retried automatically: after the failure the data file sees exactly one best-effort `Truncate` and no further `WriteAt` or `Sync`, ever.
+  4. After reopening, the operation is either fully present or fully absent, never partially applied. The test reaches both outcomes.
+  5. A failed rollback (truncate) cannot turn the unknown outcome into a definite one. The same rule applies to WriteAt failures: disk-full becomes the definite `ErrFull` only when both the truncate and its `Sync` succeeded; otherwise it is `ErrOutcomeUnknown`. The compaction failure paths in §11.3 follow the same rule.
+* **F2 — a write failure that is not disk-full is `ErrOutcomeUnknown` + FAILED even if the rollback succeeded**, exactly as the table says. Only disk-full with a successful truncate and `Sync` is the definite `ErrFull` that keeps the handle OPEN. T-I1-1 ("rollback succeeds, next commit at the old end") is therefore tested with a disk-full error.
+* **F3 — FAILED rejects Get too** (§13.2 "reject subsequent operations"); only Close is allowed. `Close` twice returns nil; every other call after Close returns `ErrClosed` (an empty batch included).
+* **F4 — limits that cannot be met are a definite `ErrFull` with no I/O:** sequence numbers exhausted (`NextSeq = 0`, note E4), or a frame that would pass the maximum file offset.
+* **F5 — Phase 2 API scope.** `Compact` is not exposed until Phase 3 (no stub). `Open(path, maxBytes)` validates `maxBytes` (0 = unlimited; negative or 1–31 → `ErrInvalidArgument`) and records it, but admission is not enforced until Phase 3.
+* **F6 — empty values.** `Put(k, nil)` stores an empty value; `Get` returns a non-nil empty slice, so present-but-empty is distinguishable from `ErrNotFound`.
+* **F7 — Get checks the entry type:** an index location that decodes to a DEL entry is `ErrCorruption` (defence in depth next to the CRC and key checks).
+
 ### 6.4 Durability ordering (summary)
 | Operation | Order |
 |---|---|
@@ -391,6 +406,16 @@ Truncation is done only by C1, C2, C4 and C5, always to exactly `pos`, never bel
 Recovery must not silently truncate structurally corrupt data whose checksums validate.
 
 A real read error must never be interpreted as EOF and must never cause truncation.
+
+**Implementation notes (Phase 2 Stage 2, 2026-11-06; `src/internal/recovery/scan.go`, `open.go`).** These refinements fill in cases the table leaves implicit; none relaxes it:
+
+* **E1 — a short read is C8, not a torn tail.** Every C rule is decided from the file size obtained before the scan. If a read then returns end-of-file before that size (the file shrank underneath, or a faulty read), Open fails with an I/O error and truncates nothing. Only `size − pos` and decoded bytes can justify truncation.
+* **E2 — a CRC-valid header with an invalid field** (type ≠ 1, reserved ≠ 0, op_count/payload_len out of range) is C7 (`ErrMalformed`), not C2.
+* **E3 — `snapshot_end` must fall on a frame boundary.** A valid frame that starts before `snapshot_end` and ends after it is refused with `ErrCorruption` (C0).
+* **E4 — sequence exhaustion.** After a valid frame with seq 2^64−1, `NextSeq` is reported as 0 (exhausted). Any later CRC-valid header is C7; a torn tail after it is still truncated. The write path (Stage 3) must refuse writes when `NextSeq` is 0.
+* **E5 — the superblock is re-read through the read-write handle** that the scan and the write path use, so a change between Resolve and Open cannot slip through (classified as A2 / D1).
+* **E6 — defensive truncation guard.** Open refuses to truncate unless `snapshot_end ≤ End < size`, which Scan already guarantees.
+* Order inside Open: lock → Resolve → open read-write → re-check superblock → Scan (read-only) → truncate to exactly `End` → `Sync` → `RemoveStale` (D2). A kill anywhere in that sequence, including between the truncate and the sync, is followed by an Open that reaches the same state (T-REC-12).
 
 ### 8.3 Snapshot boundary
 
@@ -513,6 +538,20 @@ A compacting commit preserves the old state plus the new commit.
 
 The new state must not be acknowledged until the replacement has succeeded.
 
+### 10.5 Implementation notes (Phase 3, 2026-11-06; `src/internal/storage/compact.go`, `src/internal/admission`) — pending review
+
+* **G1 — where.** Compaction needs the open handle's file, index and lock, so it lives in package `storage` next to the commit path. Package `admission` holds the pure size rules and the trigger. Package `compaction` is intentionally empty.
+* **G2 — snapshot layout.** The live keys (minus keys the commit touches) are copied in **file-offset order**, so the old file is read sequentially. Every copied value is verified (entry CRC, stored key, PUT type) and a mismatch aborts with `ErrCorruption`. The commit's final PUTs follow. Frames hold at most 65,535 entries and 4 MiB of payload (one maximal entry always fits). Sequence numbers start at the old `next_seq` (§9.1). The superblock has `snapshot_end` = end of the last frame and is written **last**, after the frames are synced, then synced again (§10.2 steps 5–8). Gaps 0–31 read as zeros until the seal, so an unfinished `.compact` is unsealed.
+* **G3 — compacting commit.** The whole result (old live state with the commit applied) is written as the snapshot; the commit has no separate frame. It is acknowledged only after R2, the directory sync, and validation of the reopened file.
+* **G4 — validation before swap (§10.2 step 12).** The new `path` is reopened and fully scanned with `recovery.ScanFile`. The superblock, end, frame count and key count must match the plan exactly and the tail must be clean. Only then are the file handle, index, end and `next_seq` swapped. R3 (delete `.old`) is best-effort afterwards.
+* **G5 — failure classes.** These follow §11.3 and the F1 rule that a failed rollback never yields a definite answer:
+  - **Phase A** (building `.compact`; the live file is untouched): every failure is definite and the handle stays OPEN. `.compact` is removed best-effort. Disk-full → `ErrFull`; a damaged live entry → `ErrCorruption`; anything else → the wrapped OS error.
+  - **Phase B** (after closing the data handle): if the old file is back at `path` and reopened (R1 failed, or R2 failed and the restore `.old → path` succeeded), the result is definite and the handle stays OPEN with the old index.
+  - **Any other Phase B failure** (restore failed, reopen failed, directory sync failed, validation failed): the handle becomes FAILED. A compacting commit returns `ErrOutcomeUnknown`; a plain compaction returns `ErrFailed` (no user operation is in doubt; the live data is the same either way).
+* **G6 — non-replacing moves pay off.** If R2 actually happened but reported an error, the restore `MoveNoReplace(.old → path)` fails because `path` exists, so the new file is never clobbered. Pinned by the fail-after cases of `TestCompactFaultSweep`. Moves, deletes and reopens retry sharing violations (antivirus) with `fileio.DefaultRetry`.
+* **G7 — automatic trigger (§10.1).** After a successful append, if the file is ≥ 4 MiB and more than twice a cheap estimate of the compacted size, the exact plan is computed and the compaction runs if it strictly shrinks the file. The commit was already durable, so it returns nil whatever the compaction does (if the compaction fails, both the old and new files contain the commit). The optional `RECOVERY_SAFE_BYTES` trigger is not implemented (1M keys open in 0.44 s; not needed yet).
+* **G8 — standalone `Compact`** is a no-op when there are no frames or the snapshot would not be strictly smaller (§12.3 rule 4).
+
 ---
 
 ## 11. Windows File Replacement Protocol
@@ -605,6 +644,15 @@ The ordering is important.
 
 A valid `path` always takes precedence over stale temporary files.
 
+**Implementation notes (Phase 2 Stage 1, 2026-11-06; `src/internal/recovery/authority.go`).** Three refinements, each one stricter than the table above, pending reviewer approval:
+
+* **D1 — "our superblock, but snapshot_end beyond EOF" is `ErrCorruption`, never deleted.** The *valid* definition above folds `snapshot_end ≤ size` into validity, which would make A2/A6 return `ErrBadFormat` for such a file, while §13.3 lists "`snapshot_end` beyond EOF" under `ErrCorruption`. Resolution: a file whose superblock decodes but whose `snapshot_end` exceeds its size is ours and damaged, so it is refused with **`ErrCorruption`** (for `path` under A2, for `.old` under A6). The same file under the name `.compact` or `.new` is also refused with `ErrCorruption` instead of being treated as unsealed and deleted by A7: a kill cannot produce it, so it may be the only remaining evidence of the data. Nothing is changed in any of these cases.
+* **D2 — A1 cleanup runs after the recovery scan, not inside the table.** `Resolve` returns the stale temp names in `Resolution.Stale`; Open deletes them with `RemoveStale` (best-effort) only after the scan has accepted `path`. If the scan finds `path` corrupt, `.old` and `.compact` are still there for manual recovery. A leftover temp next to a valid `path` is harmless: §11.2 deletes stale `.compact`/`.old` before compacting, and A7 never runs while `path` exists.
+* **D3 — A6 is evaluated before A5.** The order is A1, A2, A3, A4, **A6, A5**, A7. With `path` missing, `.old` invalid and `.new` sealed, the original order would adopt the empty `.new` (A5) and A1 would then delete the damaged `.old`, possibly the only copy. A `.new` cannot legitimately coexist with `.old` (A7 creates `.new` only when `.old` is missing), so refusing is always safe.
+* All seven rules are implemented now, including A3/A4/A6, which are pure moves or refusals and need no compaction code; leaving them out would make Open create a fresh database next to an interrupted compaction.
+* A non-regular file (for example a directory) under any of the four names is refused with `ErrBadFormat` and never touched.
+* Every read, move and delete retries sharing violations with `fileio.DefaultRetry`; after each move the directory is synced (`platform.SyncDir`: a no-op on Windows, `fsync(dir)` on Unix).
+
 ### 11.5 Crash testing
 
 Inject crashes:
@@ -654,6 +702,17 @@ Until judges clarify the interpretation:
 5. If a write cannot be safely admitted, return `ErrFull` without changing committed data.
 
 This is a design assumption, not an official judge clarification.
+
+**Implementation (Phase 3, `admission.Decide`), pending review:**
+
+* `Fits(cap, end, n)` checks `end ≤ cap` before computing `cap − end`, and never adds, so it cannot overflow or underflow (§12.1).
+* A commit is **PUT-bearing** when its *net* effect leaves some key holding a PUT; otherwise it is **delete-only**. A commit whose net effect changes nothing (only deletes of absent keys, `PUT X, DEL X` for an absent X) succeeds with no I/O (assumption A8). So `PUT X, DEL X` for a *present* X counts as a delete.
+* Decision: append if the frame fits. Otherwise compute the exact snapshot size S (live state with the commit applied):
+  - a PUT-bearing commit → compacting commit if S ≤ cap, else `ErrFull`;
+  - a delete-only commit → compacting commit if S ≤ cap or S < current size, else `ErrFull`.
+  - So a delete may append while the result stays within the cap, and on an over-cap file it must strictly shrink it.
+* `ErrFull` from admission does no I/O at all.
+* **The cap applies to the data file only.** The transient `.compact` (which exists at the same time as the old file during compaction) is not counted: judge question 2. A real out-of-space condition while writing `.compact` gives a definite `ErrFull` with nothing changed (G5).
 
 ### 12.4 Disk-full errors
 
@@ -1212,6 +1271,15 @@ A scanner, indexer or backup tool holding `path.lock` can make Open report `ErrL
 
 Rule C3 (§8.2) trusts the crash model: real mid-file damage (bit-rot) behind a damaged header would be truncated away without detection. Bit-rot is outside the official model [REQ §5 G]; refusing instead would let a crafted user value make Open fail on our own file.
 
+### Phase 3 risks *(added 2026-11-06)*
+
+* **max_bytes interpretation (A2)** is our assumption, not a ruling. In particular, the transient `.compact` is not counted, so the disk needs room for the old file plus the snapshot during compaction.
+* **Compacting-commit cost.** Under a tight cap, every write that does not fit rewrites the whole live state (O(live bytes) I/O, under the exclusive lock). This is correct but can be slow; reads and writes wait for the duration.
+* **Peak memory during compaction** is about twice the index (old index + plan + the new index from the validation scan) until the swap. At 1M keys that is roughly 2 × 195 MB.
+* **Antivirus or backup tools holding the data file** longer than the ~1 s retry budget make R1/R2 fail. That is normally a definite error with the old file restored; if the restore is also blocked, the handle becomes FAILED and the next Open finishes the job (A3/A4).
+* **Validation failure after R2** (only possible through an engine bug or an I/O error while scanning) leaves the handle FAILED. If the new file really were bad, the next Open would refuse with `ErrCorruption` while keeping `.old` (D2), which needs manual recovery.
+* **Power loss.** `SyncDir` is a no-op on Windows; the durability of `MoveFileW` metadata under power loss is not claimed (assumption A5).
+
 ### Linux primitives untested *(added 2026-11-06)*
 
 `MoveNoReplace` (link + unlink) and `IsDiskFull` (ENOSPC/EDQUOT) compile and pass `go vet` for linux/amd64, but their tests have only run on Windows.
@@ -1327,3 +1395,39 @@ The following invariants must hold throughout implementation.
 | 8 | Authority table A1–A7 with ordering, cleanup and termination | §11.3, §11.4 | Spec T-AUTH-1 … T-AUTH-12 |
 | 9 | `ErrBadFormat` vs `ErrCorruption` | §13.3, `dberr` docs, inv. 21 | `kvdb.TestErrorsAreDistinct`; spec T-ERR-1 … T-ERR-4 |
 | 10 | Cross-check against Phase 1: `format.Classify` mislabelled a bare entry-checksum error as I/O; fixed (Corrupt) and a Usage class added for encoder/caller errors | `format/errors.go` | `format.TestClassifyTable`, `TestDecodeEntryErrorClasses`, `FuzzDecodeEntry` now asserts classes |
+
+### 2026-11-06 — Phase 2 Stage 1 (pending review)
+
+| # | Change | Sections | Evidence / tests |
+|---|---|---|---|
+| 11 | D1: superblock valid but `snapshot_end` > size → `ErrCorruption` for every name; never deleted | §11.4 notes, §13.3 | `recovery.TestAuthorityTable` D1/* |
+| 12 | D2: A1 cleanup deferred to `RemoveStale` after the scan | §11.4 notes | `recovery.TestResolveDefersStaleCleanup` |
+| 13 | D3: A6 evaluated before A5 | §11.4 notes | `recovery.TestAuthorityTable` D3/* |
+
+### 2026-11-06 — Phase 2 Stage 2 (pending review)
+
+| # | Change | Sections | Evidence / tests |
+|---|---|---|---|
+| 14 | E1: a short read during the scan is C8 (I/O), never a truncation | §8.2 notes | `recovery.TestReadErrorsNeverTruncate` (Partial + `io.EOF` at every read) |
+| 15 | E2: CRC-valid malformed header is C7 | §8.2 notes | `TestTailC7CRCValidButWrong/reserved-field-set` |
+| 16 | E3: `snapshot_end` must be a frame boundary | §8.2 notes, §8.3 | `TestTailC0InsideSnapshot/boundary-mismatch` |
+| 17 | E4: sequence exhaustion reported as `NextSeq = 0` | §8.2 notes, §9.2 | `TestSequenceExhaustion` |
+
+### 2026-11-06 — Phase 2 Stage 3 (pending review)
+
+| # | Change | Sections | Evidence / tests |
+|---|---|---|---|
+| 18 | F1: no Sync after the best-effort truncate that follows a failed Sync | §6.3 notes | `storage.TestI1SyncFailureIsNotRetried` |
+| 19 | F2: non-disk-full write failure is always OutcomeUnknown + FAILED | §6.3 notes | `storage.TestI1WriteFailuresFailTheHandle` |
+| 20 | F3: FAILED rejects Get; Close idempotent | §6.3 notes, §13.2 | `assertFailed`, `TestClosedHandle`, `kvdb.TestLockedAndClosed` |
+| 21 | F4: exhausted sequence / max offset → definite ErrFull | §6.3 notes | `storage.TestSequenceExhaustionIsErrFull` |
+| 22 | F5: `Compact` not exposed yet; `maxBytes` validated, not enforced | §6.3 notes, §14 | `kvdb.TestOpenValidatesArguments` |
+
+### 2026-11-06 — F1–F5 approved; Phase 3 (pending review)
+
+| # | Change | Sections | Evidence / tests |
+|---|---|---|---|
+| 23 | F1 invariants 1–5 stated explicitly | §6.3 notes | `storage.TestF1SyncFailureInvariants` |
+| 24 | Admission: net-effect PUT-bearing vs delete-only; A8 no-op commits; cap = data file only | §12.3 implementation | `admission.TestDecide`, `TestFitsNeverOverflows`, `storage.TestAdmission*`, `kvdb.TestMaxBytesThroughAPI` |
+| 25 | Compaction G1–G8: snapshot layout, compacting commit, validation before swap, failure classes, automatic trigger | §10.5 | `storage.TestCompact*`, `TestAutoCompactTrigger`, `kvdb.TestCompactThroughAPI`, `kvdb.TestKillDuringCompactingCommits` |
+| 26 | F5 superseded: `Compact()` is now public; `maxBytes` enforced | §14, §12 | as above |

@@ -1,8 +1,6 @@
 // Package kvdb is the public API of the engine.
 //
-// Phase 1 status: only the error values and the batch operation type are
-// defined. The DB type and Open / Put / Get / Delete / Batch / Compact / Close
-// arrive in Phase 2; nothing here performs I/O yet.
+// Open, Put, Get, Delete, Batch, Compact and Close are in db.go.
 package kvdb
 
 import (

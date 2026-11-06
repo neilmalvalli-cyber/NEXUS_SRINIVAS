@@ -32,6 +32,75 @@ Package `src/internal/platform`:
 Package `src/kvdb`: op/batch validation and error mapping, 10,000-op boundary,
 all error values distinct (incl. `ErrBadFormat`).
 
+## Phase 2 Stage 1 — file abstraction, lock, creation (✅ implemented)
+
+| Package | Tests | Covers |
+|---|---|---|
+| `fileio` | `TestOSCreateExclusiveRefusesExisting`, `TestOSFileOperations`, `TestReadFullAtDistinguishesEOFFromIOError`, `TestWriteFullAtDetectsShortWrites`, `TestRetry`, `TestDefaultRetrySchedule`, `TestFaultFSModesAndTrace`, `TestFaultFSSyncTruncateCloseFaults` | full reads/writes; EOF vs real I/O errors; short writes with a nil error; retry schedule (15 attempts, 14 sleeps, 1 s); faultfs modes and trace; faulted Close still releases the handle |
+| `platform` | `TestLockFileExclusiveAndReleasable`, `TestIsLockBusyRejectsOtherErrors` | exclusive lock, busy classification, lock file kept |
+| `locking` | `TestAcquireReleaseKeepsLockFile` (T-LOCK-6), `TestSecondAcquireInSameProcessIsErrLocked` (T-LOCK-3), `TestBriefThirdPartyHandleIsAbsorbed` (T-LOCK-5), `TestNonBusyErrorIsNotErrLocked`, `TestAcquireTouchesOnlyTheLockFile`, `TestCheckRejectsNilReleasedAndForeignLocks`, `TestReleaseErrorStillReleases`, `TestLockContentionAcrossProcessesAndKill` (T-LOCK-4, child process killed), `TestLockReleasedByOrderlyChildExit` | lock contention within and across processes |
+| `recovery` | `TestCreateThroughNew` (T-LOCK-1 + creation order), `TestReopenDoesNotRecreate`, `TestResolveRequiresLock`, `TestLockedOpenChangesNothing` (T-LOCK-2), `TestAuthorityTable` (T-AUTH-1…10, interrupted creation: empty / partial / sealed `.new`, D1, D3, non-regular files), `TestResolveDefersStaleCleanup` (D2), `TestCheckErrorsStopOpen` (T-AUTH-12), `TestShortSuperblockReadIsNotBadFormat`, `TestSharingViolationsAreRetried`, `TestRestartCap`, `TestFaultSweep` (fail-before / fail-after / short write at every operation), `TestCrashSweep` (T-AUTH-11: kill before/after/mid-write at every operation; re-run reaches the same state) | authority table and safe creation |
+
+T-AUTH-11 is now covered for every state the table *resolves*. Kill points inside compaction itself (R1/R2/R3) are still Phase 3.
+
+## Phase 2 Stage 2 — index, recovery scanner, tail rules (✅ implemented)
+
+Files are built byte by byte with the Phase 1 encoder (`recovery/scan_test.go`).
+
+| ID | Test | Result |
+|---|---|---|
+| — | `index.TestIndexPutGetDeleteAndCounters`, `TestIndexGetDoesNotAllocate` | ✅ |
+| — | `TestOpenRebuildsIndex` (batches, overwrite, delete, live/dead bytes, clean Open changes nothing), `TestOpenFreshDatabase`, `TestStateCloseReleasesEverything` | ✅ |
+| T-REC-1 | `TestTailC1ShortTrailer` (1…31 bytes, zeros and non-zeros; Sync after the truncate; no writes) | ✅ |
+| T-REC-2 | `TestTailC2DamagedHeader` (bad magic, bad header CRC, zero fill, junk after) | ✅ |
+| T-REC-3 | `TestTailC3NoForwardScan` | ✅ |
+| T-REC-4, T-REC-11 | `TestTailKillPointSweep` (cut at every byte of a batch whose value contains valid frame headers with the expected seq; torn batch never partially applied; second Open clean) | ✅ |
+| T-REC-5 | `TestTailC5PayloadCRCAtEOF` (each payload byte flipped; zero-filled suffixes) | ✅ |
+| T-REC-6 | `TestTailC6BytesAfterBadPayload` | ✅ |
+| T-REC-7 | `TestTailC4PayloadPastEOF` (incl. payload_len = 2^40) | ✅ |
+| T-REC-8 | `TestTailC7CRCValidButWrong` (seq skip/repeat, first_seq mismatch, CRC-valid malformed payload, CRC-valid malformed header) | ✅ |
+| T-REC-9 | `TestTailC0InsideSnapshot` (C5-shaped and header damage inside the snapshot, boundary mismatch; truncation at exactly snapshot_end allowed) | ✅ |
+| T-REC-10, T-ERR-4 | `TestReadErrorsNeverTruncate` (error and short read at every read position, small and 5 MiB logs) | ✅ |
+| T-REC-12 | `TestOpenCrashSweep` (kill before/after every Open operation incl. truncate and sync), `TestOpenFaultSweep` | ✅ |
+| T-ERR-1, T-ERR-2 | `TestErrorMeanings`, plus every refusal test asserts the other error is not also matched | ✅ |
+| — | `TestStaleTempsSurviveScanRefusal` (D2 end to end), `TestSequenceExhaustion` (E4) | ✅ |
+| §8.4 | `TestOpenMillionKeysTiming` (opt-in, `KVDB_PERF=1`): 1,000,000 keys, 37 MB, **0.44 s**, about 195 MB heap | ✅ |
+
+T-ERR-3 and T-I1-1…4 are covered in Stage 3 below.
+
+## Phase 2 Stage 3 — write path, Get, public API (✅ implemented)
+
+| ID | Test | Covers |
+|---|---|---|
+| — | `storage.TestCommitGetDeleteAndReopen`, `TestGetReturnsIndependentCopyAndEmptyValue`, `TestNoIOForNoOps`, `TestValidationBeforeIO`, `TestCommitWritesThenSyncs` | semantics; Delete of a missing key and empty batch do no I/O; validation before I/O; writes strictly sequential at the old end, then exactly one Sync |
+| T-I1-1 | `TestI1DiskFullRollbackKeepsHandleOpen` (failure at the 1st/2nd/3rd WriteAt of a multi-write frame) | definite `ErrFull`, handle OPEN, file = previous bytes + next frame exactly |
+| T-I1-2 | `TestI1WriteFailuresFailTheHandle` (I/O error, short write with nil error, failed truncate, failed rollback Sync) | `ErrOutcomeUnknown`, FAILED, every later call `ErrFailed` with no I/O, Close works, reopen all or nothing |
+| T-I1-3 | `TestI1SyncFailureIsNotRetried` (Sync fails before / after taking effect) | data-file ops are exactly `write sync truncate`; FAILED |
+| T-I1-4 | `TestI1ConcurrentWritersDoNotInterleave` (4 writers × 40 commits, some multi-write frames) | writes contiguous per frame, one Sync per frame, nothing interleaved |
+| — | `TestConcurrentReadersSeeWholeValues` | a Get during batches sees a whole old or new value |
+| T-ERR-3 | `TestGetCorruptionKeepsHandleOpen` | flipped byte → `ErrCorruption`, other keys readable, still writable; short read → `ErrCorruption`; OS read error → wrapped, not corruption |
+| — | `TestClosedHandle`, `TestSequenceExhaustionIsErrFull` | lifecycle; F4 |
+| — | `TestCommitFaultSweep` (every commit op × fail-before/after/short write/disk full) | **nil → batch present after reopen; `ErrFull` → absent; `ErrOutcomeUnknown` → all or nothing** |
+| — | `TestCommitCrashSweep` (kill before / mid-write / after every commit op) | prior state intact, batch all or nothing; both outcomes reached |
+| — | `kvdb.TestOpenValidatesArguments`, `TestAPIRoundTripAndPersistence`, `TestAPIValidationErrors`, `TestMaxBatchOfDistinctKeys`, `TestLockedAndClosed`, `TestBadFormatFileIsUntouched` | public API, last-wins batches, 1 MiB value / 1024-byte key, 10,000-op batch |
+| — | `kvdb.TestKillDuringWritesLosesNothingAcknowledged` (child process writes Puts or 51-op Batches and prints ACK after each success; parent kills it with `TerminateProcess`; 3 rounds each) | **every ACKed write present and correct; the in-flight one all or nothing** |
+| F1 | `storage.TestF1SyncFailureInvariants` (Sync fails before/after taking effect × rollback truncate succeeds/fails) | the five approved F1 invariants, both reopen outcomes reached |
+
+## Phase 3 — max_bytes admission and crash-safe compaction (✅ implemented)
+
+| Area | Test | Covers |
+|---|---|---|
+| Admission arithmetic | `admission.TestFitsNeverOverflows`, `TestDecide`, `TestTriggers` | no overflow/underflow at 2^64 limits; every decision branch; snapshot size computed only when needed; 4 MiB / 2× trigger |
+| Plain compaction | `storage.TestCompactPreservesLiveStateAndShrinks`, `TestCompactIsNoOpWhenNothingToReclaim`, `TestCompactAfterDeletingEverything`, `TestCompactSplitsFrames` | contents and live counters preserved, file shrinks, `first_seq` = old `next_seq` (§9.1), numbering continues, no temp files left; no-op cases do no I/O / no rewrite; empty snapshot (32 bytes); frame splitting by payload |
+| Automatic trigger | `TestAutoCompactTrigger` | 12 MiB of overwrites keep the file < 9 MiB; nothing below 4 MiB |
+| max_bytes policy | `TestAdmissionCompactingCommitAndFull`, `TestAdmissionOverCapDatabase`, `TestAdmissionRandomWorkloadMatchesModel` (600 random commits, cap 16 KiB, checked against a model), `kvdb.TestMaxBytesThroughAPI` | appends then compacting commits stay ≤ cap; oversized → `ErrFull` with no I/O and no change; rule 1 over-cap open; rule 2 PUT refused; rule 3 deletes shrink an over-cap file; A8 net-empty commit no I/O; rejected batch never partially applied |
+| Failure handling (§11.3) | `TestCompactDiskFullAndCorruptionChangeNothing`, `TestCompactRetriesSharingViolations`, `TestCompactingCommitFailedRestoreIsUnknown` | disk-full / corrupt live value → definite, file unchanged, `.compact` removed; antivirus-style violations on moves absorbed; R2 + restore failure → `ErrOutcomeUnknown` (never definite), FAILED, next Open adopts `.compact` (A3) |
+| Kill points (§11.5, T-AUTH-11) | `TestCompactCrashSweep` (plain and compacting commit; kill before / mid-write / after every operation, including R1, R2, R3, the seal and the stale-file deletes) | reopen always succeeds; plain compaction never changes contents; compacting commit all or nothing (both reached); no temp file survives the next Open |
+| Fault sweep | `TestCompactFaultSweep` (every operation fails before / after taking effect) | definite errors: handle OPEN with the old state in memory and on reopen; unknown: FAILED, reopen all or nothing; both classes reached |
+| Concurrency | `TestCompactConcurrentReaders` | Gets during 20 compactions always see the right values |
+| Real kills | `kvdb.TestKillDuringCompactingCommits` (child writes under a 64 KiB cap, so it compacts every few writes; killed with `TerminateProcess`; 6 rounds) | every ACKed value survives; file ≤ cap after reopen; no leftover files |
+| Public API | `kvdb.TestCompactThroughAPI` | Compact shrinks the file, leaves only `db.kv` + `.lock`, `ErrClosed` after Close |
+
 ## Specifications for the 2026-11-06 design corrections (📋)
 
 All of these need the Phase 2 `fileOps` fault-injection layer and a recording

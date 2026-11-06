@@ -1,4 +1,8 @@
-// Package compaction writes a sealed snapshot to path.compact and swaps it in with two non-overwriting renames (path->path.old, path.compact->path).
+// Package compaction is intentionally empty.
 //
-// Phase 1: placeholder. Not implemented yet.
+// Compaction needs the open handle's file, index and lock, so it is
+// implemented next to the commit path in package storage (compact.go):
+// snapshot planning, the sealed .compact file and the two non-overwriting
+// moves of DESIGN §11. The pure size and trigger rules live in package
+// admission.
 package compaction

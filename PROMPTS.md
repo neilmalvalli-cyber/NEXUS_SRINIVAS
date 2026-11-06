@@ -1310,3 +1310,149 @@ Add tests or test specifications for every change.
 Do not start Phase 2 yet. Do not commit or push automatically.
 At the end, report any contradictions, unresolved risks and remaining judge questions.
 ````
+
+### Prompt 3a (message about a Supercharge AI screenshot)
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 13:40 (local time)
+- **Notes:** The message contained only a screenshot of the Supercharge AI start screen showing: "inside a git repository. Navigate to a git repo or run 'git init' first." No text was typed.
+
+### Prompt 4
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 14:00 (local time)
+- **Notes:** Pasted with no other text. Full text as sent:
+
+````text
+We are continuing development of NEXUS_SRINIVAS.
+Supercharge AI is being temporarily excluded. You are the primary implementation assistant.
+IMPORTANT PROJECT STATE:
+
+* Repository: C:\Users\MY PC\NEXUS_SRINIVAS
+* Branch: phase1-format
+* Phase 1 commit: ee4b5d6
+* Go version: 1.27.3
+* Target OS: Windows 64-bit
+* Phase 1 binary format, tests and documentation are complete.
+
+FIRST:
+
+1. Verify the repository path and Git branch.
+2. Check git status and preserve any existing changes.
+3. Verify commit ee4b5d6.
+4. Read the COMPLETE docs/DESIGN.md, including sections 8–28.
+5. Read docs/RECOVERY.md, ARCHITECTURE.md, FILE_FORMAT.md, TEST_PLAN.md and JUDGE_CLARIFICATIONS.md.
+6. Inspect the existing Phase 1 source code before modifying anything.
+
+NOW BEGIN PHASE 2 — STAGE 1 ONLY.
+Implement:
+A. File abstraction
+
+* A small interface for database file operations.
+* Read, write, sync, truncate, stat and close operations as required by the design.
+* Fault injection support for tests.
+* Ability to simulate short writes and real I/O errors.
+
+B. Windows process locking
+
+* Implement the approved exclusive-sharing lock-file approach.
+* Keep Windows-specific functionality inside src/internal/platform.
+* Classify sharing violations correctly.
+* Return ErrLocked after the documented bounded retries.
+* Never perform recovery cleanup before acquiring the lock.
+
+C. Safe database creation
+
+* Implement creation through the .new temporary file.
+* Follow the approved authority rules in DESIGN.md.
+* Never overwrite or delete the only valid database copy.
+* Ensure the file is sealed and synced according to the design.
+
+STRICT RULES:
+
+* Do not change the binary file format.
+* Do not weaken any recovery invariant.
+* Do not implement compaction yet.
+* Do not implement max_bytes yet.
+* Do not implement the complete recovery scanner yet.
+* Do not silently change public API signatures.
+* Keep Windows-specific code isolated.
+* Use only the Go standard library unless the design explicitly approves otherwise.
+* Append this prompt and every subsequent AI prompt to PROMPTS.md exactly as required.
+
+TESTING:
+
+* Add unit tests for the file abstraction.
+* Add fault-injection tests.
+* Test lock contention between processes where practical.
+* Test database creation and interrupted creation.
+* Run gofmt.
+* Run go vet ./...
+* Run go test ./...
+* Run Windows build and relevant tests.
+
+WORKFLOW:
+Implement Stage 1 in small steps.
+After each step, report:
+
+1. Files created or modified.
+2. Design sections followed.
+3. Tests added and results.
+4. Unresolved issues.
+5. Next step.
+
+Do not commit, push, reset or discard any work.
+STOP after Stage 1 and wait for my review before beginning Stage 2.
+Prioritize correctness, crash safety and testability over speed.
+````
+
+### Prompt 4a
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 (local time), during Phase 2 Stage 1
+- **Notes:** Sent after interrupting a tool call (a vet run for several OS targets). Full text as sent:
+
+````text
+continue
+````
+
+### Prompt 5
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 (local time), after the Phase 2 Stage 1 report
+- **Notes:** Sent by clicking the "Approve, start Stage 2" button, which answered Claude's question "Do you approve design notes D1–D3 so I can start Stage 2?". The Stage 1 report had named Stage 2 as "the recovery scanner and tail rules C0–C8". Full text as sent:
+
+````text
+Approve, start Stage 2
+````
+
+### Prompt 6
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 (local time), after the Phase 2 Stage 2 report
+- **Notes:** Sent by clicking the "Approve, start Stage 3" button, which answered Claude's question "Do you approve notes E1–E4 so I can start Stage 3 (Put/Get/Delete/Batch/Close)?". Full text as sent:
+
+````text
+Approve, start Stage 3
+````
+
+### Prompt 7
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 (local time), after the Phase 2 Stage 3 report
+- **Notes:** Pasted with no other text. Full text as sent:
+
+````text
+I approve F1–F5.
+For F1, please ensure the following invariants are explicitly documented and tested:
+
+1. A failed Sync returns ErrOutcomeUnknown, never a definite success or definite absence.
+2. The handle enters FAILED and accepts no further operations except Close.
+3. The database does not automatically retry an operation with an unknown outcome.
+4. After reopening, the operation may be fully present or fully absent, but never partially applied.
+5. A failed rollback/truncate must not accidentally turn an unknown outcome into a definite failure classification.
+
+Proceed to Phase 3: maxBytes enforcement and crash-safe compaction.
+Before implementation, review the compaction authority table, replacement protocol, Windows rename behaviour and maxBytes semantics. Preserve all existing invariants and tests.
+Do not commit or push. Keep PROMPTS.md updated, run the full test suite and stop for review when Phase 3 is complete. Report unresolved risks separately.
+````

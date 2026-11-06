@@ -28,6 +28,15 @@ func IsDiskFull(err error) bool {
 	return errno == errorDiskFull || errno == errorHandleDiskFull
 }
 
+// DiskFullError returns an error value that IsDiskFull accepts, so tests in
+// other packages can inject a realistic out-of-space failure.
+func DiskFullError() error { return errorDiskFull }
+
+// SharingViolationError returns an error value that IsSharingViolation
+// accepts. It exists so tests in other packages can inject a realistic
+// sharing violation without spelling out a Windows error number.
+func SharingViolationError() error { return errorSharingViolation }
+
 // IsSharingViolation reports whether err means another handle (another
 // process, an antivirus scanner, a backup tool, or an open handle in this
 // process) denies the requested access. Callers retry these with bounded

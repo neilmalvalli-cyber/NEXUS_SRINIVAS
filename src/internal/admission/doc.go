@@ -1,4 +1,7 @@
-// Package admission implements the max_bytes policy: decides append, compacting commit or ErrFull using pure arithmetic before any I/O. [ASSUME] policy pending judge clarification.
+// Package admission implements the max_bytes policy (DESIGN §12): it decides
+// between append, compacting commit and ErrFull using pure arithmetic before
+// any I/O, plus the automatic-compaction trigger (§10.1).
 //
-// Phase 1: placeholder. Not implemented yet.
+// The policy is our documented assumption A2 (JUDGE_CLARIFICATIONS.md),
+// pending a judge clarification.
 package admission

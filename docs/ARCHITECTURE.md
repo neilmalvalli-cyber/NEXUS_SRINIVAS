@@ -19,18 +19,24 @@ tail rules C0–C8 → ready (DESIGN §8, §11.4; checklist in [RECOVERY.md](REC
 ```
 src/
   cmd/kvdb/            CLI entry point (Phase 1: placeholder)
-  kvdb/                public API: DB, Op, errors (Phase 1: Op + errors only)
+  kvdb/                public API: Open/Put/Get/Delete/Batch/Close, Op, errors
+                       (Compact, max_bytes enforced: Phase 3)
   internal/
     format/            on-disk codec, CRC32C, limits, error classes   <- done
     platform/          OS-specific primitives: MoveNoReplace,
                        IsDiskFull, IsSharingViolation                 <- done
     dberr/             sentinel errors shared by all packages         <- done
-    storage/           commit path, truncate-on-failure               (Phase 2)
-    recovery/          authority resolution, scan, tail rules         (Phase 2/3)
-    compaction/        snapshot + two non-overwriting moves           (Phase 3)
-    index/             key -> {offset, len}                           (Phase 2)
-    admission/         max_bytes policy [ASSUME]                      (Phase 3)
-    locking/           process lock file                              (Phase 2)
+    fileio/            File/FS interfaces, full reads/writes with
+                       short-I/O detection, bounded retry policy      <- Phase 2 Stage 1
+      faultfs/         test-only fault/crash injection + op recorder  <- Phase 2 Stage 1
+    storage/           commit path, rollback, FAILED state, Get,
+                       compaction + replacement protocol (compact.go) <- Phase 2/3
+    recovery/          authority table A1-A7 + creation via .new      <- Phase 2 Stage 1
+                       scan, tail rules C0-C8, recovery Open          <- Phase 2 Stage 2
+    compaction/        intentionally empty: compaction is storage/compact.go
+    index/             key -> {offset, len}, live-byte counter        <- Phase 2 Stage 2
+    admission/         max_bytes decision + auto-compaction trigger   <- Phase 3
+    locking/           process lock file + ErrLocked after retries    <- Phase 2 Stage 1
     cli/               command implementations                        (Phase 4)
 tests/                 cross-package / crash tests (later phases)
 ```
