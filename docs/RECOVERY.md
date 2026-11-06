@@ -1,6 +1,6 @@
 # Recovery
 
-Status: **specification only. Recovery is implemented in Phase 2.**
+Status: implemented (Phase 2–3) in `src/internal/recovery`; this page is the checklist it follows.
 
 The normative rules live in [DESIGN.md](DESIGN.md); this page is the
 implementer's checklist, with the reasoning behind each rule. Section references

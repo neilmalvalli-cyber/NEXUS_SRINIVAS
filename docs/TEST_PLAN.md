@@ -173,11 +173,72 @@ Construct files byte by byte with the Phase 1 encoder, then Open.
 | T-ERR-3 | Get after flipping a byte of an indexed value on disk | `ErrCorruption`; handle still OPEN; other keys still readable |
 | T-ERR-4 | read error during Open | neither `ErrBadFormat` nor `ErrCorruption`; wraps the OS error |
 
-## Later phases (planned)
+## Phase 4 — CLI, torture tool, official scenarios, acceptance (✅ implemented)
 
-* Storage: commit path with fault-injecting `fileOps` (fail at every write / sync / truncate).
-* Compaction: kill at every step of the R1/R2 protocol; R1/R2 failure cleanup rules (§11.3).
-* Admission: max_bytes boundary and overflow tables.
-* Crash harness: child process killed with `TerminateProcess` at random points, oracle checks invariant rules 1–5.
-* Concurrency: ≥ 2 writers + readers under `-race`, no half-batch visible.
-* Performance: open with 1,000,000 keys < 2 s.
+Every row was executed; results are in [results/](results/) (scenario table:
+[results/SCENARIO_RESULTS.md](results/SCENARIO_RESULTS.md)). Tags: [REQ] official
+problem statement, [ASSUME] our interpretation, [OPT] extra.
+
+### Official requirements → tests
+
+| Requirement | Tag | Test / evidence |
+|---|---|---|
+| Six operations, durable put/delete/batch, get not-found | [REQ] | `kvdb` package tests; `cli.TestCommandsRoundTrip`; scenarios A, B |
+| Keys 1–1024 B, values 0–1 MB, batches ≤ 10,000 ops | [REQ] ("1 MB" = 1 MiB [ASSUME]) | `kvdb.TestOpValidate`, `kvdb.TestValidateBatch`, `kvdb.TestAPIValidationErrors`, `kvdb.TestMaxBatchOfDistinctKeys`; `cli.TestBatchFileOrderingAndAtomicity` (10,000 accepted, 10,001 rejected); `cli.TestLineReaderLimits` (1 MiB line) |
+| ≥ 1,000,000 keys; open < 2 s | [REQ] | `TestGroupB/B6`, `TestGroupF/F3`, `recovery.TestOpenMillionKeysTiming`, `TestAcceptanceMillionPutDelete` |
+| ≥ 2 concurrent writers; get never sees half a batch | [REQ] | `TestGroupD/D1–D4`; `cli.TestServeConcurrentWritersKeepOrder`; `storage.TestI1ConcurrentWritersDoNotInterleave` |
+| Disk full / `max_bytes` | [REQ] | `TestGroupE/E1–E5`; `cli.TestMaxBytesFlag`, `cli.TestServeMaxBytesErrorsAreClean`; torture `disk-full` |
+| CLI: open (key count + recovery time), put, get (NOTFOUND), del, batch file, dump (sorted), check (OK or reason), serve (ACK after durable) | [REQ] | `src/internal/cli/cli_test.go` (all commands, usage errors, quoting, check on torn/corrupt/garbage files, lock while serving) |
+| serve input format (`<writer-id> <op-id> <cmd>`, `batch <n>` + n lines, `compact`, replies VALUE/NOTFOUND/ERR) | [ASSUME] (statement fixes only `ACK <op-id>`) | `cli.TestServeProtocol`, `FuzzParseRequest` |
+| serve never ACKs a failed / unknown write | [REQ] | `cli.TestServeNeverAcksFailedWrites` (ErrOutcomeUnknown, ErrFailed, ErrFull, OS error) |
+| serve never executes a request cut off mid-line | [ASSUME] | `cli.TestServeIgnoresIncompleteFinalLine` |
+| `--max-bytes` per invocation, not persisted | [ASSUME] | `cli.TestMaxBytesFlag` |
+| check runs recovery first (a torn unacknowledged tail is not corruption) | [ASSUME] | `cli.TestCheckReportsCorruptionAndTornTail` |
+| Torture: serve child, ≥ 2 writers, puts/deletes/batches, oracle file, random-ms kill, open → check → dump, compare, 500 default iterations, one line per iteration, stop on first failure with op IDs, `--seed` mandatory and reproducible | [REQ] | `torture/` (run logs in results/); `torture/model_test.go` (checker rejects lost writes, partial batches, garbage, rejected values; accepts legal outcomes); mutation runs in BREAKING.md §4 |
+| Torture modes: large values, large batches, recovery kills, compaction kills, disk full | [REQ] | `--mode large-values`, `large-batch`, `recovery-crash`, `compaction`, `disk-full` |
+| Extra torture modes `concurrent-disjoint`, `same-key`, gets, JSON report | [OPT] | D1, D2 |
+| 32 scenarios A1–F4 | [REQ] | `src/scenarios` (`TestGroupA` … `TestGroupF`), one subtest per scenario |
+| 1M PUT then 1M DELETE, compaction shrinks the file, writes after compaction | [REQ] (DESIGN §23 #19) | `TestAcceptanceMillionPutDelete` (KVDB_ACCEPTANCE=1) |
+
+### Official scenarios → tests
+
+| # | Test | Crash method |
+|---|---|---|
+| A1 | `TestGroupA/A1` | faultfs crash before the first write |
+| A2 | `TestGroupA/A2` | faultfs crash mid-write, 7 torn lengths |
+| A3 | `TestGroupA/A3` | crash at Sync / right after the write |
+| A4 | `TestGroupA/A4` | crash right after Sync returned |
+| A5 | `TestGroupA/A5` | crash after Commit returned; serve killed on ACK ×20 |
+| A6 | `TestGroupA/A6` | crash sweep over Delete |
+| A7 | `TestGroupA/A7` | crash sweep over a 1 MiB put; torture `large-values` |
+| B1 | `TestGroupB/B1` | torn write keeping header + 3 entries |
+| B2 | `TestGroupB/B2` | payload minus last byte; header (marker) zeroed |
+| B3 | `TestGroupB/B3` | crash at Sync after the full frame |
+| B4 | `TestGroupB/B4` | crash after success; serve kill on ACK |
+| B5 | `TestGroupB/B5` | put X/del X ordering + crash sweep |
+| B6 | `TestGroupB/B6` | 1M-key DB, 10,000-op frame torn halfway, timed reopen; torture `large-batch` |
+| C1 | `TestGroupC/C1` | crash at every recovery operation before truncation; 3-crash chains |
+| C2 | `TestGroupC/C2` | crash around Truncate and its Sync |
+| C3 | `TestGroupC/C3` | crash sweep of compaction before R1 |
+| C4 | `TestGroupC/C4` | crash at/after R1, at/after R2 |
+| C5 | `TestGroupC/C5` | crash sweep after R2; torture `compaction` |
+| C6 | `TestGroupC/C6` | crash around closing the file and releasing the lock |
+| D1 | `TestGroupD/D1` | torture `concurrent-disjoint` |
+| D2 | `TestGroupD/D2` | torture `same-key` |
+| D3 | `TestGroupD/D3` | torture `large-batch` |
+| D4 | `TestGroupD/D4` | 4 readers (Get + Range snapshots) during 2,000 batches |
+| E1 | `TestGroupE/E1` | cap during a put; CLI |
+| E2 | `TestGroupE/E2` | over-cap batch; disk-full halfway through the frame |
+| E3 | `TestGroupE/E3` | crash after ErrFull; torture `disk-full` |
+| E4 | `TestGroupE/E4` | disk full writing `.compact`; over-cap compacting commit; crash sweep |
+| E5 | `TestGroupE/E5` | fill, delete 80 %, put again |
+| F1 | `TestGroupF/F1` | torture `default`, 500 iterations in full mode |
+| F2 | `TestGroupF/F2` | 100 chains of 2 crashed recoveries; torture `recovery-crash` |
+| F3 | `TestGroupF/F3` | 1M keys via serve, kill, `kvdb open` timed, dump verified |
+| F4 | `TestGroupF/F4` | `os.Truncate(size-1)` |
+
+### Not run
+
+* `go test -race` (no C compiler on this machine).
+* Power-loss tests (out of the official model; not claimed).
+* Linux/macOS/FreeBSD runtime tests (cross-compiled and vetted only).

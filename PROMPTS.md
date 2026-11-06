@@ -1456,3 +1456,306 @@ Proceed to Phase 3: maxBytes enforcement and crash-safe compaction.
 Before implementation, review the compaction authority table, replacement protocol, Windows rename behaviour and maxBytes semantics. Preserve all existing invariants and tests.
 Do not commit or push. Keep PROMPTS.md updated, run the full test suite and stop for review when Phase 3 is complete. Report unresolved risks separately.
 ````
+
+### Prompt 8
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 (local time), after the user committed Phase 3 as 5c9eb13
+- **Notes:** Pasted with no other text. Full text as sent:
+
+````text
+NEXUS — PHASE 4: CLI, TORTURE TESTING & FINAL SUBMISSION
+You are working on the NEXUS repository:
+`C:\Users\MY PC\NEXUS_SRINIVAS`
+NEXUS is a custom crash-safe key-value database written in Go.
+1. Current project status
+Phases 1–3 are COMPLETE and committed.
+Latest commit:
+`9eb13 — Complete Phase 3: compaction and maxBytes enforcement`
+Branch:
+`phase1-format`
+The working tree was clean after the Phase 3 commit.
+Implemented capabilities:
+
+* Custom binary database format.
+* Superblock, frame and entry encoding.
+* CRC32C checksums.
+* Sequence-number validation.
+* Append-only storage engine.
+* In-memory hash index.
+* Recovery and tail handling.
+* Atomic batches.
+* Crash-safe writes and Sync-before-ACK.
+* Rollback and FAILED-state handling.
+* Windows process locking.
+* Safe creation through `.new`.
+* Fault injection and simulated crash infrastructure.
+* `Open`, `Put`, `Get`, `Delete`, `Batch`, `Compact`, `Stats` and `Close`.
+* Crash-safe compaction.
+* Automatic compaction.
+* `maxBytes` admission and enforcement.
+* Compacting commits.
+
+Phase 3 has passed the existing test suite, gofmt, vet and Windows build.
+Do not rewrite or weaken any of these implementations.
+2. Your task
+Implement Phase 4 completely.
+This phase covers:
+
+1. Mandatory CLI.
+2. Torture-testing tool.
+3. Official crash scenarios.
+4. BREAKING.md.
+5. Final documentation and architecture proof.
+6. Acceptance testing.
+
+Before coding, inspect the entire repository, DESIGN.md, TEST_PLAN.md, ARCHITECTURE.md, README.md, PROMPTS.md and the original problem statement if available.
+Use the official problem statement as the source of truth.
+Distinguish:
+
+* [REQ] Official requirements.
+* [ASSUME] Explicit design assumptions.
+* [OPT] Optional improvements.
+
+Do not invent requirements.
+3. Mandatory CLI
+Implement these commands:
+
+* `open`
+* `put`
+* `get`
+* `del`
+* `batch`
+* `dump`
+* `check`
+* `serve`
+
+Use a consistent command-line interface with clear usage instructions and error messages.
+Requirements:
+open
+Open or create a database at the requested path.
+put
+Insert or update a key-value pair.
+get
+Retrieve a value and return a clear not-found response when absent.
+del
+Delete a key. Deleting a nonexistent key must not be treated as an error.
+batch
+Accept multiple operations and submit them through the atomic Batch API.
+Preserve operation ordering, including repeated operations on the same key.
+dump
+Display the database contents in a useful and deterministic format.
+check
+Validate database integrity and report corruption or other failures accurately.
+serve
+Implement the required serving interface.
+CRITICAL:
+Print `ACK <op-id>` ONLY after the corresponding operation has successfully completed its durability requirement.
+Never print ACK before Sync succeeds.
+If an operation returns ErrOutcomeUnknown, do not print ACK.
+Support multiple concurrent writers while preserving per-writer ordering.
+Do not invent an incompatible protocol. Check the original problem statement for the expected input format.
+4. Torture-testing tool
+Implement the competition-required torture-testing tool.
+It must:
+
+* Exercise the database through its supported interface.
+* Generate realistic PUT, GET, DELETE and BATCH workloads.
+* Include concurrent writers.
+* Support crash injection.
+* Kill and restart database processes.
+* Reopen and verify database consistency.
+* Detect partial batches.
+* Detect missing acknowledged operations.
+* Detect corrupted values.
+* Detect invalid recovery behaviour.
+* Exercise compaction.
+* Exercise maxBytes.
+* Produce clear machine-readable and human-readable results.
+
+The tool must not simply trust the database's own recovery output.
+Maintain an independent reference model or operation history so it can verify the recovered state.
+Where practical, store operation IDs, expected values and acknowledged operations independently of the database process.
+The tool should distinguish:
+
+* Definitely committed operations.
+* Definitely rejected operations.
+* Operations with unknown outcomes.
+
+Unknown outcomes may be fully present or fully absent, but must never be partially applied.
+5. Official crash scenarios
+Inspect the original problem statement and TEST_PLAN.md.
+Implement all 32 official crash scenarios across groups A–F.
+Do not approximate the scenarios or silently omit difficult ones.
+For each scenario:
+
+1. Explain what is being tested.
+2. Execute the relevant crash or fault.
+3. Restart/reopen the database.
+4. Verify the expected state.
+5. Report PASS or FAIL.
+6. Record useful diagnostic information.
+
+If the official test environment requires a particular interface or invocation, follow it exactly.
+Also implement the required `compaction` mode.
+Ensure the torture tool can be run repeatedly and deterministically where applicable.
+6. BREAKING.md
+Create a meaningful BREAKING.md containing technical failure scenarios.
+It must explain:
+
+* What operation or failure is being attempted.
+* Why the scenario threatens database consistency.
+* What a broken implementation might do.
+* How NEXUS handles the scenario.
+* What test demonstrates the behaviour.
+* What the expected result is.
+
+Include examples involving:
+
+* Partial frame writes.
+* Failed Sync.
+* Interrupted batch.
+* Damaged frame headers.
+* Invalid payload checksums.
+* Process termination.
+* Concurrent writers.
+* Two processes attempting to open the same database.
+* Disk-full conditions.
+* Compaction interrupted between file moves.
+* `.new`, `.compact` and `.old` recovery.
+* maxBytes exhaustion.
+* Recovery after an interrupted compacting commit.
+
+Do not claim tests passed unless they were actually executed.
+7. Documentation
+Update:
+README.md
+Include:
+
+* Project overview.
+* Architecture summary.
+* Build instructions.
+* Run instructions.
+* CLI usage and examples.
+* API overview.
+* Test instructions.
+* Current limitations.
+
+ARCHITECTURE.md
+Explain:
+
+* Binary format.
+* Append-only log.
+* In-memory index.
+* Write path.
+* Sync and ACK ordering.
+* Recovery.
+* Batch atomicity.
+* Compaction.
+* maxBytes.
+* Locking.
+* Error model.
+
+Include a clear architecture diagram, preferably Mermaid.
+TEST_PLAN.md
+Map all official requirements and crash scenarios to their corresponding tests.
+PROMPTS.md
+Every prompt sent to any AI tool must be logged unedited, with tool name and approximate time.
+Log this complete instruction as the next prompt.
+Do not fabricate historical prompts or times.
+8. Performance and acceptance requirements
+Explicitly test and report:
+
+1. Recovery of one million keys under the two-second target.
+2. One million PUT operations followed by one million DELETE operations.
+3. Database file shrinking after compaction.
+4. Successful writes after compaction.
+5. maxBytes enforcement.
+6. A batch with up to 10,000 operations, subject to the official requirements.
+7. Values up to 1 MB.
+8. Concurrent writers.
+9. Process termination during writes.
+10. Process termination during compaction.
+11. Every official crash scenario.
+12. `serve` ACK durability.
+
+Do not substitute a small benchmark for the official workload.
+Record actual:
+
+* Hardware/environment where available.
+* Runtime.
+* Memory usage where practical.
+* Database file size before and after compaction.
+* Number of operations.
+* PASS/FAIL.
+
+If an acceptance requirement cannot be run, state that clearly.
+9. Windows compatibility
+The judging machine runs Windows.
+Windows is the primary target.
+Verify:
+
+* Windows build.
+* Windows process termination tests.
+* Windows locking.
+* Windows file move and replacement behaviour.
+* File handles are closed before moves.
+* Antivirus/sharing violations are handled according to the existing bounded retry policy.
+
+Do not claim Windows power-loss durability. The existing design explicitly does not guarantee it.
+Linux, macOS and FreeBSD compilation and tests should be preserved where practical.
+10. Strict engineering constraints
+
+* Do not use SQLite, RocksDB, LevelDB or another database engine.
+* Do not replace the custom storage engine.
+* Do not weaken existing tests.
+* Do not remove fault-injection coverage.
+* Do not silently ignore errors.
+* Do not acknowledge writes before Sync.
+* Do not change the binary format without a demonstrated correctness reason.
+* Do not change existing public APIs unnecessarily.
+* Do not delete potentially authoritative database files during recovery.
+* Preserve the A1–A7 authority rules.
+* Preserve F1 invariants.
+* Preserve G1–G8 decisions.
+* Preserve the maxBytes admission rules.
+* Keep all AI prompts in PROMPTS.md.
+
+If a genuine design issue requires changing an existing invariant, stop and explain the issue before changing it.
+11. Git instructions
+The user manages Git commits manually.
+Therefore:
+
+* Do not commit.
+* Do not push.
+* Do not reset.
+* Do not rebase.
+* Do not amend existing commits.
+* Do not discard user changes.
+* Do not switch branches without permission.
+* Do not create unnecessary worktrees.
+
+Work on the current branch and preserve the existing Phase 1–3 commits.
+12. Final review report
+When Phase 4 is complete, STOP and provide a report containing:
+
+1. All files created or modified.
+2. All eight CLI commands and their status.
+3. Torture tool architecture and usage.
+4. The 32 official crash scenarios and individual results.
+5. Compaction-mode results.
+6. BREAKING.md coverage.
+7. Documentation completed.
+8. Test suite results.
+9. Windows build results.
+10. One-million-key recovery timing.
+11. One-million-PUT / one-million-DELETE compaction results.
+12. maxBytes results.
+13. Remaining risks.
+14. Any requirements not completed.
+15. Exact Git status and current branch.
+
+Do not claim Phase 4 is complete if mandatory requirements remain unimplemented or untested.
+Stop for my review before making any commit or push.
+Begin by inspecting the repository and official requirements. Then implement Phase 4 in small, testable stages.
+````

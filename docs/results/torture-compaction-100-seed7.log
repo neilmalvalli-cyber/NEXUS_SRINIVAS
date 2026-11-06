@@ -1,0 +1,103 @@
+torture: mode=compaction seed=7 iterations=100 writers=3 kill=20..1500ms max-bytes=0 kvdb=C:\Users\MY PC\NEXUS_SRINIVAS\kvdb.exe dir=torture-runs/compaction-100-seed7
+[   1/100] PASS kill@731ms sent=478 acked=436 rejected=0 unknown=3 gets=39 in-flight=2 keys=107 file=915922B open=1.5ms
+[   2/100] PASS kill@276ms sent=143 acked=133 rejected=0 unknown=3 gets=7 in-flight=3 keys=103 file=864022B open=1.0ms compact-in-flight
+[   3/100] PASS kill@79ms sent=34 acked=27 rejected=0 unknown=3 gets=4 in-flight=3 keys=101 file=811986B open=2.1ms compact-in-flight
+[   4/100] PASS kill@398ms sent=279 acked=248 rejected=0 unknown=3 gets=28 in-flight=3 keys=111 file=969427B open=1.6ms compact-in-flight
+[   5/100] PASS kill@1234ms sent=830 acked=768 rejected=0 unknown=3 gets=59 in-flight=3 keys=109 file=981708B open=1.6ms compact-in-flight
+[   6/100] PASS kill@1462ms sent=1014 acked=921 rejected=0 unknown=3 gets=90 in-flight=3 keys=113 file=984757B open=2.1ms compact-in-flight
+[   7/100] PASS kill@790ms sent=525 acked=474 rejected=0 unknown=3 gets=48 in-flight=3 keys=110 file=1006037B open=2.1ms compact-in-flight
+[   8/100] PASS kill@1424ms sent=1001 acked=923 rejected=0 unknown=3 gets=75 in-flight=3 keys=109 file=1394986B open=1.5ms
+[   9/100] PASS kill@620ms sent=389 acked=361 rejected=0 unknown=3 gets=25 in-flight=3 keys=107 file=993975B open=1.5ms compact-in-flight
+[  10/100] PASS kill@328ms sent=200 acked=176 rejected=0 unknown=3 gets=21 in-flight=3 keys=108 file=1071385B open=2.1ms compact-in-flight
+[  11/100] PASS kill@1359ms sent=829 acked=767 rejected=0 unknown=3 gets=59 in-flight=3 keys=108 file=884315B open=2.1ms compact-in-flight
+[  12/100] PASS kill@576ms sent=332 acked=314 rejected=0 unknown=3 gets=15 in-flight=3 keys=108 file=956350B open=1.5ms compact-in-flight
+[  13/100] PASS kill@1284ms sent=816 acked=741 rejected=0 unknown=3 gets=72 in-flight=3 keys=104 file=987138B open=1.5ms compact-in-flight
+[  14/100] PASS kill@1480ms sent=826 acked=759 rejected=0 unknown=3 gets=64 in-flight=3 keys=111 file=1028300B open=1.6ms
+[  15/100] PASS kill@73ms sent=26 acked=23 rejected=0 unknown=3 gets=0 in-flight=3 keys=109 file=974168B open=1.6ms compact-in-flight
+[  16/100] PASS kill@1126ms sent=815 acked=752 rejected=0 unknown=3 gets=60 in-flight=2 keys=108 file=1016660B open=2.1ms
+[  17/100] PASS kill@1351ms sent=931 acked=863 rejected=0 unknown=3 gets=65 in-flight=3 keys=97 file=934616B open=1.0ms
+[  18/100] PASS kill@803ms sent=473 acked=431 rejected=0 unknown=3 gets=39 in-flight=3 keys=106 file=956658B open=3.1ms compact-in-flight
+[  19/100] PASS kill@1209ms sent=738 acked=682 rejected=0 unknown=3 gets=53 in-flight=3 keys=101 file=1094897B open=1.8ms
+[  20/100] PASS kill@1199ms sent=767 acked=707 rejected=0 unknown=3 gets=57 in-flight=3 keys=110 file=907856B open=1.6ms compact-in-flight
+[  21/100] PASS kill@1253ms sent=728 acked=654 rejected=0 unknown=3 gets=71 in-flight=3 keys=108 file=1243119B open=2.1ms compact-in-flight
+[  22/100] PASS kill@1146ms sent=855 acked=775 rejected=0 unknown=3 gets=77 in-flight=3 keys=108 file=1250487B open=2.1ms compact-in-flight
+[  23/100] PASS kill@697ms sent=452 acked=410 rejected=0 unknown=3 gets=39 in-flight=3 keys=106 file=1114414B open=2.1ms compact-in-flight
+[  24/100] PASS kill@409ms sent=283 acked=256 rejected=0 unknown=2 gets=25 in-flight=3 keys=106 file=923997B open=1.6ms compact-in-flight
+[  25/100] PASS kill@565ms sent=392 acked=355 rejected=0 unknown=3 gets=34 in-flight=3 keys=108 file=933679B open=2.1ms compact-in-flight
+[  26/100] PASS kill@480ms sent=325 acked=297 rejected=0 unknown=3 gets=25 in-flight=3 keys=105 file=981251B open=2.1ms compact-in-flight
+[  27/100] PASS kill@1497ms sent=851 acked=782 rejected=0 unknown=3 gets=66 in-flight=3 keys=108 file=1024801B open=1.6ms
+[  28/100] PASS kill@822ms sent=459 acked=419 rejected=0 unknown=3 gets=37 in-flight=3 keys=112 file=909606B open=1.6ms
+[  29/100] PASS kill@67ms sent=23 acked=18 rejected=0 unknown=3 gets=2 in-flight=3 keys=111 file=923209B open=2.6ms compact-in-flight
+[  30/100] PASS kill@512ms sent=199 acked=178 rejected=0 unknown=2 gets=19 in-flight=3 keys=98 file=841774B open=2.1ms compact-in-flight
+[  31/100] PASS kill@1219ms sent=739 acked=672 rejected=0 unknown=3 gets=64 in-flight=3 keys=110 file=1038382B open=1.6ms
+[  32/100] PASS kill@723ms sent=418 acked=378 rejected=0 unknown=3 gets=37 in-flight=1 keys=107 file=1057538B open=2.1ms
+[  33/100] PASS kill@461ms sent=301 acked=278 rejected=0 unknown=3 gets=20 in-flight=3 keys=109 file=954174B open=2.2ms compact-in-flight
+[  34/100] PASS kill@431ms sent=225 acked=201 rejected=0 unknown=3 gets=21 in-flight=3 keys=105 file=937043B open=1.6ms
+[  35/100] PASS kill@474ms sent=264 acked=231 rejected=0 unknown=3 gets=30 in-flight=3 keys=104 file=894002B open=2.5ms compact-in-flight
+[  36/100] PASS kill@179ms sent=89 acked=84 rejected=0 unknown=3 gets=2 in-flight=3 keys=99 file=897667B open=1.3ms compact-in-flight
+[  37/100] PASS kill@433ms sent=255 acked=235 rejected=0 unknown=3 gets=17 in-flight=3 keys=112 file=954306B open=1.7ms
+[  38/100] PASS kill@1054ms sent=636 acked=578 rejected=0 unknown=3 gets=55 in-flight=3 keys=99 file=970433B open=2.1ms compact-in-flight
+[  39/100] PASS kill@692ms sent=351 acked=331 rejected=0 unknown=2 gets=18 in-flight=3 keys=107 file=1054327B open=1.6ms
+[  40/100] PASS kill@298ms sent=201 acked=180 rejected=0 unknown=3 gets=18 in-flight=3 keys=110 file=1003637B open=1.6ms
+[  41/100] PASS kill@300ms sent=198 acked=178 rejected=0 unknown=3 gets=17 in-flight=3 keys=107 file=935879B open=2.1ms compact-in-flight
+[  42/100] PASS kill@876ms sent=484 acked=442 rejected=0 unknown=3 gets=39 in-flight=3 keys=108 file=1021320B open=1.6ms compact-in-flight
+[  43/100] PASS kill@829ms sent=536 acked=489 rejected=0 unknown=3 gets=44 in-flight=3 keys=110 file=1018694B open=2.1ms compact-in-flight
+[  44/100] PASS kill@49ms sent=18 acked=13 rejected=0 unknown=3 gets=2 in-flight=3 keys=112 file=1040788B open=2.1ms compact-in-flight
+[  45/100] PASS kill@996ms sent=566 acked=516 rejected=0 unknown=3 gets=47 in-flight=3 keys=108 file=960012B open=1.6ms
+[  46/100] PASS kill@307ms sent=172 acked=161 rejected=0 unknown=3 gets=8 in-flight=3 keys=110 file=947764B open=2.1ms compact-in-flight
+[  47/100] PASS kill@584ms sent=359 acked=328 rejected=0 unknown=2 gets=29 in-flight=3 keys=110 file=977757B open=2.1ms compact-in-flight
+[  48/100] PASS kill@1475ms sent=880 acked=805 rejected=0 unknown=3 gets=72 in-flight=3 keys=110 file=910791B open=2.1ms compact-in-flight
+[  49/100] PASS kill@60ms sent=40 acked=35 rejected=0 unknown=3 gets=2 in-flight=3 keys=105 file=898451B open=2.1ms compact-in-flight
+[  50/100] PASS kill@859ms sent=478 acked=430 rejected=0 unknown=3 gets=45 in-flight=3 keys=100 file=880165B open=2.1ms compact-in-flight
+[  51/100] PASS kill@796ms sent=517 acked=467 rejected=0 unknown=3 gets=47 in-flight=3 keys=102 file=1007118B open=2.1ms compact-in-flight
+[  52/100] PASS kill@915ms sent=603 acked=540 rejected=0 unknown=3 gets=60 in-flight=3 keys=110 file=989678B open=2.1ms compact-in-flight
+[  53/100] PASS kill@64ms sent=22 acked=17 rejected=0 unknown=3 gets=2 in-flight=3 keys=111 file=1015414B open=1.6ms compact-in-flight
+[  54/100] PASS kill@525ms sent=302 acked=277 rejected=0 unknown=3 gets=22 in-flight=3 keys=116 file=969085B open=2.1ms compact-in-flight
+[  55/100] PASS kill@592ms sent=316 acked=292 rejected=0 unknown=2 gets=22 in-flight=3 keys=110 file=1385467B open=2.1ms
+[  56/100] PASS kill@51ms sent=32 acked=28 rejected=0 unknown=3 gets=1 in-flight=3 keys=108 file=1112311B open=2.6ms compact-in-flight
+[  57/100] PASS kill@1379ms sent=860 acked=789 rejected=0 unknown=3 gets=68 in-flight=3 keys=107 file=1146653B open=2.6ms compact-in-flight
+[  58/100] PASS kill@1450ms sent=871 acked=788 rejected=0 unknown=3 gets=80 in-flight=3 keys=106 file=984538B open=1.6ms compact-in-flight
+[  59/100] PASS kill@804ms sent=495 acked=455 rejected=0 unknown=3 gets=37 in-flight=3 keys=98 file=1001477B open=2.1ms compact-in-flight
+[  60/100] PASS kill@1033ms sent=598 acked=558 rejected=0 unknown=3 gets=37 in-flight=3 keys=106 file=826422B open=2.1ms compact-in-flight
+[  61/100] PASS kill@397ms sent=193 acked=175 rejected=0 unknown=3 gets=15 in-flight=3 keys=104 file=911732B open=2.1ms compact-in-flight
+[  62/100] PASS kill@55ms sent=20 acked=16 rejected=0 unknown=3 gets=1 in-flight=3 keys=106 file=958925B open=1.6ms compact-in-flight
+[  63/100] PASS kill@1132ms sent=665 acked=622 rejected=0 unknown=3 gets=40 in-flight=3 keys=108 file=1135991B open=2.1ms compact-in-flight
+[  64/100] PASS kill@87ms sent=51 acked=46 rejected=0 unknown=2 gets=3 in-flight=3 keys=105 file=1080669B open=2.1ms compact-in-flight
+[  65/100] PASS kill@221ms sent=170 acked=157 rejected=0 unknown=3 gets=10 in-flight=3 keys=106 file=921438B open=2.1ms compact-in-flight
+[  66/100] PASS kill@1075ms sent=615 acked=567 rejected=0 unknown=2 gets=46 in-flight=3 keys=93 file=797284B open=1.6ms compact-in-flight
+[  67/100] PASS kill@768ms sent=453 acked=405 rejected=0 unknown=3 gets=45 in-flight=3 keys=103 file=913752B open=2.1ms compact-in-flight
+[  68/100] PASS kill@314ms sent=180 acked=166 rejected=0 unknown=3 gets=11 in-flight=3 keys=106 file=860540B open=2.2ms compact-in-flight
+[  69/100] PASS kill@1423ms sent=761 acked=698 rejected=0 unknown=3 gets=60 in-flight=3 keys=106 file=933336B open=1.6ms compact-in-flight
+[  70/100] PASS kill@424ms sent=245 acked=229 rejected=0 unknown=2 gets=14 in-flight=3 keys=109 file=1027294B open=1.7ms compact-in-flight
+[  71/100] PASS kill@659ms sent=358 acked=333 rejected=0 unknown=3 gets=22 in-flight=3 keys=109 file=1028436B open=1.1ms
+[  72/100] PASS kill@765ms sent=498 acked=456 rejected=0 unknown=3 gets=39 in-flight=3 keys=103 file=966582B open=2.1ms compact-in-flight
+[  73/100] PASS kill@108ms sent=67 acked=63 rejected=0 unknown=3 gets=1 in-flight=3 keys=108 file=1414468B open=2.0ms compact-in-flight
+[  74/100] PASS kill@122ms sent=89 acked=82 rejected=0 unknown=3 gets=4 in-flight=3 keys=109 file=932304B open=1.6ms compact-in-flight
+[  75/100] PASS kill@1178ms sent=851 acked=783 rejected=0 unknown=3 gets=65 in-flight=3 keys=105 file=954867B open=2.1ms compact-in-flight
+[  76/100] PASS kill@801ms sent=432 acked=396 rejected=0 unknown=3 gets=33 in-flight=3 keys=103 file=870534B open=2.1ms compact-in-flight
+[  77/100] PASS kill@1074ms sent=648 acked=601 rejected=0 unknown=3 gets=44 in-flight=3 keys=101 file=983344B open=1.6ms compact-in-flight
+[  78/100] PASS kill@1325ms sent=848 acked=782 rejected=0 unknown=3 gets=63 in-flight=3 keys=109 file=1010237B open=1.6ms compact-in-flight
+[  79/100] PASS kill@614ms sent=351 acked=334 rejected=0 unknown=3 gets=14 in-flight=3 keys=113 file=1030272B open=1.6ms compact-in-flight
+[  80/100] PASS kill@1123ms sent=705 acked=645 rejected=0 unknown=3 gets=57 in-flight=3 keys=114 file=1017345B open=2.1ms compact-in-flight interrupted-compaction-resolved
+[  81/100] PASS kill@605ms sent=397 acked=375 rejected=0 unknown=2 gets=20 in-flight=3 keys=106 file=933637B open=2.1ms compact-in-flight
+[  82/100] PASS kill@31ms sent=20 acked=17 rejected=0 unknown=3 gets=0 in-flight=3 keys=102 file=877297B open=1.6ms compact-in-flight
+[  83/100] PASS kill@1318ms sent=856 acked=775 rejected=0 unknown=2 gets=79 in-flight=3 keys=110 file=979840B open=1.6ms compact-in-flight
+[  84/100] PASS kill@125ms sent=61 acked=58 rejected=0 unknown=3 gets=0 in-flight=3 keys=109 file=967099B open=1.6ms compact-in-flight
+[  85/100] PASS kill@811ms sent=641 acked=572 rejected=0 unknown=3 gets=66 in-flight=3 keys=104 file=1214502B open=1.6ms compact-in-flight
+[  86/100] PASS kill@1377ms sent=945 acked=860 rejected=0 unknown=3 gets=82 in-flight=3 keys=109 file=889790B open=2.1ms compact-in-flight
+[  87/100] PASS kill@908ms sent=574 acked=527 rejected=0 unknown=3 gets=44 in-flight=3 keys=111 file=1001083B open=2.1ms compact-in-flight
+[  88/100] PASS kill@492ms sent=263 acked=235 rejected=0 unknown=3 gets=25 in-flight=3 keys=103 file=915389B open=2.0ms compact-in-flight
+[  89/100] PASS kill@1443ms sent=1002 acked=927 rejected=0 unknown=3 gets=72 in-flight=3 keys=107 file=935360B open=1.6ms compact-in-flight
+[  90/100] PASS kill@395ms sent=276 acked=258 rejected=0 unknown=3 gets=15 in-flight=3 keys=111 file=955139B open=1.6ms compact-in-flight
+[  91/100] PASS kill@1299ms sent=883 acked=795 rejected=0 unknown=3 gets=85 in-flight=3 keys=106 file=1113247B open=1.6ms compact-in-flight
+[  92/100] PASS kill@562ms sent=314 acked=290 rejected=0 unknown=3 gets=21 in-flight=3 keys=109 file=964413B open=2.1ms compact-in-flight
+[  93/100] PASS kill@567ms sent=377 acked=337 rejected=0 unknown=3 gets=37 in-flight=3 keys=104 file=881928B open=2.1ms compact-in-flight
+[  94/100] PASS kill@136ms sent=82 acked=73 rejected=0 unknown=3 gets=6 in-flight=3 keys=111 file=951292B open=1.6ms
+[  95/100] PASS kill@1085ms sent=725 acked=663 rejected=0 unknown=3 gets=59 in-flight=3 keys=108 file=870413B open=1.6ms compact-in-flight
+[  96/100] PASS kill@375ms sent=274 acked=250 rejected=0 unknown=3 gets=21 in-flight=3 keys=108 file=925715B open=2.1ms compact-in-flight
+[  97/100] PASS kill@506ms sent=321 acked=301 rejected=0 unknown=3 gets=17 in-flight=3 keys=111 file=1060817B open=2.1ms compact-in-flight
+[  98/100] PASS kill@1046ms sent=750 acked=682 rejected=0 unknown=3 gets=65 in-flight=3 keys=100 file=915925B open=2.1ms compact-in-flight
+[  99/100] PASS kill@614ms sent=403 acked=367 rejected=0 unknown=3 gets=33 in-flight=3 keys=106 file=936994B open=2.6ms compact-in-flight interrupted-compaction-resolved
+[ 100/100] PASS kill@1467ms sent=935 acked=853 rejected=0 unknown=3 gets=79 in-flight=3 keys=109 file=972183B open=2.1ms compact-in-flight
+
+RESULT: PASS  passed=100 failed=0 of 100 planned  mode=compaction seed=7  acked=42197 rejected=0 unknown=290  kills-mid-write=100 compact-in-flight=82 torn-tails=0 compaction-resolved=2 recovery-kills-landed=0/0  elapsed=79.1s  report=torture-runs\compaction-100-seed7\report.json

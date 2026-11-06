@@ -1,0 +1,44 @@
+%% NEXUS component diagram (Mermaid). Rendered in ARCHITECTURE.md.
+flowchart LR
+  subgraph Clients
+    CLI["kvdb CLI<br/>open put get del batch dump check"]
+    SERVE["kvdb serve<br/>stdin requests, one goroutine + queue per writer<br/>ACK only after nil"]
+    TORT["torture tool<br/>(separate process, own oracle log)"]
+    API["Go API: package kvdb<br/>Open Put Get Delete Batch Compact Close"]
+  end
+  TORT -- "stdin/stdout, TerminateProcess" --> SERVE
+  CLI --> API
+  SERVE --> API
+  API --> LOG
+
+  subgraph Engine["storage.Log (one sync.RWMutex)"]
+    LOG["commit path<br/>validate -> admission -> WriteFrame -> Sync -> index"]
+    ADM["admission<br/>max_bytes: append / compacting commit / ErrFull"]
+    IDX["in-memory index<br/>key -> (offset, size)"]
+    CMP["compaction<br/>.compact -> R1 -> R2 -> validate -> swap"]
+    LOG --> ADM
+    LOG --> IDX
+    ADM --> CMP
+    LOG --> CMP
+  end
+
+  subgraph Recovery["recovery.Open"]
+    LCK["lock path.lock<br/>(share mode 0)"]
+    AUT["authority A1-A7<br/>path / .compact / .old / .new"]
+    SCAN["scan frames<br/>CRC + seq checks, tail rules C0-C8"]
+    LCK --> AUT --> SCAN
+  end
+  API -- Open --> LCK
+  SCAN -- "index, end, next_seq" --> LOG
+
+  subgraph Disk
+    DATA[("path<br/>superblock + frames")]
+    TMP[("path.compact / .old / .new")]
+    LOCKF[("path.lock")]
+  end
+  LOG -- "WriteFile + FlushFileBuffers" --> DATA
+  CMP -- "write, Sync, MoveFileW" --> TMP
+  CMP --> DATA
+  SCAN -- "read, Truncate+Sync" --> DATA
+  AUT -- "MoveFileW (no replace)" --> TMP
+  LCK --> LOCKF

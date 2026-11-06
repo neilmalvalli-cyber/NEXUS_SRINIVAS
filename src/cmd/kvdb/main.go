@@ -1,23 +1,23 @@
-// Command kvdb is the CLI for the engine.
+// Command kvdb is the command-line wrapper around the engine.
 //
-// Phase 1 status: this is a placeholder so the build can be verified on
-// Windows. Every command reports "not implemented" and exits with status 2.
-// The real commands (open, put, get, del, batch, dump, check, serve) are
-// implemented in a later phase.
+//	kvdb open  <path> [--max-bytes N]
+//	kvdb put   <path> <key> <value>
+//	kvdb get   <path> <key>
+//	kvdb del   <path> <key>
+//	kvdb batch <path> <file>
+//	kvdb dump  <path>
+//	kvdb check <path>
+//	kvdb serve <path>
+//
+// See package cli and README.md for the output formats and the serve protocol.
 package main
 
 import (
-	"fmt"
 	"os"
+
+	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/cli"
 )
 
-var commands = []string{"open", "put", "get", "del", "batch", "dump", "check", "serve"}
-
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "usage: kvdb <command> [args]\ncommands: %v\n", commands)
-		os.Exit(2)
-	}
-	fmt.Fprintf(os.Stderr, "kvdb: command %q is not implemented yet (Phase 1: storage format only)\n", os.Args[1])
-	os.Exit(2)
+	os.Exit(cli.Run(os.Args[1:], cli.Env{Stdin: os.Stdin, Stdout: os.Stdout, Stderr: os.Stderr}))
 }

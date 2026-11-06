@@ -3,3 +3,4 @@ kvdb.exe
 *.test
 *.out
 /testdata/fuzz/
+torture-runs/

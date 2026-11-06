@@ -1,0 +1,10 @@
+=== RUN   TestAcceptanceMillionPutDelete
+    acceptance_test.go:75: environment: windows/amd64, 16 logical CPUs, go1.27.3, test dir C:\Users\MYPC~1\AppData\Local\Temp\TestAcceptanceMillionPutDelete2607089704\001
+    acceptance_test.go:75: PUT phase: 1000000 individual Put calls (each synced) in 6m14.566s (2670 ops/s, 0.375 ms/op); file 93000032 bytes; keys 1000000; peak heap 136 MiB, peak Go sys 169 MiB
+    acceptance_test.go:75: RECOVERY: Open of 1000000 keys / 93000032 bytes in 687ms (limit 2 s): PASS; peak heap 105 MiB, peak Go sys 169 MiB
+    acceptance_test.go:75: DELETE phase: 1000000 individual Delete calls (each synced) in 6m22.324s (2616 ops/s); file peaked at 101745032 bytes, shrank 9 times by automatic compaction, 1161382 bytes at the end; keys 0; peak heap 280 MiB
+    acceptance_test.go:75: COMPACTION: explicit Compact in 11ms: 1161382 -> 32 bytes; largest file during the workload 101745032 bytes -> 32 bytes (PASS)
+    acceptance_test.go:75: WRITES AFTER COMPACTION: 10000 puts then reopen in 3.704s: 10000 keys, values verified, full-file verify OK: PASS; final file 690032 bytes
+--- PASS: TestAcceptanceMillionPutDelete (761.31s)
+PASS
+ok  	github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/scenarios	762.108s

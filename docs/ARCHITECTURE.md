@@ -18,9 +18,10 @@ tail rules C0–C8 → ready (DESIGN §8, §11.4; checklist in [RECOVERY.md](REC
 
 ```
 src/
-  cmd/kvdb/            CLI entry point (Phase 1: placeholder)
-  kvdb/                public API: Open/Put/Get/Delete/Batch/Close, Op, errors
-                       (Compact, max_bytes enforced: Phase 3)
+  cmd/kvdb/            CLI entry point (calls internal/cli.Run)    <- Phase 4
+  kvdb/                public API: Open/Put/Get/Delete/Batch/Compact/Close,
+                       Op, errors; Stats/Recovery/Range/Verify (Phase 4)
+  scenarios/           the 32 official crash scenarios + acceptance  <- Phase 4
   internal/
     format/            on-disk codec, CRC32C, limits, error classes   <- done
     platform/          OS-specific primitives: MoveNoReplace,
@@ -37,8 +38,9 @@ src/
     index/             key -> {offset, len}, live-byte counter        <- Phase 2 Stage 2
     admission/         max_bytes decision + auto-compaction trigger   <- Phase 3
     locking/           process lock file + ErrLocked after retries    <- Phase 2 Stage 1
-    cli/               command implementations                        (Phase 4)
-tests/                 cross-package / crash tests (later phases)
+    cli/               the eight commands and the serve protocol      <- Phase 4
+torture/               torture tool (repository root, separate binary)  <- Phase 4
+tests/                 pointer to where the tests live
 ```
 
 ### Deviations from the suggested layout, and why

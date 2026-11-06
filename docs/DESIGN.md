@@ -1431,3 +1431,16 @@ The following invariants must hold throughout implementation.
 | 24 | Admission: net-effect PUT-bearing vs delete-only; A8 no-op commits; cap = data file only | §12.3 implementation | `admission.TestDecide`, `TestFitsNeverOverflows`, `storage.TestAdmission*`, `kvdb.TestMaxBytesThroughAPI` |
 | 25 | Compaction G1–G8: snapshot layout, compacting commit, validation before swap, failure classes, automatic trigger | §10.5 | `storage.TestCompact*`, `TestAutoCompactTrigger`, `kvdb.TestCompactThroughAPI`, `kvdb.TestKillDuringCompactingCommits` |
 | 26 | F5 superseded: `Compact()` is now public; `maxBytes` enforced | §14, §12 | as above |
+
+### 2026-11-06 — Phase 4: CLI, torture tool, scenarios (pending review)
+
+No change to the binary format, the write path, recovery, admission or compaction. Additions only.
+
+| # | Change | Sections | Evidence / tests |
+|---|---|---|---|
+| 27 | Read-only inspection API: `storage.Log.Recovery/Range/Verify`, `kvdb.DB.Stats/Recovery/Range/Verify` (used by `open`, `dump`, `check`); `Log` remembers what recovery did | §18.1 | `cli` tests, `src/scenarios` (every reopen runs `Verify`) |
+| 28 | CLI output contract: `open` prints `keys= recovery_ms= size=`; `get` prints the value or `NOTFOUND`; `dump` sorted by key, Go-quoted when not plain; `check` = recovery + full-file `Verify`, prints `OK` or `CORRUPT:`/`BAD FORMAT:`/`ERROR:`; exit codes 0/1/2/3 (3 = outcome unknown) | §18.1 | `cli.TestCommandsRoundTrip`, `TestDumpSortedAndQuoted`, `TestCheckReportsCorruptionAndTornTail` |
+| 29 | serve protocol (the statement fixes only `ACK <op-id>`): `<writer-id> <op-id> put|del|get|batch <n>|compact`, writer ID optional; replies `ACK`/`VALUE`/`NOTFOUND`/`ERR <op-id> <class> <msg>`; per-writer goroutine + FIFO; ACK only after a nil return; an unterminated final line or an incomplete batch is never executed | §18.2–18.4 | `cli.TestServeProtocol`, `TestServeConcurrentWritersKeepOrder`, `TestServeNeverAcksFailedWrites`, `TestServeIgnoresIncompleteFinalLine`, `FuzzParseRequest` |
+| 30 | `--max-bytes` accepted by every writing command and by serve, per invocation (the cap is not stored in the file) | §12, §18 | `cli.TestMaxBytesFlag`, `TestServeMaxBytesErrorsAreClean` |
+| 31 | Torture tool in `torture/` with an independent oracle (`torture/model.go`): real-time-order register check per key over all applied/not-applied choices of unknown requests | §21 | `torture/model_test.go`; mutation runs (BREAKING.md §4) |
+| 32 | Official scenarios as `src/scenarios` tests; 1M PUT/DELETE acceptance test | §20, §23 | [results](results/) |

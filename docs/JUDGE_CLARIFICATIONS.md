@@ -20,6 +20,10 @@ _None received yet._
 | A7 | Bit-rot is outside the crash model [REQ §5 G]. A damaged frame header is therefore treated as the torn final frame and truncated (rule C2/C3); real mid-file damage behind it would not be detected. | recovery |
 | A8 | (implemented in Phase 3) A commit whose net effect on the live state is empty (e.g. a batch that only deletes absent keys, or `PUT X, DEL X` for an absent X) succeeds with no I/O. Without this, such a batch on an over-cap, already-compact database could not "strictly reduce" the file and would wrongly return `ErrFull`. | write path, admission |
 | A9 | A second Open of a locked database, including from the same process, returns `ErrLocked` immediately after a short bounded retry (about 1 s); it does not wait for the lock. | locking |
+| A10 | (Phase 4) The serve input format is `<writer-id> <op-id> <command ...>` (writer ID optional), batches as `batch <n>` followed by n op lines, plus `get` and `compact`; replies besides `ACK <op-id>` are `VALUE`, `NOTFOUND` and `ERR <op-id> <class> <message>`. The statement only fixes `ACK <op-id>`. | `internal/cli/serve.go`, torture tool |
+| A11 | (Phase 4) `--max-bytes` applies to the invocation that receives it (open, put, del, batch, serve); it is not stored in the file. | CLI |
+| A12 | (Phase 4) `kvdb check` runs normal recovery first (a torn, never-acknowledged tail is cut and reported on stderr, as `open` would), then verifies the whole file; it prints `OK` or a reason and never repairs corruption. | CLI |
+| A13 | (Phase 4) `kvdb open` prints `keys=<n> recovery_ms=<ms> size=<bytes>`; recovery_ms is the in-process duration of Open (lock, authority, scan, truncation), excluding process start-up. | CLI |
 
 ## Questions to ask the judges
 

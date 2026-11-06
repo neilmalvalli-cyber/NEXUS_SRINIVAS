@@ -52,6 +52,8 @@ type Log struct {
 	idx     *index.Index
 	end     int64  // end of the last committed frame == file size
 	nextSeq uint64 // 0: sequence space exhausted
+
+	recovered RecoveryInfo // what Open did (for the CLI; never used by the write path)
 }
 
 // Open recovers the database at path with no size cap and automatic
@@ -72,14 +74,15 @@ func OpenWith(fsys fileio.FS, path string, cfg Config) (*Log, error) {
 		return nil, err
 	}
 	return &Log{
-		fsys:    fsys,
-		path:    path,
-		cfg:     cfg,
-		lock:    rs.Lock,
-		f:       rs.File,
-		idx:     rs.Scan.Index,
-		end:     rs.Scan.End,
-		nextSeq: rs.Scan.NextSeq,
+		fsys:      fsys,
+		path:      path,
+		cfg:       cfg,
+		lock:      rs.Lock,
+		f:         rs.File,
+		idx:       rs.Scan.Index,
+		end:       rs.Scan.End,
+		nextSeq:   rs.Scan.NextSeq,
+		recovered: recoveryInfo(rs),
 	}, nil
 }
 
