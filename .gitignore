@@ -1,0 +1,5 @@
+kvdb.exe
+*.exe
+*.test
+*.out
+/testdata/fuzz/
