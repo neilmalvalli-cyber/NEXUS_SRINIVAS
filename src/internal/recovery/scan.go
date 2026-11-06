@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/dberr"
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/format"
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/index"
 )
@@ -90,7 +89,7 @@ func Scan(r io.ReaderAt, path string, sb format.Superblock, size int64) (*ScanRe
 	var pending []pendingOp
 
 	corrupt := func(rule string, cause error) error {
-		return fmt.Errorf("%w: %s: frame at offset %d (rule %s): %v", dberr.ErrCorruption, path, pos, rule, cause)
+		return &ScanError{Path: path, Offset: pos, Rule: rule, Cause: cause} // unwraps to dberr.ErrCorruption
 	}
 	// tail decides between truncation (C1, C2, C4, C5) and C0.
 	tail := func(rule TailRule, cause error) (*ScanResult, error) {

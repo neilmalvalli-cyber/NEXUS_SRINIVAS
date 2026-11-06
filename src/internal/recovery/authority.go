@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"path/filepath"
 
-	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/dberr"
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/fileio"
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/format"
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/locking"
@@ -148,14 +147,9 @@ func inspect(fsys fileio.FS, name string, policy fileio.RetryPolicy) (inspection
 
 // refuse builds the error for a file the table must not touch.
 func refuse(rule Rule, in inspection) error {
-	switch in.state {
-	case stCorrupt:
-		// Its superblock is ours, so this is corruption, not a foreign file
-		// (DESIGN §13.3; design note D1).
-		return fmt.Errorf("%w: %s (rule %s): %v", dberr.ErrCorruption, in.name, rule, in.why)
-	default:
-		return fmt.Errorf("%w: %s (rule %s): %v", dberr.ErrBadFormat, in.name, rule, in.why)
-	}
+	// stCorrupt: its superblock is ours, so this is corruption, not a
+	// foreign file (DESIGN §13.3; design note D1). See RefusalError.
+	return &RefusalError{Rule: rule, File: in.name, Corrupt: in.state == stCorrupt, Cause: in.why}
 }
 
 // Resolve runs the recovery authority table (DESIGN §11.4) for the database

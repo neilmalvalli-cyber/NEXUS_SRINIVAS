@@ -77,9 +77,11 @@ func (l *Log) Range(fn func(key, value []byte) error) error {
 	if err := l.checkUsable(); err != nil {
 		return err
 	}
+	f, pooled := l.readHandle()
+	defer l.putHandle(f, pooled)
 	for _, k := range l.sortedKeysLocked() {
 		loc, _ := l.idx.Get([]byte(k))
-		v, err := readEntryValue(l.f, []byte(k), loc)
+		v, err := readEntryValue(f, []byte(k), loc)
 		if err != nil {
 			return fmt.Errorf("key %q: %w", k, err)
 		}
@@ -112,6 +114,11 @@ type VerifyReport struct {
 //
 // It never modifies the file. Any mismatch is ErrCorruption with a reason.
 func (l *Log) Verify() (VerifyReport, error) {
+	// wmu: no frame may be in flight while the whole file is rescanned and
+	// compared with the handle (an appended but not yet indexed frame would
+	// look like a size mismatch).
+	l.wmu.Lock()
+	defer l.wmu.Unlock()
 	l.mu.RLock()
 	defer l.mu.RUnlock()
 	if err := l.checkUsable(); err != nil {

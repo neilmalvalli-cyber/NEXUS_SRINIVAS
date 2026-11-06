@@ -1,0 +1,185 @@
+{
+  "tool": "nexus-powercut",
+  "version": 1,
+  "config": {
+    "seed": 1,
+    "writers": 4,
+    "ops_per_writer": 60,
+    "max_crash_points": 400,
+    "max_variants_per_point": 8,
+    "dir": "pc-default",
+    "keep_passed": false,
+    "controls": true
+  },
+  "started_at": "2026-11-06T20:53:09.0610929Z",
+  "finished_at": "2026-11-06T20:53:18.3996679Z",
+  "duration_ms": 9338.575,
+  "environment": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.27.3",
+    "cpus": 16
+  },
+  "model": [
+    "M1 synced data is durable: writes to a file issued before a completed fsync (FlushFileBuffers) survive",
+    "M2 512-byte sectors are atomic: each aligned sector is entirely old or entirely new",
+    "M3 unsynced writes may be lost, kept, or kept partially (whole sectors), in any combination and order",
+    "M4 directory operations are atomic and ordered; durable after SyncDir, otherwise any ordered prefix survives",
+    "M5 file data and directory entries survive independently of each other"
+  ],
+  "not_modeled": [
+    "disks or controllers that acknowledge a flush they did not perform (violates M1; exercised only as a negative control)",
+    "torn or garbage sectors (violates M2), bit rot, misdirected or phantom writes (one bit flip is exercised as a negative control)",
+    "filesystem metadata corruption or journaling bugs; Windows does not expose directory fsync (SyncDir is a no-op there), so M4 is an assumption about NTFS",
+    "crashes during recovery itself (covered by the torture framework's recovery-kill modes, not here)",
+    "every possible interleaving of concurrent writers: one recorded interleaving per run"
+  ],
+  "disclaimer": "A finite, seeded sample of modeled power-loss states. Passing it is evidence, not an exhaustive proof that NEXUS survives every possible power loss.",
+  "trace": {
+    "events": 290,
+    "by_op": {
+      "create": 4,
+      "move": 7,
+      "remove": 3,
+      "sync": 136,
+      "syncdir": 4,
+      "write": 136
+    },
+    "bytes_written": 568238,
+    "workload_ops": 240,
+    "acknowledged_ops": 240,
+    "by_kind": {
+      "batch": 52,
+      "compact": 3,
+      "delete": 34,
+      "hot": 30,
+      "put": 121
+    },
+    "frames_written": 132
+  },
+  "crash_points_tested": 291,
+  "crash_points_in_trace": 291,
+  "images_validated": 1278,
+  "images_by_variant_family": {
+    "all-pending-persisted": 291,
+    "dir-prefix": 22,
+    "dir-synced-only+all-data": 73,
+    "only-synced-state": 270,
+    "prefix": 359,
+    "random-subset": 263
+  },
+  "outcomes": {
+    "opened-authority-rule-A3": 6,
+    "opened-authority-rule-A5": 4,
+    "opened-clean": 838,
+    "opened-new-empty-database": 9,
+    "opened-torn-tail-truncated-C1": 11,
+    "opened-torn-tail-truncated-C2": 37,
+    "opened-torn-tail-truncated-C4": 370,
+    "opened-torn-tail-truncated-C5": 3
+  },
+  "checks": {
+    "batch-atomicity": 66456,
+    "durability-put": 154638,
+    "no-phantom-values": 1278,
+    "ordering-overwrite": 4630,
+    "verify": 1278
+  },
+  "passed": 1278,
+  "failed": 0,
+  "failures": [],
+  "negative_controls": [
+    {
+      "name": "fsync-lie",
+      "crash_point": 7,
+      "violates": "M1 (synced data is durable)",
+      "detected": true,
+      "how": "acknowledged-write-lost: key \"u-w1-0\" of op 0 (acked at event 7) is missing",
+      "xray": {
+        "health": "healthy",
+        "engine_outcome": "clean",
+        "findings": [
+          "INFO SCAN_CLEAN: All frames validated"
+        ],
+        "report": "pc-default\\images\\controls\\failures\\p00007-control-fsync-lie\\xray.json"
+      }
+    },
+    {
+      "name": "bit-flip",
+      "crash_point": 7,
+      "violates": "M2 / no bit rot (byte 1381 of 4081 flipped)",
+      "detected": true,
+      "how": "acknowledged-write-lost: key \"u-w1-0\" of op 0 (acked at event 7) is missing",
+      "xray": {
+        "health": "attention",
+        "engine_outcome": "repairable",
+        "findings": [
+          "WARNING FRAME_PAYLOAD_CHECKSUM @32: Final frame data checksum mismatch"
+        ],
+        "report": "pc-default\\images\\controls\\failures\\p00007-control-bit-flip\\xray.json"
+      }
+    },
+    {
+      "name": "fsync-lie",
+      "crash_point": 9,
+      "violates": "M1 (synced data is durable)",
+      "detected": true,
+      "how": "acknowledged-write-lost: batch op 1 (acked at event 9) is missing",
+      "xray": {
+        "health": "healthy",
+        "engine_outcome": "clean",
+        "findings": [
+          "INFO SCAN_CLEAN: All frames validated"
+        ],
+        "report": "pc-default\\images\\controls\\failures\\p00009-control-fsync-lie\\xray.json"
+      }
+    },
+    {
+      "name": "fsync-lie",
+      "crash_point": 11,
+      "violates": "M1 (synced data is durable)",
+      "detected": true,
+      "how": "acknowledged-write-lost: key \"u-w1-1\" of op 2 (acked at event 11) is missing",
+      "xray": {
+        "health": "healthy",
+        "engine_outcome": "clean",
+        "findings": [
+          "INFO SCAN_CLEAN: All frames validated"
+        ],
+        "report": "pc-default\\images\\controls\\failures\\p00011-control-fsync-lie\\xray.json"
+      }
+    },
+    {
+      "name": "bit-flip",
+      "crash_point": 21,
+      "violates": "M2 / no bit rot (byte 14723 of 44106 flipped)",
+      "detected": true,
+      "how": "recovery-refused: kvdb: corruption detected: pc-default\\images\\controls\\p00021-control-bit-flip\\pc.kv: frame at offset 4081 (rule C6): format: payload checksum mismatch (stored 0xae2f4019, computed 0x2092a236); 25116 bytes follow the frame's declared end, impossible for a torn write",
+      "xray": {
+        "health": "critical",
+        "engine_outcome": "refused",
+        "findings": [
+          "CRITICAL FRAME_PAYLOAD_CHECKSUM @4081: Committed frame data is corrupted"
+        ],
+        "report": "pc-default\\images\\controls\\failures\\p00021-control-bit-flip\\xray.json"
+      }
+    },
+    {
+      "name": "bit-flip",
+      "crash_point": 35,
+      "violates": "M2 / no bit rot (byte 21905 of 65651 flipped)",
+      "detected": true,
+      "how": "recovery-refused: kvdb: corruption detected: pc-default\\images\\controls\\p00035-control-bit-flip\\pc.kv: frame at offset 18990 (rule C6): format: payload checksum mismatch (stored 0x7fcb9f24, computed 0x64ff267c); 42589 bytes follow the frame's declared end, impossible for a torn write",
+      "xray": {
+        "health": "critical",
+        "engine_outcome": "refused",
+        "findings": [
+          "CRITICAL FRAME_PAYLOAD_CHECKSUM @18990: Committed frame data is corrupted"
+        ],
+        "report": "pc-default\\images\\controls\\failures\\p00035-control-bit-flip\\xray.json"
+      }
+    }
+  ],
+  "verdict": "PASS: all 1278 modeled images from 291 crash points recovered correctly (A finite, seeded sample of modeled power-loss states. Passing it is evidence, not an exhaustive proof that NEXUS survives every possible power loss.)",
+  "reproduce": "nexus-powercut --seed 1 --writers 4 --ops 60 --max-points 400 --max-variants 8"
+}

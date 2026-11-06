@@ -1,0 +1,242 @@
+{
+  "tool": "kvdb-perf",
+  "label": "final (A+B+C)",
+  "started": "2026-11-07T02:24:12+05:30",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "quick": false,
+  "results": [
+    {
+      "name": "put, 1 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 1
+      },
+      "metrics": {
+        "bytes_per_put": 155,
+        "file_bytes": 1240032,
+        "max_us": 23367,
+        "ops_per_sec": 2636.2475336256666,
+        "p50_us": 520,
+        "p99_us": 1357
+      },
+      "seconds": 3.0346164
+    },
+    {
+      "name": "put, 4 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 4
+      },
+      "metrics": {
+        "bytes_per_put": 140.724,
+        "file_bytes": 1125824,
+        "max_us": 6062,
+        "ops_per_sec": 4658.961404523118,
+        "p50_us": 556,
+        "p99_us": 2151
+      },
+      "seconds": 1.7171208999999998
+    },
+    {
+      "name": "put, 16 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 16
+      },
+      "metrics": {
+        "bytes_per_put": 129.584,
+        "file_bytes": 1036704,
+        "max_us": 4459,
+        "ops_per_sec": 12426.294598553797,
+        "p50_us": 1203,
+        "p99_us": 3149
+      },
+      "seconds": 0.6437961
+    },
+    {
+      "name": "batch of 100 puts",
+      "config": {
+        "batches": 200,
+        "ops_per_batch": 100
+      },
+      "metrics": {
+        "batch_max_us": 1636,
+        "batch_p50_us": 521,
+        "batch_p99_us": 1504,
+        "batches_per_sec": 1981.2121650389356,
+        "ops_per_sec": 198121.21650389358
+      },
+      "seconds": 0.1009483
+    },
+    {
+      "name": "delete, 1 writer",
+      "config": {
+        "ops": 4000
+      },
+      "metrics": {
+        "max_us": 5605,
+        "ops_per_sec": 2664.251966301209,
+        "p50_us": 519,
+        "p99_us": 1186
+      },
+      "seconds": 1.5013595
+    },
+    {
+      "name": "get, 1 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 1
+      },
+      "metrics": {
+        "allocs_per_op": 2.0071475,
+        "bytes_per_op": 148.57426,
+        "ns_per_op": 6636.593,
+        "ops_per_sec": 150679.7237679032
+      },
+      "seconds": 2.6546372
+    },
+    {
+      "name": "get, 8 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 8
+      },
+      "metrics": {
+        "allocs_per_op": 2.0098625,
+        "bytes_per_op": 149.01312,
+        "ns_per_op": 25583.74,
+        "ops_per_sec": 312698.6124780818
+      },
+      "seconds": 1.279187
+    },
+    {
+      "name": "mixed: 4 readers + 4 writers",
+      "config": {
+        "keys": 100000,
+        "readers": 4,
+        "seconds": 4,
+        "writers": 4
+      },
+      "metrics": {
+        "get_max_us": 1960,
+        "get_ops_per_sec": 231568.4493930604,
+        "get_p50_us": 0,
+        "get_p99_us": 1002,
+        "put_max_us": 21420,
+        "put_ops_per_sec": 4366.376808869954,
+        "put_p50_us": 1013,
+        "put_p99_us": 2540
+      },
+      "seconds": 4.0005709
+    },
+    {
+      "name": "memory, 100000 keys",
+      "config": {
+        "key_len": 12,
+        "keys": 100000,
+        "value_size": 100
+      },
+      "metrics": {
+        "heap_bytes": 6849224,
+        "heap_bytes_per_key": 68.49224,
+        "keys": 100000
+      },
+      "seconds": 0.0285587
+    },
+    {
+      "name": "memory, 1000000 keys",
+      "config": {
+        "key_len": 12,
+        "keys": 1000000,
+        "value_size": 100
+      },
+      "metrics": {
+        "heap_bytes": 99807176,
+        "heap_bytes_per_key": 99.807176,
+        "keys": 1000000
+      },
+      "seconds": 0.4935918
+    },
+    {
+      "name": "recovery (open), 100000 keys",
+      "config": {
+        "keys": 100000,
+        "runs": 3
+      },
+      "metrics": {
+        "alloc_bytes_per_key": 189.41952,
+        "allocs_per_key": 2.00644,
+        "file_bytes": 12300352,
+        "mb_per_sec": 436.67356567488986,
+        "open_ms_median": 28.168,
+        "open_ms_min": 27.605
+      },
+      "seconds": 0.0281683
+    },
+    {
+      "name": "recovery (open), 1000000 keys",
+      "config": {
+        "keys": 1000000,
+        "runs": 3
+      },
+      "metrics": {
+        "alloc_bytes_per_key": 197.530296,
+        "allocs_per_key": 2.008689,
+        "file_bytes": 123003232,
+        "mb_per_sec": 240.28724315336095,
+        "open_ms_median": 511.9,
+        "open_ms_min": 509.37
+      },
+      "seconds": 0.5119008
+    },
+    {
+      "name": "recovery (open), 2000000 keys",
+      "config": {
+        "keys": 2000000,
+        "runs": 3
+      },
+      "metrics": {
+        "alloc_bytes_per_key": 194.740988,
+        "allocs_per_key": 2.0086395,
+        "file_bytes": 246006432,
+        "mb_per_sec": 222.27981749316305,
+        "open_ms_median": 1106.742,
+        "open_ms_min": 1098.816
+      },
+      "seconds": 1.1067421
+    },
+    {
+      "name": "compaction, 100k keys, 50% dead",
+      "config": {
+        "keys": 100000
+      },
+      "metrics": {
+        "alloc_bytes": 92089848,
+        "bytes_after": 12300128,
+        "bytes_before": 20910576,
+        "bytes_written_per_live_byte": 1.0000104065040651,
+        "compact_ms": 848.157,
+        "reader_get_max_us": 37223,
+        "reader_get_p50_us": 0,
+        "reader_get_p99_us": 523,
+        "temp_file_bytes": 12300128
+      },
+      "seconds": 0.8481579
+    }
+  ],
+  "notes": [
+    "Every PUT/DELETE/BATCH is synced before it returns (the engine has no other mode).",
+    "Latencies are wall time around one public API call, measured by this tool."
+  ]
+}

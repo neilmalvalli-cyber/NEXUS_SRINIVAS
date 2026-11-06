@@ -1,0 +1,67 @@
+nexus-torture: mode=disk-full seed=11 iterations=1..60 writers=3 readers=0 kill=5..1200ms max-bytes=262144
+  kvdb=C:\Users\MY PC\AppData\Local\Temp\claude\8bd721bb8349a66b\5535522f-6a01-4088-9d42-4a637e03f8be\scratchpad\tort\kvdb.exe dir=runs/df
+[   1/60] PASS kill@137ms in-flight=compact+del+put sent=212 acked=202 rejected=0 unknown=3 gets=7 keys=173 file=200925B restart=12.7ms recovery=2.63ms oracle=0.5ms
+[   2/60] PASS kill@1034ms in-flight=put+put+put sent=631 acked=462 rejected=145 unknown=3 gets=21 keys=253 file=260826B restart=12.0ms recovery=2.10ms oracle=1.0ms full=145
+[   3/60] PASS kill@186ms in-flight=del+put+put sent=127 acked=77 rejected=40 unknown=3 gets=7 keys=254 file=261823B restart=13.1ms recovery=2.61ms oracle=0.0ms full=40
+[   4/60] PASS kill@975ms in-flight=put+put+put sent=539 acked=369 rejected=133 unknown=3 gets=34 keys=266 file=261140B restart=12.6ms recovery=2.63ms oracle=1.0ms full=133
+[   5/60] PASS kill@893ms in-flight=del+get+put sent=533 acked=382 rejected=121 unknown=3 gets=27 keys=284 file=261280B restart=14.4ms recovery=2.66ms oracle=1.3ms full=121
+[   6/60] PASS kill@851ms in-flight=batch+del+put sent=527 acked=318 rejected=180 unknown=3 gets=26 keys=291 file=260485B restart=16.0ms recovery=3.72ms oracle=0.5ms interrupted-compaction-resolved full=180
+[   7/60] PASS kill@133ms in-flight=del+put+put sent=80 acked=50 rejected=24 unknown=3 gets=3 keys=286 file=260365B restart=16.9ms recovery=4.77ms oracle=0.0ms interrupted-compaction-resolved full=24
+[   8/60] PASS kill@968ms in-flight=batch+del+put sent=630 acked=382 rejected=214 unknown=3 gets=31 keys=281 file=261349B restart=12.7ms recovery=2.67ms oracle=1.0ms full=214
+[   9/60] PASS kill@234ms in-flight=del+put+put sent=124 acked=72 rejected=40 unknown=3 gets=9 keys=278 file=262135B restart=13.1ms recovery=2.61ms oracle=0.5ms full=40
+[  10/60] PASS kill@70ms in-flight=del+del+del sent=51 acked=25 rejected=21 unknown=3 gets=2 keys=276 file=261497B restart=11.7ms recovery=2.10ms oracle=0.7ms full=21
+[  11/60] PASS kill@361ms in-flight=compact+put+put sent=209 acked=132 rejected=62 unknown=3 gets=12 keys=270 file=259267B restart=13.1ms recovery=3.64ms oracle=0.0ms interrupted-compaction-resolved full=62
+[  12/60] PASS kill@868ms in-flight=del+put+put sent=510 acked=360 rejected=125 unknown=3 gets=22 keys=265 file=262018B restart=12.4ms recovery=2.09ms oracle=0.6ms full=125
+[  13/60] PASS kill@205ms in-flight=compact+compact+put sent=153 acked=94 rejected=49 unknown=3 gets=7 keys=266 file=261209B restart=12.3ms recovery=2.63ms oracle=0.0ms full=49
+[  14/60] PASS kill@120ms in-flight=compact+del+put sent=54 acked=35 rejected=12 unknown=3 gets=4 keys=263 file=261375B restart=12.8ms recovery=3.28ms oracle=0.0ms full=12
+[  15/60] PASS kill@1174ms in-flight=batch+put+put sent=718 acked=441 rejected=240 unknown=3 gets=34 keys=277 file=262057B restart=12.4ms recovery=3.66ms oracle=1.1ms full=240
+[  16/60] PASS kill@281ms in-flight=compact+del+put sent=181 acked=114 rejected=61 unknown=3 gets=3 keys=276 file=260945B restart=14.1ms recovery=3.68ms oracle=0.5ms interrupted-compaction-resolved full=61
+[  17/60] PASS kill@872ms in-flight=batch+compact+del sent=558 acked=360 rejected=163 unknown=3 gets=32 keys=269 file=261143B restart=12.7ms recovery=4.26ms oracle=1.1ms interrupted-compaction-resolved full=163
+[  18/60] PASS kill@190ms in-flight=del+put+put sent=137 acked=72 rejected=59 unknown=3 gets=3 keys=272 file=261804B restart=13.8ms recovery=3.15ms oracle=0.0ms full=59
+[  19/60] PASS kill@333ms in-flight=del+del+put sent=208 acked=134 rejected=61 unknown=3 gets=10 keys=270 file=261868B restart=11.5ms recovery=2.61ms oracle=0.0ms full=61
+[  20/60] PASS kill@681ms in-flight=put+put+put sent=411 acked=265 rejected=118 unknown=3 gets=25 keys=279 file=261534B restart=14.4ms recovery=3.84ms oracle=1.0ms interrupted-compaction-resolved full=118
+[  21/60] PASS kill@795ms in-flight=del+put+put sent=434 acked=281 rejected=126 unknown=3 gets=24 keys=278 file=261792B restart=13.1ms recovery=2.65ms oracle=0.5ms full=126
+[  22/60] PASS kill@203ms in-flight=compact+put+put sent=125 acked=84 rejected=31 unknown=3 gets=7 keys=280 file=260863B restart=12.3ms recovery=2.10ms oracle=0.0ms full=31
+[  23/60] PASS kill@1176ms in-flight=compact+put+put sent=688 acked=413 rejected=238 unknown=3 gets=34 keys=267 file=260580B restart=13.7ms recovery=3.63ms oracle=0.5ms full=238
+[  24/60] PASS kill@1007ms in-flight=compact+del+put sent=671 acked=412 rejected=211 unknown=3 gets=45 keys=268 file=260084B restart=13.0ms recovery=2.88ms oracle=1.1ms full=211
+[  25/60] PASS kill@520ms in-flight=put+put+put sent=342 acked=224 rejected=97 unknown=3 gets=18 keys=275 file=261615B restart=14.0ms recovery=3.54ms oracle=0.5ms interrupted-compaction-resolved full=97
+[  26/60] PASS kill@101ms in-flight=put+put+put sent=58 acked=39 rejected=16 unknown=3 gets=0 keys=272 file=261677B restart=11.4ms recovery=2.79ms oracle=0.0ms full=16
+[  27/60] PASS kill@285ms in-flight=del+put+put sent=194 acked=110 rejected=71 unknown=3 gets=10 keys=274 file=261753B restart=12.4ms recovery=2.61ms oracle=0.5ms full=71
+[  28/60] PASS kill@907ms in-flight=batch+put+put sent=580 acked=397 rejected=152 unknown=3 gets=28 keys=277 file=261793B restart=12.5ms recovery=2.15ms oracle=0.5ms full=152
+[  29/60] PASS kill@421ms in-flight=del+put+put sent=251 acked=152 rejected=81 unknown=3 gets=15 keys=282 file=262099B restart=14.5ms recovery=2.66ms oracle=0.0ms full=81
+[  30/60] PASS kill@246ms in-flight=del+del+put sent=168 acked=95 rejected=62 unknown=3 gets=8 keys=290 file=262034B restart=12.6ms recovery=2.33ms oracle=0.0ms full=62
+[  31/60] PASS kill@582ms in-flight=del+del+put sent=352 acked=221 rejected=106 unknown=3 gets=22 keys=284 file=261636B restart=12.6ms recovery=2.36ms oracle=0.5ms full=106
+[  32/60] PASS kill@862ms in-flight=del+del+put sent=451 acked=312 rejected=112 unknown=3 gets=24 keys=283 file=261902B restart=12.0ms recovery=2.11ms oracle=0.5ms full=112
+[  33/60] PASS kill@554ms in-flight=batch+del+put sent=350 acked=217 rejected=115 unknown=3 gets=15 keys=292 file=261543B restart=11.9ms recovery=2.63ms oracle=0.5ms full=115
+[  34/60] PASS kill@366ms in-flight=batch+put+put sent=273 acked=158 rejected=100 unknown=3 gets=12 keys=288 file=261901B restart=12.5ms recovery=2.65ms oracle=0.0ms full=100
+[  35/60] PASS kill@742ms in-flight=del+put+put sent=485 acked=312 rejected=143 unknown=3 gets=27 keys=291 file=261614B restart=12.3ms recovery=2.10ms oracle=0.5ms full=143
+[  36/60] PASS kill@388ms in-flight=batch+batch+put sent=244 acked=143 rejected=84 unknown=3 gets=14 keys=284 file=261480B restart=13.2ms recovery=2.77ms oracle=0.5ms full=84
+[  37/60] PASS kill@134ms in-flight=del+put+put sent=67 acked=43 rejected=16 unknown=3 gets=5 keys=285 file=262061B restart=12.0ms recovery=2.08ms oracle=0.0ms full=16
+[  38/60] PASS kill@181ms in-flight=compact+put sent=133 acked=77 rejected=45 unknown=3 gets=8 keys=287 file=262033B restart=13.2ms recovery=2.12ms oracle=0.0ms full=45
+[  39/60] PASS kill@787ms in-flight=compact+del+del sent=526 acked=306 rejected=197 unknown=3 gets=20 keys=286 file=261711B restart=12.5ms recovery=2.65ms oracle=0.5ms full=197
+[  40/60] PASS kill@915ms in-flight=del+put+put sent=555 acked=344 rejected=179 unknown=3 gets=29 keys=290 file=261867B restart=12.3ms recovery=2.08ms oracle=0.7ms full=179
+[  41/60] PASS kill@529ms in-flight=put+put+put sent=339 acked=211 rejected=108 unknown=3 gets=17 keys=291 file=260905B restart=12.3ms recovery=2.08ms oracle=0.0ms full=108
+[  42/60] PASS kill@724ms in-flight=put+put+put sent=519 acked=326 rejected=164 unknown=3 gets=26 keys=280 file=261194B restart=12.2ms recovery=2.10ms oracle=0.5ms full=164
+[  43/60] PASS kill@61ms in-flight=del+del+put sent=23 acked=16 rejected=2 unknown=3 gets=2 keys=281 file=261227B restart=11.5ms recovery=2.07ms oracle=0.0ms full=2
+[  44/60] PASS kill@711ms in-flight=batch+del+put sent=449 acked=282 rejected=144 unknown=3 gets=20 keys=279 file=261616B restart=11.7ms recovery=2.63ms oracle=0.0ms full=144
+[  45/60] PASS kill@274ms in-flight=del+del+put sent=163 acked=99 rejected=55 unknown=3 gets=6 keys=283 file=262133B restart=12.7ms recovery=2.63ms oracle=0.5ms full=55
+[  46/60] PASS kill@33ms in-flight=batch+del+put sent=10 acked=4 rejected=2 unknown=3 gets=1 keys=281 file=260234B restart=12.4ms recovery=2.10ms oracle=0.0ms full=2
+[  47/60] PASS kill@547ms in-flight=put+put+put sent=351 acked=215 rejected=114 unknown=3 gets=19 keys=276 file=258917B restart=14.0ms recovery=3.72ms oracle=0.0ms interrupted-compaction-resolved full=114
+[  48/60] PASS kill@1190ms in-flight=put+put+put sent=790 acked=481 rejected=245 unknown=3 gets=61 keys=278 file=261899B restart=12.0ms recovery=2.11ms oracle=0.5ms full=245
+[  49/60] PASS kill@718ms in-flight=del+del+put sent=442 acked=287 rejected=138 unknown=3 gets=14 keys=289 file=261802B restart=12.6ms recovery=2.65ms oracle=0.5ms full=138
+[  50/60] PASS kill@610ms in-flight=batch+del+put sent=388 acked=244 rejected=117 unknown=3 gets=24 keys=280 file=261982B restart=12.5ms recovery=2.60ms oracle=0.5ms full=117
+[  51/60] PASS kill@1076ms in-flight=put+put+put sent=649 acked=408 rejected=209 unknown=3 gets=29 keys=277 file=261536B restart=12.2ms recovery=2.09ms oracle=0.5ms full=209
+[  52/60] PASS kill@314ms in-flight=batch+del+put sent=191 acked=113 rejected=69 unknown=3 gets=6 keys=276 file=260803B restart=11.9ms recovery=2.07ms oracle=0.5ms full=69
+[  53/60] PASS kill@1174ms in-flight=batch+del+put sent=729 acked=474 rejected=225 unknown=3 gets=27 keys=283 file=260973B restart=13.8ms recovery=4.37ms oracle=1.1ms interrupted-compaction-resolved full=225
+[  54/60] PASS kill@904ms in-flight=compact+del+del sent=579 acked=392 rejected=153 unknown=3 gets=31 keys=283 file=261388B restart=12.8ms recovery=2.62ms oracle=0.7ms full=153
+[  55/60] PASS kill@1042ms in-flight=del+put+put sent=647 acked=454 rejected=157 unknown=3 gets=33 keys=283 file=261279B restart=14.1ms recovery=4.18ms oracle=0.6ms interrupted-compaction-resolved full=157
+[  56/60] PASS kill@956ms in-flight=batch+batch+put sent=526 acked=339 rejected=154 unknown=3 gets=30 keys=281 file=261855B restart=12.1ms recovery=3.25ms oracle=0.5ms full=154
+[  57/60] PASS kill@288ms in-flight=batch+put+put sent=156 acked=98 rejected=48 unknown=3 gets=7 keys=280 file=261635B restart=13.2ms recovery=2.64ms oracle=0.0ms full=48
+[  58/60] PASS kill@18ms in-flight=batch+batch+put sent=4 acked=1 rejected=0 unknown=3 gets=0 keys=280 file=261569B restart=12.6ms recovery=2.08ms oracle=0.0ms
+[  59/60] PASS kill@1136ms in-flight=batch+put+put sent=696 acked=441 rejected=210 unknown=3 gets=42 keys=277 file=261838B restart=12.8ms recovery=2.63ms oracle=1.1ms full=210
+[  60/60] PASS kill@953ms in-flight=del+put+put sent=634 acked=351 rejected=254 unknown=3 gets=26 keys=290 file=261782B restart=13.4ms recovery=2.61ms oracle=0.5ms full=254
+
+RESULT: PASS  mode=disk-full seed=11  passed=60 failed=0 inconclusive=0 of 60  acked=13922 rejected=6618 unknown=180 gets=1105  kills-mid-write=60 compact-in-flight=12 torn-tails=0 interrupted-compactions=10 recovery-kills=0/0 closes=0 kills-in-close=0
+VERIFY: attempted=21825 acknowledged=15027 (writes 12817) cleanly-rejected=6618 unknown=180  acked-writes-verified-after-restart=12817 reads-verified=1105  batch-atomicity-violations=0 data-integrity-violations=0 recovery-failures=0 protocol/liveness-failures=0 oracle-inconclusive=0
+PERF: 39.2s total, 1.53 iterations/s, restart 12.9 ms avg / 16.9 max, recovery 2.76 ms avg / 4.77 max, oracle 0.44 ms avg / 1.3 max, verify 42.6 ms avg, serve peak 23.3 MiB, tester heap peak 4.7 MiB
+report: runs\df\summary.json

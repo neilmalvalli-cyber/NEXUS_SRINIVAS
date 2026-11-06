@@ -3115,3 +3115,2251 @@ Not yet
 ```text
 fix prompts.md and make sure it is up to date
 ```
+
+### Prompt 17
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-06 23:45 (local time; 18:15 UTC, from the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the session transcript. Sent after the user committed the earlier work as 7a1f536. The prompt refers to an attached NEXUS UI reference image; no image was attached to the message (the transcript contains text only). Produced the HTTP adapter (`src/cmd/nexus-api`) and the frontend (`frontend/`). Full text as sent:
+
+````text
+# NEXUS — Complete Frontend Development (Phase 1)
+
+You are building the frontend for **NEXUS**, a high-performance, crash-safe key-value database engine developed in Go.
+
+Your task is to create a complete, polished, functional database management and observability dashboard that integrates with the existing NEXUS backend.
+
+This is a real engineering project intended for a live technical judging demonstration. The interface must not just look impressive; its features must work with the actual database and testing tools.
+
+---
+
+# 1. IMPORTANT: Understand the Existing Project First
+
+Before writing any code, inspect the repository thoroughly.
+
+Repository location:
+
+`C:\Users\MY PC\NEXUS_SRINIVAS`
+
+Read and understand:
+
+- `README.md`
+- `ARCHITECTURE.md`
+- `BREAKING.md`
+- `docs/FRONTEND_INTEGRATION.md`
+- `docs/FAILURE_GUARANTEES.md`
+- `docs/RECOVERY.md`
+- `docs/TORTURE_TOOLS.md`
+- `docs/TORTURE_ARCHITECTURE.md`
+- `docs/TORTURE_CLI.md`
+- Relevant source code under `src/`
+- The existing torture-testing implementation under `torture2/`
+
+Understand the actual functionality of NEXUS before designing the interface.
+
+**Critical restrictions:**
+
+1. Do not modify the existing database storage format.
+2. Do not rewrite or duplicate the database engine.
+3. Do not introduce another database engine.
+4. Do not remove existing functionality.
+5. Do not invent backend capabilities or API endpoints.
+6. Do not display fabricated performance statistics as real data.
+7. Do not change existing Go functionality merely to accommodate frontend design.
+8. Do not commit, push, reset, rebase, or amend Git history.
+
+The existing database engine is already implemented, tested, committed, and pushed. Protect it.
+
+---
+
+# 2. Technology Stack
+
+Use the following stack:
+
+- Next.js with App Router
+- TypeScript with strict mode
+- Tailwind CSS
+- shadcn/ui
+- Lucide React icons
+- Recharts for data visualizations
+- TanStack Query for API state management
+- Zod for validation
+- React Hook Form for forms
+
+Use reusable components and maintain a clean, scalable project structure.
+
+Avoid unnecessary dependencies.
+
+---
+
+# 3. Visual Identity — STRICT MINIMALIST GREYSCALE
+
+This is one of the most important requirements.
+
+The entire NEXUS dashboard must follow a **minimalist charcoal, graphite, and greyscale aesthetic**.
+
+Think of premium developer tools and sophisticated database management software.
+
+The design must feel:
+- Minimalist.
+- Professional.
+- Technical.
+- Precise.
+- Spacious.
+- Elegant.
+- Functional.
+
+## Colour palette
+
+Use this palette consistently across every page:
+
+| Element | Colour |
+|---|---|
+| Main background | `#111111` |
+| Sidebar background | `#151515` |
+| Card background | `#1B1B1B` |
+| Elevated surfaces | `#222222` |
+| Borders | `#303030` |
+| Primary text | `#F2F2F2` |
+| Secondary text | `#A0A0A0` |
+| Muted text | `#707070` |
+| Subtle hover | `#292929` |
+
+Use different shades of grey to establish depth and hierarchy.
+
+## Strict design rules
+
+- No purple accents.
+- No neon colours.
+- No colourful gradients.
+- No flashy backgrounds.
+- No excessive glassmorphism.
+- No excessive glow or shadows.
+- No oversized headings.
+- No unnecessary decorative elements.
+- No overcrowded cards.
+- No excessive rounded corners.
+
+Use:
+- Thin grey borders.
+- Subtle shadows only where needed.
+- Clean typography.
+- Generous whitespace.
+- Compact, carefully aligned cards.
+- Consistent spacing.
+- Small, understated icons.
+- Subtle hover states.
+- Restrained transitions.
+- Greyscale charts.
+
+Reserve subtle green and red only for meaningful success, warning, and error states.
+
+The overall interface should resemble a premium database engineering product rather than a generic SaaS dashboard.
+
+## Reference image
+
+Use the attached NEXUS UI reference image as inspiration for:
+- Sidebar structure.
+- Dashboard layout.
+- Metric cards.
+- Database operation forms.
+- Storage tables.
+- Recovery panels.
+- Testing results.
+- General page composition.
+
+However, disregard the purple accents and use the strict charcoal-and-greyscale palette above.
+
+The final design should be cleaner and less cluttered than the reference.
+
+---
+
+# 4. Application Structure
+
+Build the main application directly.
+
+**Do not create an introductory landing page or intro animation in this phase.**
+
+The user should open the application and immediately see the main dashboard.
+
+Do not implement:
+- Logo reveal animations.
+- Scrolling hero animations.
+- Animated landing pages.
+- Introductory splash screens.
+
+## Sidebar navigation
+
+Create a persistent left sidebar containing:
+
+1. Overview
+2. Database
+3. Storage
+4. Recovery
+5. Torture Lab
+6. Architecture
+
+Include:
+- NEXUS logo and name.
+- Active navigation indicator.
+- Backend connection status.
+- Database health status.
+- Consistent icons.
+- Responsive behaviour.
+
+Keep the sidebar minimalist and relatively narrow.
+
+## Main content area
+
+Every page should have:
+- A clear page title.
+- A short description.
+- Relevant actions.
+- Consistent spacing.
+- Consistent card and table styling.
+
+Include toast notifications, confirmation dialogs, loading indicators, and error states.
+
+---
+
+# 5. Page 1 — Overview Dashboard
+
+This is the primary screen and should receive the most visual attention.
+
+Create a clean database overview dashboard.
+
+## Database status
+
+Display actual backend information wherever available:
+
+- Database health.
+- Connection status.
+- Total number of keys.
+- Database file size.
+- WAL size, if available.
+- Storage levels, if available.
+- Recent operations.
+- Last compaction status.
+- Recent recovery activity.
+
+If a metric is not exposed by the backend, display `N/A` or `Not available`.
+
+Never invent values.
+
+## Performance visualizations
+
+Create clean greyscale charts for:
+
+- PUT operations.
+- GET operations.
+- DELETE operations.
+- Operations per second.
+- Latency, if measurable.
+
+Use clear legends and readable axes.
+
+Do not show fabricated historical metrics.
+
+If live time-series information is unavailable, explain that the metric is unavailable instead of generating fake activity.
+
+## Quick actions
+
+Provide compact actions for:
+
+- PUT
+- GET
+- DELETE
+- COMPACT
+- INSPECT
+
+These should open functional forms or navigate to the appropriate page.
+
+## Recent activity
+
+Show recent operations and system activity where available.
+
+Include:
+- Operation type.
+- Key, where appropriate.
+- Timestamp.
+- Result.
+- Status.
+
+Keep this section compact and readable.
+
+---
+
+# 6. Page 2 — Database
+
+Build a functional interface for interacting with the NEXUS key-value store.
+
+Provide four main operations.
+
+## PUT
+
+Allow users to:
+- Enter a key.
+- Enter a value.
+- Submit the operation.
+- See the result.
+
+Support large values within the backend's actual limits.
+
+Provide appropriate validation.
+
+## GET
+
+Allow users to:
+- Enter a key.
+- Retrieve its value.
+- Display the returned value clearly.
+- Display errors when the key does not exist.
+
+Support readable JSON and plain-text formatting.
+
+## DELETE
+
+Allow users to:
+- Enter a key.
+- Delete it.
+- Confirm the action.
+- See the result.
+
+## LIST KEYS
+
+If the backend exposes key listing:
+- Display keys in a table.
+- Support pagination.
+- Support prefix filtering if available.
+- Show useful empty states.
+
+Do not invent a listing endpoint if one does not exist.
+
+## UX requirements
+
+Use a clean interface with:
+- Tabs or segmented controls for operations.
+- Compact forms.
+- Readable value viewers.
+- Copy-to-clipboard functionality.
+- Clear success and failure notifications.
+
+Distinguish between a missing key and an actual backend failure.
+
+---
+
+# 7. Page 3 — Storage and Compaction
+
+Create a storage management dashboard.
+
+Display information available from the backend:
+
+- Database file size.
+- WAL size.
+- Storage levels.
+- File counts.
+- File sizes.
+- Compaction status.
+- Latest compaction result.
+- Relevant storage information.
+
+Do not assume that NEXUS uses storage levels or metadata that are not actually exposed.
+
+## Compaction
+
+Provide a `Compact Database` action.
+
+When clicked:
+1. Display a confirmation dialog.
+2. Send the request to the actual backend.
+3. Display the running state.
+4. Display the final result.
+5. Refresh relevant storage information.
+
+Show meaningful errors if compaction fails.
+
+## Storage visualization
+
+Use a clean table or simple visual representation.
+
+Avoid unnecessary animations and decorative graphics.
+
+---
+
+# 8. Page 4 — Recovery and Inspection
+
+Create a dedicated recovery and database inspection interface.
+
+This page is important because crash safety and recovery are major parts of NEXUS.
+
+## Inspection
+
+Provide a button to run database inspection using the existing inspection functionality.
+
+Display the actual results returned by the backend.
+
+## Results presentation
+
+Where supported, display:
+
+- WAL consistency.
+- Snapshot or manifest consistency.
+- Recovery status.
+- Validation results.
+- Warnings.
+- Errors.
+- Latest recovery information.
+
+Present results using clear pass/fail indicators.
+
+Use:
+- Subtle green for confirmed success.
+- Subtle red for confirmed failure.
+- Grey for unavailable or unverified information.
+
+## Recovery information
+
+Show:
+- Latest recovery status.
+- Recovery logs, if available.
+- Inspection history, if supported.
+- Any detected inconsistencies.
+
+Never display a successful recovery result unless the backend actually confirms it.
+
+Do not expose destructive recovery operations unless they are explicitly supported by the existing system.
+
+---
+
+# 9. Page 5 — Torture Lab
+
+This is one of the most important demonstration sections.
+
+NEXUS has an existing Go-based torture-testing system under `torture2/`.
+
+The frontend must integrate with the actual testing implementation.
+
+Do not recreate the testing engine in JavaScript.
+
+## Main interface
+
+Create a professional testing dashboard with:
+
+- Available workloads.
+- Workload descriptions.
+- Test configuration.
+- Run Test button.
+- Test status.
+- Execution logs.
+- Final results.
+
+## Workload selection
+
+Inspect the actual torture tester and expose only supported workloads.
+
+Where supported, allow users to select workloads such as:
+
+- Default workload.
+- Concurrent disjoint keys.
+- Same-key concurrency.
+- Large batches.
+- Large values.
+- Compaction.
+- Disk-full scenarios.
+- Recovery/crash testing.
+- Other workloads actually implemented by the tester.
+
+Do not invent workloads.
+
+## Test execution
+
+When a user starts a test:
+
+1. Validate the configuration.
+2. Submit the request to the backend.
+3. Show the running state.
+4. Display progress if the backend exposes it.
+5. Display logs if available.
+6. Display the final result.
+7. Allow the user to inspect the result.
+
+## Results
+
+Display actual information where available:
+
+- Number of operations.
+- Duration.
+- Throughput.
+- Number of failures.
+- Number of successful checks.
+- Test outcome.
+
+Do not fabricate test results.
+
+Clearly distinguish:
+- Running.
+- Passed.
+- Failed.
+- Interrupted.
+- Blocked.
+
+A test should never be marked as passed unless the backend confirms success.
+
+If the existing torture tester cannot safely be triggered through the HTTP adapter, explain the limitation and propose a safe integration method. Do not execute arbitrary shell commands from the frontend.
+
+---
+
+# 10. Page 6 — Architecture
+
+Create a visually clean architecture page explaining how NEXUS works.
+
+Base the architecture entirely on the actual source code and documentation.
+
+Include the real components:
+
+- CLI/API layer.
+- Database interface.
+- In-memory hash index.
+- Append-only binary log.
+- Write and read paths.
+- Recovery process.
+- Compaction process.
+- Independent verification.
+- Torture-testing system.
+
+## Architecture diagram
+
+Create a simple connected diagram.
+
+Each component should have:
+- A name.
+- A short explanation.
+- Its role in the system.
+- Connections to related components.
+
+Use monochromatic boxes and connecting lines.
+
+Provide a simple way to understand:
+- How a write happens.
+- How a read happens.
+- How recovery works.
+- How compaction works.
+
+Do not invent distributed architecture, replication, consensus, or other features that NEXUS does not implement.
+
+---
+
+# 11. Backend and HTTP Integration
+
+The NEXUS database engine currently exists separately from the frontend.
+
+Read `docs/FRONTEND_INTEGRATION.md` and follow its API contract.
+
+Build a dedicated API/service layer.
+
+## Requirements
+
+- Read the API base URL from an environment variable.
+- Create `.env.example`.
+- Use typed request and response interfaces.
+- Centralize API calls.
+- Use request timeouts.
+- Handle network errors.
+- Handle server disconnection.
+- Handle malformed responses.
+- Handle non-2xx responses.
+- Display loading and error states.
+- Refresh data after successful mutations.
+- Avoid excessive polling.
+
+Use TanStack Query for data fetching and cache invalidation.
+
+Do not place API logic directly inside every UI component.
+
+## HTTP adapter
+
+If the HTTP adapter is not already implemented:
+
+- Build it as a separate Go component.
+- Use Go standard-library functionality where possible.
+- Call the existing NEXUS library and tools.
+- Follow the documented API contract.
+- Do not duplicate database logic.
+- Do not modify the storage format.
+- Keep the adapter isolated from the core engine.
+- Add appropriate tests.
+
+The frontend must not directly execute arbitrary shell commands.
+
+---
+
+# 12. Demo Mode
+
+Implement a clearly separated demo mode for development and UI previews.
+
+Requirements:
+
+- All mock data must be labelled `DEMO DATA`.
+- Never mix mock data with live backend responses.
+- Provide an explicit way to switch between demo and live mode.
+- Show connection status prominently.
+- Do not silently substitute fake metrics when the backend is unavailable.
+- Show a useful disconnected state when the backend cannot be reached.
+
+The default experience should make it obvious whether the dashboard is connected to a real NEXUS backend.
+
+---
+
+# 13. Testing — MANDATORY
+
+Do not stop once the UI looks good.
+
+Test every implemented feature.
+
+## Frontend tests
+
+Verify:
+
+- TypeScript compilation.
+- ESLint.
+- Production build.
+- All navigation links.
+- Responsive behaviour.
+- Loading states.
+- Empty states.
+- Error states.
+- Disconnected states.
+- Form validation.
+- Dialogs and confirmations.
+- Toast notifications.
+- Charts.
+- No dead buttons.
+- No browser console errors.
+
+## Real backend integration tests
+
+With the actual NEXUS backend running, test:
+
+1. Health/status request.
+2. PUT a key-value pair.
+3. GET the same key.
+4. Verify the retrieved value matches.
+5. DELETE the key.
+6. Verify the key is no longer available.
+7. Retrieve a nonexistent key.
+8. Submit invalid input.
+9. Test a large value within supported limits.
+10. Run compaction.
+11. Run inspection.
+12. Run an available torture workload.
+13. Verify that test logs and results display correctly.
+14. Stop the backend.
+15. Confirm that the frontend shows a disconnected state.
+16. Restart the backend.
+17. Verify that the frontend reconnects.
+
+Do not claim a test passed unless it was actually executed and verified.
+
+If a test cannot be performed because an endpoint or adapter is missing, mark it as `BLOCKED`.
+
+Never report blocked tests as successful.
+
+---
+
+# 14. Code Quality and User Experience
+
+The frontend should be production-quality.
+
+Requirements:
+
+- Strict TypeScript.
+- Modular components.
+- Reusable UI elements.
+- Clear API/service separation.
+- Consistent design tokens.
+- Accessible controls.
+- Responsive layout.
+- Proper error handling.
+- No unnecessary dependencies.
+- No unused components.
+- No dead interactions.
+- No fake functionality.
+- No excessive animation.
+
+Use subtle transitions only where they improve usability.
+
+The dashboard must work well at typical laptop and desktop resolutions, especially during a live judging demonstration.
+
+---
+
+# 15. Suggested Folder Structure
+
+Use a sensible structure similar to:
+
+frontend/
+  src/
+    app/
+      overview/
+      database/
+      storage/
+      recovery/
+      torture/
+      architecture/
+    components/
+      layout/
+      dashboard/
+      database/
+      storage/
+      recovery/
+      torture/
+      architecture/
+      ui/
+    lib/
+      api/
+      queries/
+      validation/
+      utils/
+    hooks/
+    types/
+  public/
+  .env.example
+  README.md
+
+You may adjust this structure when appropriate.
+
+Keep the implementation organised and avoid giant page components.
+
+---
+
+# 16. Final Deliverables
+
+Provide:
+
+1. Complete frontend under `frontend/`.
+2. All reusable UI components.
+3. Typed API/service layer.
+4. `.env.example`.
+5. HTTP adapter if required.
+6. Frontend README with setup instructions.
+7. Backend integration instructions.
+8. Testing report.
+9. List of missing or blocked functionality.
+
+At the end, provide:
+
+- What was implemented.
+- Which pages are functional.
+- Which features connect to the real backend.
+- Which features remain blocked.
+- Which tests were actually executed.
+- Test results.
+- Exact commands to run the frontend and backend.
+
+---
+
+# 17. Implementation Strategy
+
+Work in the following order:
+
+**Phase A — Repository understanding**
+- Inspect the codebase.
+- Read the integration contract.
+- Identify available backend capabilities.
+- Identify missing API functionality.
+
+**Phase B — Design system**
+- Establish the charcoal and greyscale theme.
+- Build the sidebar and application layout.
+- Create reusable cards, tables, dialogs, and forms.
+- Verify visual consistency.
+
+**Phase C — Main pages**
+- Overview.
+- Database.
+- Storage.
+- Recovery.
+- Torture Lab.
+- Architecture.
+
+**Phase D — Backend integration**
+- Implement the API service layer.
+- Implement the HTTP adapter if needed.
+- Connect every supported feature.
+- Add loading, error, and disconnected states.
+
+**Phase E — Testing**
+- Run frontend checks.
+- Run backend integration tests.
+- Test all actual interactions.
+- Fix errors.
+- Record blocked tests honestly.
+
+**Phase F — Final polish**
+- Review every page.
+- Remove dead buttons and placeholder interactions.
+- Check responsive behaviour.
+- Ensure the monochromatic design is consistent.
+- Prepare the live demonstration flow.
+
+Do not skip testing to save time.
+
+Do not make unnecessary changes to the existing database engine.
+
+## Final priority
+
+The priority order is:
+
+1. Correct integration with NEXUS.
+2. Functional database operations.
+3. Reliable recovery and testing interfaces.
+4. Accurate metrics and results.
+5. Clean, minimalist greyscale design.
+6. Visual polish.
+
+**The final product should feel like a premium, minimalist database engineering console built specifically for NEXUS — not a generic admin template.**
+````
+
+### Prompt 17a
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-07 01:00 (local time; 19:30 UTC, from the session transcript)
+- **Notes:** A first paste of Prompt 18 that was cut off mid-sentence. Its text is exactly the beginning of Prompt 18 below, up to and including the line `Explain` in section 5 ("Show: / In-memory hash index → Append-only binary log / Explain"). The user interrupted the reply and re-sent the complete prompt as Prompt 18.
+
+### Prompt 18
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-07 01:05 (local time; 19:35 UTC, from the session transcript)
+- **Notes:** Pasted with no other text; copied verbatim from the session transcript. Sent while the Prompt 17 frontend was built but its live testing and documentation were unfinished. Extends `src/cmd/nexus-api` and `frontend/`. Full text as sent:
+
+````text
+NEXUS — Complete the Frontend and Build an Interactive Database Demonstration Platform
+You are working on NEXUS, a custom persistent key-value database engine built in Go.
+The core database engine, recovery mechanisms, compaction, CLI, benchmarking tools, independent cross-checking and torture-testing framework have already been implemented and validated.
+The frontend is currently incomplete. Your task is to finish building a polished, fully functional frontend that allows mentors and judges to explore, operate, understand and evaluate NEXUS without having to manually execute every command in CMD.
+This is a real engineering project, NOT a UI mockup.
+1. FIRST: UNDERSTAND THE EXISTING PROJECT
+Before changing anything:
+
+1. Inspect the complete repository structure.
+2. Read:
+   * `README.md`
+   * `ARCHITECTURE.md`
+   * `docs/ARCHITECTURE.md`
+   * `docs/FRONTEND_INTEGRATION.md`
+   * `docs/PROJECT_AUDIT.md`
+   * `docs/FAILURE_GUARANTEES.md`
+   * `docs/RECOVERY.md`
+   * `docs/TORTURE_ARCHITECTURE.md`
+   * `docs/TORTURE_CLI.md`
+   * `docs/TORTURE_TEST_PLAN.md`
+   * `docs/TORTURE_RESULTS.md`
+   * `docs/INDEPENDENT_VERIFICATION.md`
+   * `docs/results/final/`
+   * `docs/results/validation/`
+3. Inspect the actual Go source code, CLI commands, database interfaces, torture-testing tools and recovery implementation.
+4. Identify which functionality is already implemented and which functionality still needs an adapter or integration.
+5. Read `docs/FRONTEND_INTEGRATION.md` carefully. Treat it as the starting API contract, but verify it against the actual implementation.
+
+Critical: Never invent functionality, metrics, API endpoints, test results or architecture guarantees. If something does not exist, either implement the required integration layer or clearly indicate that the feature is unavailable.
+Do not rewrite the database engine just to make the frontend easier.
+2. DESIGN DIRECTION
+Build a premium, minimalist, monochromatic database engineering dashboard.
+The interface should feel like a professional database observability and infrastructure product.
+Visual identity
+Use this palette:
+
+* Main background: `#111111`
+* Sidebar: `#151515`
+* Cards: `#1B1B1B`
+* Elevated surfaces: `#222222`
+* Borders: `#303030`
+* Primary text: `#F2F2F2`
+* Secondary text: `#A0A0A0`
+* Muted text: `#707070`
+
+Use green and red sparingly for success and failure states.
+Design requirements
+
+* Minimalist and monochromatic.
+* Excellent spacing and typography.
+* Clean technical diagrams.
+* Subtle hover effects and transitions.
+* Responsive layout.
+* No excessive gradients.
+* No neon colours.
+* No unnecessary glassmorphism.
+* No decorative animations that interfere with functionality.
+* No introductory landing page or lengthy loading animation.
+
+The user should enter directly into the database dashboard.
+Suggested stack
+Use the existing frontend stack if one already exists and is functional.
+Otherwise, use:
+
+* Next.js App Router
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* Lucide icons
+* Framer Motion for subtle transitions
+* Recharts for actual metrics and charts
+
+Keep the implementation maintainable and modular.
+3. MAIN DASHBOARD
+Build a sidebar with these sections:
+
+1. Overview
+2. Database Explorer
+3. Storage Engine
+4. Recovery
+5. Torture Lab
+6. Benchmark
+7. Architecture
+8. Database Comparison
+
+The dashboard should display actual information obtained from NEXUS.
+Overview page
+Display:
+
+* Database status
+* Total number of keys
+* Live key count
+* Storage file size
+* Database version
+* Current sequence number, if exposed
+* Last successful operation
+* Recovery status
+* Compaction status
+* Integrity status
+
+Include charts where the underlying data exists.
+Add a recent operations panel showing actual PUT, GET, DELETE and BATCH operations.
+Never use randomly generated values or pretend these are live measurements.
+If the database is not running, display an honest disconnected state.
+4. DATABASE EXPLORER — ACTUALLY USE NEXUS
+This is one of the most important pages.
+Create a functional interface for operating the database.
+Features
+
+* Open or create a database.
+* Enter a key and value.
+* PUT: Insert or update a record.
+* GET: Retrieve a record.
+* DELETE: Remove a record.
+* BATCH: Execute multiple operations.
+* DUMP: Display all current records.
+* CHECK: Verify database integrity.
+
+Display:
+
+* Operation type
+* Key
+* Value
+* Success or failure
+* Execution time, if measured
+* Relevant error messages
+
+Add a searchable key-value table.
+Show the distinction between inserting a new key and updating an existing key.
+Demonstrate NOTFOUND responses for deleted or nonexistent keys.
+All operations must execute against the actual NEXUS database through a backend adapter.
+Do not simulate database operations in JavaScript.
+5. STORAGE ENGINE VISUALIZATION
+Build an interactive visualization explaining how NEXUS stores information.
+The architecture must reflect the real implementation.
+Show:
+In-memory hash index → Append-only binary log
+Explain that the append-only log is authoritative and the hash index maps keys to their latest value offsets.
+Visualize the write path
+
+1. User sends PUT.
+2. Database acquires the appropriate lock.
+3. A frame is encoded.
+4. Data is appended to the binary log.
+5. Checksums are calculated and validated as appropriate.
+6. The log is synchronized to disk.
+7. The in-memory index is updated.
+8. The operation is acknowledged.
+
+Make it clear that the acknowledgement occurs only after the durable write completes.
+Visualize a record
+Explain:
+
+* Superblock
+* Frame header
+* Operation type
+* Sequence number
+* Payload length
+* Checksums
+* Entry header
+* Key
+* Value
+
+Use expandable technical explanations.
+Show the actual binary format and field sizes from the source code.
+Do not make up offsets or structures.
+Add a visual representation of the log growing as records are written.
+6. RECOVERY LAB — MAKE THIS INTERACTIVE
+This section must demonstrate one of NEXUS's most important capabilities.
+Explain what happens when the database is restarted after an unexpected interruption.
+Build a recovery visualization based on the real recovery implementation.
+Display the recovery process
+
+1. Read and validate the superblock.
+2. Verify magic, version and checksum.
+3. Scan the binary log sequentially.
+4. Validate frames.
+5. Verify checksums and sequence information.
+6. Replay valid operations.
+7. Rebuild the in-memory hash index.
+8. Handle damaged or incomplete tails according to the implemented recovery policy.
+
+Interactive demonstration
+Where the existing tooling permits it:
+
+* Open a database.
+* Show the number of records before recovery.
+* Run recovery.
+* Display recovery progress.
+* Display records recovered.
+* Show recovery duration.
+* Show final integrity status.
+
+Provide a timeline or log view showing recovery events.
+Include actual error information if recovery encounters corruption.
+Clearly distinguish:
+
+* Valid log records
+* Incomplete writes
+* Corrupted records
+* Recovered records
+* Truncated or repaired data
+
+Do not claim that every form of corruption can be recovered.
+If a destructive crash demonstration is supported, make it an explicitly controlled experiment using a separate disposable database. Never run destructive operations on the user's actual database.
+7. TORTURE LAB — DEMONSTRATE RELIABILITY
+This section should allow a mentor to understand and run NEXUS's torture-testing framework through the frontend.
+Inspect `torture2/` and its CLI before implementing this section.
+Display
+
+* Test suite status
+* Number of iterations
+* Random seed
+* Operations executed
+* Acknowledged writes
+* Restart and recovery results
+* Data integrity results
+* Batch atomicity results
+* Passed tests
+* Failed tests
+* Inconclusive tests
+* Execution duration
+
+Controls
+Provide buttons to:
+
+* Run the default torture test.
+* Run a selected scenario.
+* Run a test with a specified seed.
+* View previous test results.
+* Inspect failure details.
+* Replay a failure where supported.
+
+Display a live execution log.
+Use progress indicators only when actual progress can be obtained.
+Clearly label destructive tests and require confirmation before executing them.
+Crash scenario visualization
+Explore the existing 32 official crash scenarios and group them according to their actual categories.
+Show:
+
+* Scenario identifier
+* Description
+* Expected behavior
+* Actual result
+* Pass/fail/inconclusive status
+
+Allow the user to select a scenario and view its execution details.
+Do not invent additional crash scenarios.
+Mutation testing
+If the existing mutation framework supports it, demonstrate how deliberately broken implementations are detected.
+Explain that mutation testing validates the effectiveness of the tests by introducing controlled faults.
+Never present an unbroken control run as a detected mutation.
+8. BENCHMARK PAGE
+Connect to the actual `kvdb-bench` implementation.
+Display:
+
+* PUT throughput
+* GET throughput
+* DELETE throughput
+* Reopen time
+* Compaction duration
+* Storage size before compaction
+* Storage size after compaction
+
+Allow users to run supported benchmarks and view their output.
+Include charts comparing operations.
+Use the existing recorded results as historical evidence, not as current live performance.
+Historical benchmark evidence currently includes:
+
+* 100,000 keys across 3 runs.
+* PUT: approximately 2,699 operations/sec.
+* GET: approximately 165,652 operations/sec.
+* DELETE: approximately 2,668 operations/sec.
+* Reopen: approximately 45 ms.
+* Compaction: approximately 15.5 MB to 12.3 MB in 0.46 seconds.
+
+Clearly label these as previously recorded measurements. They are machine-dependent and must not be presented as universal performance guarantees.
+9. ARCHITECTURE PAGE — EXPLAIN HOW NEXUS WORKS
+Create a visually impressive interactive architecture diagram.
+Show the actual components and how data moves between them.
+Include:
+
+* CLI
+* Database API
+* Locking mechanism
+* In-memory hash index
+* Append-only binary log
+* Frame encoder/decoder
+* Checksums
+* Synchronization
+* Recovery engine
+* Compaction engine
+* Inspection/checking tools
+
+Allow users to click components to see:
+
+* Their responsibility
+* Their inputs
+* Their outputs
+* How they interact with other components
+* Relevant source code files
+
+Include animated data flow for PUT, GET, DELETE, BATCH, recovery and compaction.
+The diagram must represent the actual codebase, not a generic database architecture.
+10. DATABASE COMPARISON — WHERE NEXUS DIFFERS
+This is a major requirement.
+Build a dedicated section titled:
+"How NEXUS Differs From Existing Database Architectures"
+The purpose is to help mentors understand why we designed NEXUS this way and what engineering decisions distinguish it from existing systems.
+Compare NEXUS with:
+
+1. Redis
+2. RocksDB
+3. LevelDB
+4. Bitcask
+
+Do not claim that NEXUS invented append-only logging or hash-indexed storage. These are established database design patterns.
+Explain the architectural differences
+NEXUS
+
+* Custom persistent key-value engine.
+* Append-only binary log is authoritative.
+* In-memory hash index stores latest value offsets.
+* Custom binary format with superblock and checksummed frames.
+* Explicit sync-before-acknowledgement durability.
+* Batch operations encoded in one frame.
+* Sequential log recovery.
+* Crash-safe compaction and recovery mechanisms.
+
+Redis
+
+* Primarily an in-memory data structure server.
+* Persistence through configurable mechanisms such as RDB snapshots and AOF.
+* Different design goals and memory model.
+
+RocksDB
+
+* Log-structured merge-tree architecture.
+* Uses memtables, SSTables and compaction.
+* Designed for high-performance embedded storage.
+
+LevelDB
+
+* Also uses an LSM-tree architecture.
+* Organizes storage around log files, memtables, SSTables and compaction.
+
+Bitcask
+
+* The closest architectural comparison.
+* Uses an append-only log and an in-memory key directory.
+* Explain the similarities honestly.
+* Identify the implementation-specific engineering decisions in NEXUS rather than pretending the overall pattern is unique.
+
+Create a comparison table
+Compare:
+
+* Primary storage architecture
+* Index structure
+* Write path
+* Read path
+* Recovery strategy
+* Compaction strategy
+* Durability mechanism
+* Intended use case
+
+Use accurate, defensible information.
+Add a "Why We Made These Decisions" section
+Explain:
+
+* Why we chose an append-only log.
+* Why we use an in-memory hash index.
+* Why checksums matter.
+* Why sequence numbers matter.
+* Why we synchronize before acknowledging durable writes.
+* Why batch operations are encoded into one frame.
+* Why recovery scans the log sequentially.
+* Why compaction is necessary.
+
+Important distinction
+Make the following distinction obvious:
+NEXUS is not claiming to outperform or replace Redis, RocksDB or LevelDB. It is a focused database-engine implementation that demonstrates control over storage formats, persistence, recovery, durability and verification.
+The strongest comparison is not that our architecture is entirely new, but that we implemented and validated these storage mechanisms in our own custom engine.
+Include a section called:
+"What Makes NEXUS's Implementation Worth Studying?"
+Highlight its implementation-level engineering decisions and test evidence.
+11. DEMO MODE — FOR MENTORS AND JUDGES
+Create a dedicated Demo Mode.
+This should be a guided presentation through the actual running system.
+The mentor should be able to click through:
+
+1. Introduction to NEXUS.
+2. Database architecture.
+3. Insert and retrieve records.
+4. Update and delete records.
+5. Inspect the storage engine.
+6. Demonstrate persistence.
+7. Run recovery.
+8. Run torture tests.
+9. View benchmark results.
+10. Compare NEXUS with other databases.
+
+Use a clean, guided sequence with a next-step control.
+Each step should explain:
+
+* What is happening.
+* What the database is doing internally.
+* Why it matters.
+
+Do not make this a slideshow of static screenshots. The actual operations should be interactive.
+12. BACKEND INTEGRATION
+Inspect the existing backend integration documentation.
+If no HTTP server exists, build a separate Go standard-library HTTP adapter around the existing database APIs.
+Requirements:
+
+* Do not modify the core storage format.
+* Do not duplicate database logic in the frontend.
+* Do not create a second implementation of the database.
+* Use the existing CLI or package interfaces where appropriate.
+* Expose only functionality that can actually be implemented.
+* Return structured JSON responses.
+* Handle errors correctly.
+* Avoid blocking the UI during long-running operations.
+* Use safe process management if invoking existing testing tools.
+* Add request validation.
+* Prevent arbitrary filesystem access through user-supplied paths.
+* Keep destructive testing behind explicit confirmation.
+* Handle concurrent requests safely.
+* Provide clear disconnected and error states.
+
+Implement the adapter in a separate package or directory.
+Document every endpoint and its request/response format.
+If a feature cannot be integrated safely, document the limitation instead of pretending it works.
+13. ENGINEERING REQUIREMENTS
+
+* Keep existing database functionality intact.
+* Do not modify historical validation results.
+* Do not alter test evidence to improve displayed numbers.
+* Do not delete project documentation.
+* Do not introduce unnecessary dependencies.
+* Do not add unrelated features.
+* Do not commit or push to GitHub.
+* Preserve the current branch and all existing work.
+* Follow existing code conventions.
+* Ensure the project builds and runs on Windows.
+
+Add appropriate tests for the frontend integration and backend adapter.
+Run:
+
+* Go formatting.
+* Go tests.
+* Go vet.
+* Frontend linting.
+* Frontend production build.
+* API integration tests.
+
+Fix errors rather than merely documenting them.
+14. COMPLETION REQUIREMENTS
+Do not stop after creating the dashboard layout.
+The task is complete only when:
+
+1. The frontend runs locally.
+2. The backend adapter runs locally.
+3. The frontend connects to the actual NEXUS database.
+4. PUT, GET, DELETE, DUMP and CHECK work.
+5. Database statistics reflect actual database state.
+6. Recovery functionality is demonstrated using real recovery operations.
+7. Torture tests can be initiated and their actual results displayed.
+8. Benchmark results are displayed with correct historical/live labels.
+9. The architecture page reflects the actual implementation.
+10. The database comparison page accurately explains the differences.
+11. Demo Mode works as a guided interactive demonstration.
+12. The project builds successfully.
+
+At the end, provide:
+
+* What was implemented.
+* Files created or modified.
+* How to start the backend.
+* How to start the frontend.
+* The local URL.
+* How to run the mentor demonstration.
+* Which features are fully functional.
+* Which features remain unavailable and why.
+* Test and build results.
+
+Final instruction: Prioritize a fully functional, technically accurate frontend over visual decoration. The goal is to make NEXUS understandable and demonstrable to someone who has never seen the codebase, while allowing them to verify that the underlying database operations and reliability mechanisms are real.
+````
+
+### Prompt 19
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-07 01:44 (local time; 20:14 UTC, from the session transcript)
+- **Notes:** Pasted with no other text; extracted verbatim from the session transcript by script (not retyped). Sent after the Prompt 18 dashboard was finished and tested. Covers engine performance work, the NEXUS X-RAY diagnostics system and their integration into `frontend/` and `src/cmd/nexus-api`. Full text as sent:
+
+````text
+NEXUS — Complete Engineering Optimization, X-RAY Diagnostics & Frontend Integration
+Project Objective
+We are taking NEXUS to its next engineering stage.
+NEXUS is a custom persistent key-value database engine written in Go. Its core implementation includes:
+
+* Append-only binary log.
+* In-memory hash index.
+* Custom binary storage format.
+* Checksummed frames.
+* Sequence numbers.
+* Explicit synchronization before write acknowledgement.
+* PUT, GET, DELETE and BATCH operations.
+* Sequential log recovery.
+* Crash-safe compaction.
+* Database inspection and integrity checking.
+* Independent cross-checking.
+* Torture testing and crash scenario validation.
+* Benchmarking tools.
+
+The core engine has already undergone extensive development, hardening and testing.
+We now want to accomplish THREE major objectives:
+
+1. Optimize the existing NEXUS database engine based on measurable performance bottlenecks.
+2. Implement NEXUS X-RAY, a comprehensive database diagnostics and explainable error reporting system.
+3. Integrate both improvements into our EXISTING frontend, making everything interactive and demonstrable.
+
+The final result should be a polished, technically impressive database platform where a user can operate NEXUS, inspect its internal architecture, understand performance, diagnose failures, execute recovery and observe actual results.
+This is not a request to create a new database engine or a separate frontend.
+Preserve the existing project, architecture, frontend design and working functionality. Extend and improve them.
+PART 1 — INITIAL REPOSITORY AND ARCHITECTURE AUDIT
+Before modifying any code, inspect the complete repository.
+1.1 Understand the database engine
+Read and inspect:
+
+* README.md
+* ARCHITECTURE.md
+* BREAKING.md
+* docs/ARCHITECTURE.md
+* docs/FRONTEND_INTEGRATION.md
+* docs/PROJECT_AUDIT.md
+* docs/FAILURE_GUARANTEES.md
+* docs/RECOVERY.md
+* docs/INDEPENDENT_VERIFICATION.md
+* docs/TORTURE_ARCHITECTURE.md
+* docs/TORTURE_CLI.md
+* docs/TORTURE_TEST_PLAN.md
+* docs/TORTURE_RESULTS.md
+* docs/results/final/
+* docs/results/validation/
+
+Also inspect all relevant Go packages, tests, CLI commands, benchmarks and frontend files.
+Verify the actual implementation rather than relying exclusively on documentation.
+1.2 Understand the current frontend
+Inspect:
+
+* Existing frontend framework and dependencies.
+* Current routing structure.
+* Sidebar and navigation.
+* Existing pages and components.
+* Design system and colour palette.
+* API integration, if implemented.
+* Backend adapter, if implemented.
+* Current dashboard functionality.
+* Existing loading, error and disconnected states.
+
+Do not discard or replace the existing frontend.
+Preserve its current monochromatic visual identity and improve its existing structure where necessary.
+1.3 Produce an implementation map
+Before implementation, identify:
+
+1. Existing functionality.
+2. Existing functionality that needs optimization.
+3. Missing backend integration.
+4. Missing frontend functionality.
+5. Existing tests and validation tools.
+6. Compatibility risks.
+7. Files that will need modification.
+
+Create a concise implementation plan and then proceed with the work in controlled stages.
+Do not stop after producing the plan.
+PART 2 — NEXUS PERFORMANCE OPTIMIZATION
+2.1 Objective
+Make NEXUS as efficient as reasonably possible for its intended workload without compromising:
+
+* Data durability.
+* Crash consistency.
+* Recovery correctness.
+* Batch atomicity.
+* Database integrity.
+* Windows compatibility.
+* Existing database format compatibility.
+
+Do not chase benchmark numbers by weakening guarantees.
+We want measurable engineering improvements, not superficial optimizations.
+2.2 Establish a performance baseline
+Before modifying the engine, benchmark the current implementation.
+Measure:
+Write performance
+
+* PUT throughput.
+* DELETE throughput.
+* BATCH throughput.
+* Write latency.
+* Synchronization overhead.
+
+Read performance
+
+* GET throughput.
+* Read latency.
+* Index lookup performance.
+
+Recovery
+
+* Database opening time.
+* Recovery time with increasing log sizes.
+* Recovery performance at 100K, 1M and larger supported key counts.
+
+Compaction
+
+* Compaction duration.
+* Storage reduction.
+* Temporary disk space.
+* Write blocking duration.
+* Disk I/O.
+
+Memory
+
+* Memory consumption.
+* Allocations per operation.
+* Index memory consumption.
+* Memory consumption as key count increases.
+
+Concurrency
+
+* Concurrent readers.
+* Concurrent writers.
+* Mixed read/write workloads.
+* Mutex contention.
+* Blocked goroutines.
+
+Use Go profiling tools where appropriate:
+
+* CPU profiling.
+* Heap profiling.
+* Allocation profiling.
+* Mutex profiling.
+* Block profiling.
+
+Record the hardware, OS, Go version and workload configuration.
+Never compare results from different workloads as if they were directly equivalent.
+2.3 Optimization A — Write path and Group Commit
+Inspect the existing synchronization strategy.
+Currently, NEXUS explicitly synchronizes durable writes before acknowledging them.
+Investigate group commit.
+The objective is to allow multiple write operations to share a synchronization operation while preserving the guarantee that no write is acknowledged as durable before the required synchronization completes.
+Evaluate:
+
+* Write batching.
+* Synchronization frequency.
+* Concurrent writer coordination.
+* Group commit scheduling.
+* Failure handling.
+* Acknowledgement ordering.
+* Shutdown behavior.
+* Crash consistency.
+
+Do not introduce arbitrary delays that make individual writes unpredictable.
+Any new group commit mechanism must have clearly documented durability semantics.
+Benchmark it against the original implementation.
+2.4 Optimization B — Concurrency and locking
+Inspect the current global sync.RWMutex.
+Determine whether lock contention is a significant performance bottleneck.
+Evaluate:
+
+* Finer-grained locking.
+* Sharded index locking.
+* Read/write concurrency.
+* Write serialization.
+* Compaction interaction.
+* Recovery interaction.
+
+Do not replace the global mutex simply because sharded locking sounds faster.
+Only make changes supported by profiling evidence.
+Verify that concurrent PUT, GET, DELETE and BATCH operations cannot corrupt the index or persistent log.
+Run the race detector where the environment supports it.
+2.5 Optimization C — In-memory hash index
+Analyze the memory efficiency of the existing hash index.
+Investigate:
+
+* Key storage overhead.
+* Value offset representation.
+* Hash map allocations.
+* Object overhead.
+* Unnecessary copying.
+* Memory fragmentation.
+* Garbage collection pressure.
+
+Explore optimizations that reduce memory consumption without sacrificing lookup correctness.
+Benchmark at multiple database sizes.
+Do not introduce a complex custom hash table unless it produces a measurable benefit over Go's built-in map.
+2.6 Optimization D — Serialization and frame processing
+Inspect:
+
+* Frame encoding.
+* Frame decoding.
+* Checksums.
+* Payload construction.
+* Key and value allocation.
+* Buffer reuse.
+* Binary serialization.
+
+Reduce unnecessary allocations and copying where safe.
+Ensure that:
+
+* Checksums are still calculated correctly.
+* Frame boundaries remain validated.
+* Payload lengths remain validated.
+* Endianness remains unchanged.
+* Existing database files remain compatible.
+
+Do not change the on-disk format just to obtain a small performance improvement.
+Any necessary format change must be versioned and documented.
+2.7 Optimization E — Recovery performance
+Optimize sequential recovery.
+Investigate:
+
+* Buffered reads.
+* Allocation reduction.
+* Frame validation overhead.
+* Index reconstruction.
+* Large log scanning.
+* Memory growth during recovery.
+
+Measure recovery performance at increasing database sizes.
+Preserve:
+
+* Superblock validation.
+* Frame validation.
+* Checksum validation.
+* Sequence validation.
+* Correct replay ordering.
+* Damaged-tail handling.
+* Existing corruption policies.
+
+Recovery must never silently skip invalid data to make startup faster.
+2.8 Optimization F — Compaction
+Inspect the complete compaction implementation.
+Measure:
+
+* Time taken.
+* Storage before and after.
+* Temporary storage requirements.
+* I/O amplification.
+* Lock duration.
+* Memory consumption.
+
+Investigate ways to reduce unnecessary I/O and improve compaction efficiency.
+Preserve crash-safe file replacement and recovery behavior.
+Do not compromise the existing `.compact` and `.old` recovery protocol without a fully tested replacement.
+2.9 Optimization acceptance criteria
+For every optimization:
+
+1. Record the original baseline.
+2. Identify the actual bottleneck.
+3. Implement one change at a time.
+4. Run unit tests.
+5. Run relevant integration tests.
+6. Run crash scenarios.
+7. Run torture testing.
+8. Run benchmarks using the same workload.
+9. Compare results.
+10. Document trade-offs.
+
+If an optimization does not produce a meaningful improvement, revert it rather than retaining unnecessary complexity.
+Create:
+`docs/PERFORMANCE_OPTIMIZATION.md`
+Include:
+
+* Original architecture.
+* Identified bottlenecks.
+* Changes made.
+* Before/after measurements.
+* Correctness verification.
+* Known limitations.
+* Future optimization opportunities.
+
+PART 3 — NEXUS X-RAY DIAGNOSTIC SYSTEM
+3.1 Objective
+Introduce a feature named:
+NEXUS X-RAY
+X-RAY is a diagnostic and explainable error reporting system.
+Its purpose is to help users understand what happened inside the database when something goes wrong.
+Instead of simply showing:
+`checksum mismatch`
+X-RAY should explain:
+
+* What happened.
+* Where it happened.
+* Why it happened, where determinable.
+* Which data may be affected.
+* Whether recovery is possible.
+* What NEXUS actually did.
+* What the user should do next.
+
+It should provide both human-readable explanations and technical diagnostic information.
+3.2 Structured diagnostic architecture
+Create a structured diagnostic model.
+Each diagnostic should support the following fields where applicable:
+
+* Diagnostic ID.
+* Severity.
+* Error category.
+* Error title.
+* Human-readable explanation.
+* Technical explanation.
+* Database path or file identifier.
+* Byte offset.
+* Frame number.
+* Sequence number.
+* Expected value.
+* Actual value.
+* Detection timestamp.
+* Affected component.
+* Data impact assessment.
+* Recovery status.
+* Recommended action.
+* Original underlying error.
+
+Severity levels:
+
+* INFO
+* WARNING
+* ERROR
+* CRITICAL
+
+Do not make every error critical.
+Severity should reflect the actual impact.
+Use structured error types internally.
+Preserve original low-level errors for debugging.
+Avoid building the entire diagnostic system around string matching.
+3.3 Diagnostic categories
+Integrate X-RAY with the actual database validation, recovery and storage code.
+Cover these conditions wherever they can actually be detected.
+Superblock problems
+
+* Invalid magic number.
+* Unsupported format version.
+* Superblock checksum mismatch.
+* Invalid metadata.
+* Corrupted superblock.
+
+Frame problems
+
+* Invalid frame magic.
+* Invalid frame type.
+* Invalid frame length.
+* Invalid payload length.
+* Frame checksum mismatch.
+* Incomplete frame.
+* Truncated frame.
+
+Sequence and operation problems
+
+* Unexpected sequence number.
+* Invalid operation type.
+* Invalid operation payload.
+* Invalid key length.
+* Invalid value length.
+* Invalid batch structure.
+
+Recovery problems
+
+* Corruption at the end of the log.
+* Corruption inside previously committed data.
+* Recovery stopped unexpectedly.
+* Recovery refused.
+* Recovery partially completed.
+* Truncation performed.
+* Index reconstruction failure.
+
+Compaction problems
+
+* Compaction file creation failure.
+* Write failure.
+* Synchronization failure.
+* File replacement failure.
+* Reopen failure.
+* Cleanup failure.
+
+Operational problems
+
+* Database lock conflict.
+* Permission failure.
+* File I/O error.
+* Database path unavailable.
+* Storage capacity exceeded.
+
+Only report conditions that the implementation can genuinely identify.
+Do not infer the cause of an error when the evidence only establishes its symptoms.
+3.4 Explainable error reporting
+Every diagnostic should have two presentation levels.
+Level 1 — Simple explanation
+Example:
+Frame checksum mismatch
+"The checksum stored in this database frame does not match the checksum calculated from its contents. The frame may have been corrupted or modified."
+Level 2 — Technical explanation
+Display:
+
+* Frame sequence.
+* Byte offset.
+* Expected checksum.
+* Actual checksum.
+* Frame type.
+* Payload length.
+* File location.
+* Original error.
+
+Use real values obtained from the engine.
+The example above is illustrative. Never display fabricated diagnostic values as real findings.
+3.5 Recovery-aware diagnostics
+X-RAY must integrate closely with the existing recovery engine.
+When recovery encounters an error, report:
+
+* Where scanning stopped.
+* Which frame failed.
+* How many valid records were replayed, if measurable.
+* Whether the database was modified.
+* Whether truncation occurred.
+* Whether the index was rebuilt.
+* Whether recovery completed successfully.
+* Whether data may have been lost.
+
+Clearly distinguish:
+
+* Detected.
+* Recovered.
+* Repaired.
+* Partially recovered.
+* Recovery refused.
+* Unrecoverable.
+
+Do not claim a record was recovered unless the resulting database state has been verified.
+Do not silently truncate or modify files during read-only diagnostics.
+3.6 X-RAY CLI integration
+Add a CLI command using the existing CLI conventions.
+Proposed interface:
+`kvdb xray <database-path>`
+Support useful options where appropriate:
+
+* Human-readable output.
+* JSON output.
+* Read-only diagnostics.
+* Verbose technical information.
+
+The read-only mode must never modify the database.
+If a diagnostic requires recovery or modification, make that a separate explicit operation.
+Provide clear command help and examples.
+Verify the exact command syntax through the actual implementation.
+PART 4 — INTEGRATION WITH THE EXISTING FRONTEND
+This is a major requirement.
+We already have an existing NEXUS frontend.
+Do not build a second frontend or replace the current dashboard.
+Extend the existing project, reuse its components, maintain its navigation and preserve its visual identity.
+4.1 Design language
+Preserve the existing monochromatic design:
+
+* Main background: `#111111`
+* Sidebar: `#151515`
+* Cards: `#1B1B1B`
+* Elevated surfaces: `#222222`
+* Borders: `#303030`
+* Primary text: `#F2F2F2`
+* Secondary text: `#A0A0A0`
+* Muted text: `#707070`
+
+Use restrained green and red for meaningful status indicators.
+Maintain:
+
+* Consistent spacing.
+* Clean typography.
+* Responsive layouts.
+* Minimalist cards.
+* Clear technical visualizations.
+* Subtle transitions.
+* Good information hierarchy.
+
+No unnecessary gradients, neon effects, excessive glassmorphism or decorative animation.
+The frontend must feel like a serious database engineering product.
+4.2 Navigation
+Integrate the following sections into the existing sidebar.
+
+1. Overview
+2. Database Explorer
+3. Storage Engine
+4. Recovery
+5. Torture Lab
+6. Benchmark
+7. Architecture
+8. Database Comparison
+9. X-RAY
+
+If some of these already exist, extend them instead of duplicating them.
+4.3 Overview dashboard
+Display actual database information:
+
+* Database health.
+* Database status.
+* Total keys.
+* Storage size.
+* Current sequence number, if available.
+* Last operation.
+* Recovery status.
+* Compaction status.
+* Integrity status.
+* Recent diagnostics.
+* Performance information.
+
+Add an X-RAY alert summary.
+For example:
+
+* 0 critical issues.
+* 1 warning.
+* 2 informational findings.
+
+Only calculate these counts from actual diagnostic results.
+Show the latest diagnostic findings and allow navigation to their full details.
+4.4 Performance dashboard
+Create a dedicated performance section or integrate performance cards into the existing Benchmark page.
+Display:
+
+* PUT throughput.
+* GET throughput.
+* DELETE throughput.
+* BATCH throughput.
+* Latency percentiles where measured.
+* Recovery duration.
+* Compaction duration.
+* Memory consumption.
+* Allocation counts.
+* Lock contention where measurable.
+
+Add before-and-after comparisons for optimization changes.
+Clearly distinguish:
+
+* Historical benchmark data.
+* Current benchmark results.
+* Estimated performance.
+* Actual measurements.
+
+Never mix these categories.
+Provide an optimization history showing which changes improved which metrics.
+4.5 X-RAY frontend page
+Build a complete X-RAY diagnostic interface.
+Top summary
+Show:
+
+* Overall database health.
+* Critical findings.
+* Errors.
+* Warnings.
+* Informational findings.
+* Last diagnostic scan.
+
+Diagnostic timeline
+Display findings chronologically.
+Each finding should include:
+
+* Time.
+* Severity.
+* Category.
+* Short title.
+* Affected component.
+* Resolution status.
+
+Diagnostic cards
+Each card should show:
+
+* Error title.
+* Severity.
+* Simple explanation.
+* Technical details expandable section.
+* File and byte offset.
+* Expected and actual values.
+* Data impact.
+* Recovery status.
+* Recommended action.
+
+Filters
+Allow filtering by:
+
+* Severity.
+* Category.
+* Date.
+* Recovery status.
+* Component.
+
+Actions
+Provide buttons for:
+
+* Run diagnostics.
+* View technical details.
+* View affected frame information.
+* Navigate to recovery.
+* Export diagnostic report.
+
+Only provide actions that are implemented and safe.
+Read-only diagnostics must be the default.
+Require explicit confirmation for destructive or modifying operations.
+4.6 Recovery frontend integration
+Connect X-RAY findings with the existing Recovery page.
+When a user selects a diagnostic finding, provide a link to the relevant recovery information.
+Show:
+
+* Detected corruption.
+* Location.
+* Recovery process.
+* Valid records replayed.
+* Truncation details.
+* Final status.
+* Verification result.
+
+If recovery is unavailable, explain why.
+Do not fabricate recovery progress.
+4.7 Torture Lab integration
+Preserve the existing Torture Lab functionality.
+Integrate X-RAY where appropriate.
+If a torture scenario produces an error:
+
+* Display the actual test failure.
+* Display relevant diagnostic information.
+* Link to the affected database or scenario.
+* Explain what was detected.
+* Show whether the test passed, failed or was inconclusive.
+
+Do not classify every expected simulated corruption as an actual production database failure.
+Keep test-environment findings separate from live database health.
+4.8 Architecture visualization
+Update the existing Architecture page.
+Show where X-RAY sits in the architecture.
+The diagram should include:
+User/CLI/Frontend
+→ Database API
+→ Storage Engine
+→ Binary Log and Hash Index
+And the diagnostic integration:
+Storage Validation
+→ Structured Errors
+→ X-RAY Diagnostic Engine
+→ Diagnostic Report
+→ Frontend
+Also show how Recovery and X-RAY interact.
+Allow users to click components and view explanations and relevant source files.
+The diagram must accurately reflect the implementation.
+PART 5 — BACKEND AND API INTEGRATION
+The frontend must use real database operations and diagnostic results.
+Inspect the existing backend adapter and API contract.
+If an HTTP adapter is already implemented, extend it.
+If not, create a separate Go standard-library HTTP adapter around the existing database APIs.
+Do not duplicate the database engine.
+Do not implement database logic in JavaScript.
+Potential API capabilities include:
+Database
+
+* Open database.
+* Close database.
+* PUT.
+* GET.
+* DELETE.
+* BATCH.
+* DUMP.
+* CHECK.
+
+Performance
+
+* Run supported benchmarks.
+* Retrieve historical results.
+* Retrieve current measurements.
+
+Diagnostics
+
+* Run X-RAY.
+* Retrieve diagnostic findings.
+* Retrieve diagnostic details.
+* Export diagnostic reports.
+
+Recovery
+
+* Start supported recovery operation.
+* Retrieve recovery status.
+* Retrieve recovery report.
+
+Torture
+
+* Start supported torture tests.
+* Retrieve execution status.
+* Retrieve results.
+* Retrieve logs.
+
+These are required capabilities to evaluate, not permission to invent endpoints without implementing them.
+For each implemented endpoint:
+
+* Define request schema.
+* Define response schema.
+* Validate inputs.
+* Return structured errors.
+* Handle concurrent requests safely.
+* Document its behavior.
+* Add integration tests.
+
+Use safe process management for external tools.
+Never allow arbitrary filesystem access through user-controlled paths.
+Do not expose unrestricted shell execution through the frontend.
+Long-running tasks should not block ordinary database operations.
+If background execution is needed, implement controlled task management and cancellation where safe.
+PART 6 — DATABASE COMPARISON PAGE
+Preserve and improve the existing Database Comparison page.
+Compare NEXUS with:
+
+* Bitcask.
+* Redis.
+* RocksDB.
+* LevelDB.
+
+Explain differences in:
+
+* Storage architecture.
+* Index structure.
+* Write path.
+* Read path.
+* Recovery.
+* Compaction.
+* Durability.
+* Intended use case.
+
+Be particularly honest about Bitcask because its broad append-only log and in-memory index architecture is similar to NEXUS.
+Highlight NEXUS's implementation-specific decisions:
+
+* Custom binary storage format.
+* Superblock validation.
+* Checksummed frames.
+* Sequence validation.
+* Explicit sync-before-acknowledgement.
+* Batch encoding.
+* Recovery validation.
+* Crash-safe compaction.
+* Independent verification.
+* Explainable diagnostics through X-RAY.
+
+Do not claim NEXUS is universally faster or superior.
+Explain its engineering goals and trade-offs.
+PART 7 — TESTING AND REGRESSION PROTECTION
+All optimization and diagnostic work must preserve existing reliability.
+7.1 Existing tests
+Run the existing Go test suite and all relevant validation tools.
+Preserve the existing official crash scenarios.
+Run the torture framework after meaningful storage engine changes.
+Do not alter historical logs or existing evidence.
+7.2 X-RAY tests
+Create controlled corrupted copies of disposable database files.
+Test:
+
+* Corrupted superblock.
+* Invalid magic number.
+* Unsupported version.
+* Checksum mismatch.
+* Invalid frame length.
+* Incomplete final frame.
+* Corrupted committed frame.
+* Invalid sequence number.
+* Invalid operation payload.
+* Compaction failure where reproducible.
+* Lock conflict.
+
+Verify:
+
+* Correct diagnosis.
+* Correct byte offset.
+* Correct severity.
+* Accurate explanation.
+* Correct recovery classification.
+* No false recovery claims.
+* No modification in read-only mode.
+
+7.3 Performance regression
+After every optimization:
+
+* Re-run comparable benchmarks.
+* Compare latency and throughput.
+* Compare memory.
+* Compare recovery.
+* Compare compaction.
+* Run concurrency tests.
+* Run crash tests.
+
+If performance improves but reliability regresses, reject the optimization.
+7.4 Frontend testing
+Verify:
+
+* Frontend production build.
+* Linting.
+* API integration.
+* Database operation handling.
+* Diagnostic display.
+* Diagnostic filtering.
+* Recovery integration.
+* Torture integration.
+* Disconnected backend behavior.
+* Error handling.
+* Responsive layouts.
+
+PART 8 — DOCUMENTATION
+Create or update:
+
+1. `docs/PERFORMANCE_OPTIMIZATION.md`
+2. `docs/XRAY_ARCHITECTURE.md`
+3. `docs/XRAY_DIAGNOSTICS.md`
+4. `docs/XRAY_API.md`
+5. `docs/FRONTEND_INTEGRATION.md`
+6. `docs/ARCHITECTURE.md`
+
+Document:
+
+* What changed.
+* Why it changed.
+* Architecture decisions.
+* API contract.
+* Diagnostic categories.
+* Recovery behavior.
+* Performance measurements.
+* Known limitations.
+* How to run everything locally.
+
+Do not delete or rewrite historical evidence.
+PART 9 — NON-NEGOTIABLE RULES
+
+1. Do not rewrite the database engine from scratch.
+2. Do not replace the existing frontend.
+3. Do not break existing working pages.
+4. Do not change the storage format without a documented compatibility plan.
+5. Do not weaken durability to improve throughput.
+6. Do not silently discard corrupted records.
+7. Do not invent diagnostic findings.
+8. Do not fabricate benchmark results.
+9. Do not confuse historical and current measurements.
+10. Do not modify historical validation evidence.
+11. Do not remove existing tests.
+12. Do not introduce unnecessary dependencies.
+13. Preserve Windows compatibility.
+14. Do not commit or push to GitHub.
+15. Do not reset, rebase, switch branches or discard existing user changes.
+16. Preserve the current branch and working tree.
+17. Keep the implementation modular and maintainable.
+18. Make backups before any potentially destructive operation.
+19. Never run destructive recovery or corruption demonstrations against the actual user database.
+20. Do not stop at mockups or placeholder functionality.
+
+PART 10 — FINAL COMPLETION CRITERIA
+The project is complete only when the following are achieved.
+Database optimization
+
+* Existing engine audited.
+* Bottlenecks measured.
+* Optimizations implemented where justified.
+* Before-and-after benchmarks documented.
+* Existing reliability guarantees preserved.
+
+X-RAY
+
+* Structured diagnostic system implemented.
+* Real storage errors detected and explained.
+* Diagnostic locations and technical information displayed.
+* Recovery-aware reporting implemented.
+* CLI support available.
+* Read-only diagnostics verified.
+* Controlled corruption tests passing.
+
+Frontend
+
+* Existing frontend preserved.
+* X-RAY page integrated.
+* Performance dashboard integrated.
+* Architecture updated.
+* Recovery connected to diagnostics.
+* Torture results connected to diagnostics.
+* Actual database operations functional.
+* No fabricated metrics or placeholder success states.
+
+Build and validation
+
+* Go build succeeds.
+* Go tests pass.
+* Go vet passes.
+* Frontend lint passes.
+* Frontend production build succeeds.
+* API integration tests pass.
+* Relevant torture and crash scenarios pass.
+
+FINAL REPORT
+At the end, provide:
+
+1. Complete list of performance optimizations.
+2. Before-and-after performance table.
+3. X-RAY diagnostic capabilities.
+4. Frontend pages and components modified.
+5. Backend endpoints implemented.
+6. Tests executed and results.
+7. Build status.
+8. How to start the backend.
+9. How to start the frontend.
+10. Local frontend URL.
+11. A complete mentor demonstration sequence.
+12. Remaining limitations and unimplemented functionality.
+
+Clearly identify anything that could not be completed.
+Do not claim completion merely because the UI renders.
+FINAL ENGINEERING DIRECTION
+The objective is to make NEXUS a database engine that is not only functional and reliable but also measurable, inspectable and understandable.
+We want three complementary strengths:
+PERFORMANCE: A carefully optimized storage engine with evidence-backed improvements.
+RELIABILITY: Existing durability, recovery and crash-safety guarantees preserved.
+OBSERVABILITY: X-RAY explains what happens inside the database and makes errors understandable.
+The frontend should bring these together into one coherent platform.
+A mentor should be able to open NEXUS, insert data, inspect its storage architecture, measure performance, deliberately inspect a corrupted test database, understand the resulting X-RAY report, observe recovery and inspect the final integrity result.
+Build this as a complete engineering platform, not a collection of disconnected pages.
+Prioritize correctness, measurable improvements and real integration over visual decoration.
+````
+
+### Prompt 19a
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-07 01:54 (local time; 20:24 UTC, from the session transcript)
+- **Notes:** Sent mid-turn while Prompt 19 was being implemented; extracted verbatim from the session transcript by script (not retyped). Adds the Power-Cut Explorer (`src/internal/powercut`, `src/cmd/nexus-powercut`, Reliability Lab page). Full text as sent:
+
+````text
+Implement and integrate Power-Cut Explorer as a separate reliability-testing module. Preserve the existing database engine and torture framework. Record actual write bytes and synchronization events, generate modeled power-loss disk images, and validate each image using the real NEXUS recovery implementation. Integrate its results into the frontend Reliability Lab and connect failures to X-RAY. Clearly document the storage failure model, assumptions, coverage limitations and reproducibility information. Never describe a finite generated test set as exhaustive proof of all possible power-loss states.
+````

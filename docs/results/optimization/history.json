@@ -1,0 +1,631 @@
+{
+  "kind": "recorded",
+  "title": "NEXUS engine optimization history (Prompt 19)",
+  "recorded": "2026-11-07",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "machine_note": "AMD Ryzen 7 5800H (16 logical CPUs), Windows 11, internal disk (type not recorded); every step measured on the same machine with the same kvdb-perf workload",
+  "tool": "src/cmd/kvdb-perf (public kvdb API; every write synced before it returns)",
+  "steps": [
+    {
+      "id": "baseline",
+      "label": "Baseline (engine as of commit 7a1f536)",
+      "files": [
+        "01-baseline.json",
+        "02-baseline-get-compaction.json"
+      ],
+      "changes": []
+    },
+    {
+      "id": "B",
+      "label": "B: writer lock split (wmu / mu)",
+      "files": [
+        "03-B-lock-split.json"
+      ],
+      "changes": [
+        "readers no longer wait for the fsync of a commit or for the copy phase of compaction"
+      ]
+    },
+    {
+      "id": "B+C",
+      "label": "B + C: read-handle pool",
+      "files": [
+        "04-BC-read-handles-first.json",
+        "05-BC-read-handles-get.json"
+      ],
+      "changes": [
+        "up to 4 extra read-only handles so parallel GETs do not serialize on one Windows file handle"
+      ]
+    },
+    {
+      "id": "A+B+C",
+      "label": "A + B + C: group commit (final)",
+      "files": [
+        "06-ABC-group-commit.json",
+        "07-final-ABC-full.json"
+      ],
+      "changes": [
+        "concurrent commits queued while a commit is syncing are written as one frame with one fsync; each caller is acknowledged only after that fsync"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "key": "put_1w_ops",
+      "label": "PUT throughput, 1 writer(s)",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "write",
+      "phase": "put, 1 writer(s)",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 2584.61,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 2645.7,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 2636.25,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_1w_p50",
+      "label": "PUT latency p50, 1 writer(s)",
+      "unit": "µs",
+      "better": "lower",
+      "group": "write",
+      "phase": "put, 1 writer(s)",
+      "metric": "p50_us",
+      "values": {
+        "baseline": {
+          "value": 521,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 520,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 520,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_1w_p99",
+      "label": "PUT latency p99, 1 writer(s)",
+      "unit": "µs",
+      "better": "lower",
+      "group": "write",
+      "phase": "put, 1 writer(s)",
+      "metric": "p99_us",
+      "values": {
+        "baseline": {
+          "value": 1429,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 1162,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 1357,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_4w_ops",
+      "label": "PUT throughput, 4 writer(s)",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "write",
+      "phase": "put, 4 writer(s)",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 2605.78,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 2602.59,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 4658.96,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_4w_p50",
+      "label": "PUT latency p50, 4 writer(s)",
+      "unit": "µs",
+      "better": "lower",
+      "group": "write",
+      "phase": "put, 4 writer(s)",
+      "metric": "p50_us",
+      "values": {
+        "baseline": {
+          "value": 1570,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 1569,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 556,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_4w_p99",
+      "label": "PUT latency p99, 4 writer(s)",
+      "unit": "µs",
+      "better": "lower",
+      "group": "write",
+      "phase": "put, 4 writer(s)",
+      "metric": "p99_us",
+      "values": {
+        "baseline": {
+          "value": 2779,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 2779,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 2151,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_16w_ops",
+      "label": "PUT throughput, 16 writer(s)",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "write",
+      "phase": "put, 16 writer(s)",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 2441.75,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 2613.12,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 12426.29,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_16w_p50",
+      "label": "PUT latency p50, 16 writer(s)",
+      "unit": "µs",
+      "better": "lower",
+      "group": "write",
+      "phase": "put, 16 writer(s)",
+      "metric": "p50_us",
+      "values": {
+        "baseline": {
+          "value": 6358,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 6009,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 1203,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "put_16w_p99",
+      "label": "PUT latency p99, 16 writer(s)",
+      "unit": "µs",
+      "better": "lower",
+      "group": "write",
+      "phase": "put, 16 writer(s)",
+      "metric": "p99_us",
+      "values": {
+        "baseline": {
+          "value": 8998,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 7546,
+          "file": "03-B-lock-split.json"
+        },
+        "A+B+C": {
+          "value": 3149,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "batch_ops",
+      "label": "BATCH of 100, operations/s",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "write",
+      "phase": "batch of 100 puts",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 201270.62,
+          "file": "01-baseline.json"
+        },
+        "A+B+C": {
+          "value": 198121.22,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "delete_ops",
+      "label": "DELETE throughput, 1 writer",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "write",
+      "phase": "delete, 1 writer",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 2565.41,
+          "file": "01-baseline.json"
+        },
+        "A+B+C": {
+          "value": 2664.25,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "get_1t_ops",
+      "label": "GET throughput, 1 thread",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "read",
+      "phase": "get, 1 thread(s)",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 157628.68,
+          "file": "02-baseline-get-compaction.json"
+        },
+        "B+C": {
+          "value": 158616.61,
+          "file": "05-BC-read-handles-get.json"
+        },
+        "A+B+C": {
+          "value": 150679.72,
+          "file": "07-final-ABC-full.json"
+        }
+      },
+      "note": "single-thread GET is unchanged by design; differences between runs are run-to-run variance (the first baseline run measured 138,108/s)"
+    },
+    {
+      "key": "get_8t_ops",
+      "label": "GET throughput, 8 threads",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "read",
+      "phase": "get, 8 thread(s)",
+      "metric": "ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 108660.81,
+          "file": "02-baseline-get-compaction.json"
+        },
+        "B+C": {
+          "value": 316043.36,
+          "file": "05-BC-read-handles-get.json"
+        },
+        "A+B+C": {
+          "value": 312698.61,
+          "file": "07-final-ABC-full.json"
+        }
+      },
+      "note": "the first baseline run measured 64,255/s; the second 108,661/s (variance of the serialized single handle)"
+    },
+    {
+      "key": "get_allocs",
+      "label": "Allocations per GET",
+      "unit": "allocs/op",
+      "better": "lower",
+      "group": "memory",
+      "phase": "get, 1 thread(s)",
+      "metric": "allocs_per_op",
+      "values": {
+        "baseline": {
+          "value": 2.0,
+          "file": "02-baseline-get-compaction.json"
+        },
+        "B+C": {
+          "value": 2.0,
+          "file": "05-BC-read-handles-get.json"
+        },
+        "A+B+C": {
+          "value": 2.01,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "mixed_get_ops",
+      "label": "Mixed load: GET throughput (4 readers + 4 writers)",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "concurrency",
+      "phase": "mixed: 4 readers + 4 writers",
+      "metric": "get_ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 7841.66,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 10555.67,
+          "file": "03-B-lock-split.json"
+        },
+        "B+C": {
+          "value": 166780.76,
+          "file": "04-BC-read-handles-first.json"
+        },
+        "A+B+C": {
+          "value": 231568.45,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "mixed_get_p99",
+      "label": "Mixed load: GET p99",
+      "unit": "µs",
+      "better": "lower",
+      "group": "concurrency",
+      "phase": "mixed: 4 readers + 4 writers",
+      "metric": "get_p99_us",
+      "values": {
+        "baseline": {
+          "value": 1561,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 1637,
+          "file": "03-B-lock-split.json"
+        },
+        "B+C": {
+          "value": 1068,
+          "file": "04-BC-read-handles-first.json"
+        },
+        "A+B+C": {
+          "value": 1002,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "mixed_get_max",
+      "label": "Mixed load: GET max",
+      "unit": "µs",
+      "better": "lower",
+      "group": "concurrency",
+      "phase": "mixed: 4 readers + 4 writers",
+      "metric": "get_max_us",
+      "values": {
+        "baseline": {
+          "value": 20633,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 4506,
+          "file": "03-B-lock-split.json"
+        },
+        "B+C": {
+          "value": 1972,
+          "file": "04-BC-read-handles-first.json"
+        },
+        "A+B+C": {
+          "value": 1960,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "mixed_put_ops",
+      "label": "Mixed load: PUT throughput",
+      "unit": "ops/s",
+      "better": "higher",
+      "group": "concurrency",
+      "phase": "mixed: 4 readers + 4 writers",
+      "metric": "put_ops_per_sec",
+      "values": {
+        "baseline": {
+          "value": 1952.54,
+          "file": "01-baseline.json"
+        },
+        "B": {
+          "value": 2167.26,
+          "file": "03-B-lock-split.json"
+        },
+        "B+C": {
+          "value": 2023.38,
+          "file": "04-BC-read-handles-first.json"
+        },
+        "A+B+C": {
+          "value": 4366.38,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "compact_ms",
+      "label": "Compaction time (20.9 MB → 12.3 MB, 2 readers running)",
+      "unit": "ms",
+      "better": "lower",
+      "group": "compaction",
+      "phase": "compaction, 100k keys, 50% dead",
+      "metric": "compact_ms",
+      "values": {
+        "baseline": {
+          "value": 501.74,
+          "file": "02-baseline-get-compaction.json"
+        },
+        "B": {
+          "value": 3079.79,
+          "file": "03-B-lock-split.json"
+        },
+        "B+C": {
+          "value": 1057.15,
+          "file": "04-BC-read-handles-first.json"
+        },
+        "A+B+C": {
+          "value": 848.16,
+          "file": "07-final-ABC-full.json"
+        }
+      },
+      "note": "slower than baseline: readers now run during the copy instead of waiting (trade-off, see reader stall)"
+    },
+    {
+      "key": "compact_reader_stall",
+      "label": "Longest reader wait during compaction",
+      "unit": "µs",
+      "better": "lower",
+      "group": "compaction",
+      "phase": "compaction, 100k keys, 50% dead",
+      "metric": "reader_get_max_us",
+      "values": {
+        "baseline": {
+          "value": 501739,
+          "file": "02-baseline-get-compaction.json"
+        },
+        "B": {
+          "value": 36032,
+          "file": "03-B-lock-split.json"
+        },
+        "B+C": {
+          "value": 34980,
+          "file": "04-BC-read-handles-first.json"
+        },
+        "A+B+C": {
+          "value": 37223,
+          "file": "07-final-ABC-full.json"
+        }
+      }
+    },
+    {
+      "key": "mem_1m",
+      "label": "Index memory per key (1M keys)",
+      "unit": "bytes/key",
+      "better": "lower",
+      "group": "memory",
+      "phase": "memory, 1000000 keys",
+      "metric": "heap_bytes_per_key",
+      "values": {
+        "baseline": {
+          "value": 99.85,
+          "file": "01-baseline.json"
+        },
+        "A+B+C": {
+          "value": 99.81,
+          "file": "07-final-ABC-full.json"
+        }
+      },
+      "note": "index unchanged (packing evaluated and rejected)"
+    },
+    {
+      "key": "recovery_1m",
+      "label": "Recovery (open) time, 1M keys",
+      "unit": "ms",
+      "better": "lower",
+      "group": "recovery",
+      "phase": "recovery (open), 1000000 keys",
+      "metric": "open_ms_median",
+      "values": {
+        "baseline": {
+          "value": 579.6,
+          "file": "01-baseline.json"
+        },
+        "A+B+C": {
+          "value": 511.9,
+          "file": "07-final-ABC-full.json"
+        }
+      },
+      "note": "recovery code unchanged; the difference is run-to-run variance"
+    },
+    {
+      "key": "recovery_2m",
+      "label": "Recovery (open) time, 2M keys",
+      "unit": "ms",
+      "better": "lower",
+      "group": "recovery",
+      "phase": "recovery (open), 2000000 keys",
+      "metric": "open_ms_median",
+      "values": {
+        "baseline": {
+          "value": 1241.61,
+          "file": "01-baseline.json"
+        },
+        "A+B+C": {
+          "value": 1106.74,
+          "file": "07-final-ABC-full.json"
+        }
+      },
+      "note": "recovery code unchanged; the difference is run-to-run variance"
+    }
+  ],
+  "rejected": [
+    {
+      "name": "Packed index location (offset+size in one uint64)",
+      "reason": "saves about 8 bytes per key but caps the file at about 8 TiB and changes no measured bottleneck; not done"
+    },
+    {
+      "name": "Recovery read path",
+      "reason": "already one sequential 4 MiB buffered scan at ~200–440 MB/s with 2 allocations per key (the key string and the map entry); no change made"
+    },
+    {
+      "name": "Serialization (format) changes",
+      "reason": "would change the on-disk format; the stable format is a hard requirement; none made"
+    },
+    {
+      "name": "Delayed or timer-based group commit",
+      "reason": "would add latency for a lone writer; group commit uses no timer"
+    }
+  ],
+  "tradeoffs": [
+    "Compaction under concurrent reads takes longer than baseline (readers now share the disk during the copy instead of being blocked); the longest reader stall fell from ~502 ms to ~35 ms.",
+    "Group commit: commits merged into one frame become durable together or not at all; each caller still returns only after the fsync covering its operations."
+  ],
+  "validation": {
+    "go_test": "go test ./... passed after every change",
+    "torture": [
+      "torture-default-300-seed12345.log",
+      "torture-compaction-100-seed7.log",
+      "torture-large-batch-60-seed13.log",
+      "torture-disk-full-60-seed11.log",
+      "torture-mutants.log"
+    ],
+    "powercut": "powercut-default-seed1.json"
+  }
+}

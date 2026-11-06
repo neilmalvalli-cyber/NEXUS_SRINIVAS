@@ -1,0 +1,118 @@
+{
+  "tool": "kvdb-perf",
+  "label": "A+B+C",
+  "started": "2026-11-07T02:00:17+05:30",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "quick": false,
+  "results": [
+    {
+      "name": "put, 1 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 1
+      },
+      "metrics": {
+        "bytes_per_put": 155,
+        "file_bytes": 1240032,
+        "max_us": 19405,
+        "ops_per_sec": 2640.800117542013,
+        "p50_us": 520,
+        "p99_us": 1264
+      },
+      "seconds": 3.0293849
+    },
+    {
+      "name": "put, 4 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 4
+      },
+      "metrics": {
+        "bytes_per_put": 140.676,
+        "file_bytes": 1125440,
+        "max_us": 6315,
+        "ops_per_sec": 4664.847065321387,
+        "p50_us": 565,
+        "p99_us": 2298
+      },
+      "seconds": 1.7149543999999999
+    },
+    {
+      "name": "put, 16 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 16
+      },
+      "metrics": {
+        "bytes_per_put": 129.568,
+        "file_bytes": 1036576,
+        "max_us": 7016,
+        "ops_per_sec": 12453.131472223211,
+        "p50_us": 1148,
+        "p99_us": 2955
+      },
+      "seconds": 0.6424087
+    },
+    {
+      "name": "batch of 100 puts",
+      "config": {
+        "batches": 200,
+        "ops_per_batch": 100
+      },
+      "metrics": {
+        "batch_max_us": 1941,
+        "batch_p50_us": 518,
+        "batch_p99_us": 1508,
+        "batches_per_sec": 2061.4051361970373,
+        "ops_per_sec": 206140.51361970374
+      },
+      "seconds": 0.0970212
+    },
+    {
+      "name": "delete, 1 writer",
+      "config": {
+        "ops": 4000
+      },
+      "metrics": {
+        "max_us": 5374,
+        "ops_per_sec": 2677.2935587462794,
+        "p50_us": 520,
+        "p99_us": 1229
+      },
+      "seconds": 1.4940461
+    },
+    {
+      "name": "mixed: 4 readers + 4 writers",
+      "config": {
+        "keys": 100000,
+        "readers": 4,
+        "seconds": 4,
+        "writers": 4
+      },
+      "metrics": {
+        "get_max_us": 1942,
+        "get_ops_per_sec": 237492.27397349308,
+        "get_p50_us": 0,
+        "get_p99_us": 1008,
+        "put_max_us": 6935,
+        "put_ops_per_sec": 4468.939967289769,
+        "put_p50_us": 1030,
+        "put_p99_us": 2564
+      },
+      "seconds": 4.0002775
+    }
+  ],
+  "notes": [
+    "Every PUT/DELETE/BATCH is synced before it returns (the engine has no other mode).",
+    "Latencies are wall time around one public API call, measured by this tool."
+  ]
+}

@@ -14,6 +14,16 @@ it is always the last one (invariant I1, DESIGN §2.4).
 Open order: **process lock** → authority table A1–A7 → superblock → frame scan →
 tail rules C0–C8 → ready (DESIGN §8, §11.4; checklist in [RECOVERY.md](RECOVERY.md)).
 
+## Additions in Prompt 19
+
+* **Concurrency:** `wmu` (writers, compaction, close) and `mu` (reader-visible
+  state), group commit without a timer, and a read-handle pool. Durability and
+  format unchanged. See [PERFORMANCE_OPTIMIZATION.md](PERFORMANCE_OPTIMIZATION.md).
+* **Structured recovery errors** and read-only `recovery.Plan` (`recovery/errors.go`).
+* **X-RAY** (`internal/xray`, `kvdb xray`). See [XRAY_ARCHITECTURE.md](XRAY_ARCHITECTURE.md).
+* **Power-Cut Explorer** (`internal/powercut`, `cmd/nexus-powercut`). See [POWER_CUT_EXPLORER.md](POWER_CUT_EXPLORER.md).
+* **Tools:** `cmd/kvdb-perf`; nexus-api `/api/xray/*`, `/api/powercut*`, `/api/perf/*` ([XRAY_API.md](XRAY_API.md)).
+
 ## Package layout
 
 ```

@@ -477,9 +477,14 @@ func TestI1ConcurrentWritersDoNotInterleave(t *testing.T) {
 			t.Fatalf("unexpected %s", e)
 		}
 	}
-	if frames != writers*each || off != l.Stats().Size {
+	// Group commit (docs/PERFORMANCE_OPTIMIZATION.md, change A) may merge
+	// concurrent commits into one frame, so there are between 1 and
+	// writers*each frames; each is still written sequentially, never
+	// interleaved, and followed by exactly one sync (checked above).
+	if frames < 1 || frames > writers*each || off != l.Stats().Size {
 		t.Fatalf("frames=%d end=%d size=%d", frames, off, l.Stats().Size)
 	}
+	t.Logf("%d commits in %d frames", writers*each, frames)
 	want := contents(t, l)
 	l.Close()
 	if got := reopen(t, db); !reflect.DeepEqual(got, want) || len(got) != writers*each+writers {

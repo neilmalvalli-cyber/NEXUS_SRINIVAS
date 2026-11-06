@@ -1,0 +1,87 @@
+{
+  "tool": "kvdb-perf",
+  "label": "B+C: lock split, read handles",
+  "started": "2026-11-07T01:54:22+05:30",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "quick": false,
+  "results": [
+    {
+      "name": "get, 1 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 1
+      },
+      "metrics": {
+        "allocs_per_op": 3.0044375,
+        "bytes_per_op": 180.12824,
+        "ns_per_op": 6592.483,
+        "ops_per_sec": 151687.91485696664
+      },
+      "seconds": 2.6369932
+    },
+    {
+      "name": "get, 8 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 8
+      },
+      "metrics": {
+        "allocs_per_op": 2.84048,
+        "bytes_per_op": 175.4647,
+        "ns_per_op": 33746.062,
+        "ops_per_sec": 237064.698097218
+      },
+      "seconds": 1.6873030999999998
+    },
+    {
+      "name": "mixed: 4 readers + 4 writers",
+      "config": {
+        "keys": 100000,
+        "readers": 4,
+        "seconds": 4,
+        "writers": 4
+      },
+      "metrics": {
+        "get_max_us": 1972,
+        "get_ops_per_sec": 166780.76078076914,
+        "get_p50_us": 0,
+        "get_p99_us": 1068,
+        "put_max_us": 10118,
+        "put_ops_per_sec": 2023.3783675810198,
+        "put_p50_us": 2076,
+        "put_p99_us": 3655
+      },
+      "seconds": 4.0012289
+    },
+    {
+      "name": "compaction, 100k keys, 50% dead",
+      "config": {
+        "keys": 100000
+      },
+      "metrics": {
+        "alloc_bytes": 96482984,
+        "bytes_after": 12300128,
+        "bytes_before": 20910576,
+        "bytes_written_per_live_byte": 1.0000104065040651,
+        "compact_ms": 1057.154,
+        "reader_get_max_us": 34980,
+        "reader_get_p50_us": 0,
+        "reader_get_p99_us": 527,
+        "temp_file_bytes": 12300128
+      },
+      "seconds": 1.0571541
+    }
+  ],
+  "notes": [
+    "Every PUT/DELETE/BATCH is synced before it returns (the engine has no other mode).",
+    "Latencies are wall time around one public API call, measured by this tool."
+  ]
+}

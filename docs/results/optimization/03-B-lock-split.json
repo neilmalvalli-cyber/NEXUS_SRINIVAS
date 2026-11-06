@@ -1,0 +1,108 @@
+{
+  "tool": "kvdb-perf",
+  "label": "B: lock split",
+  "started": "2026-11-07T01:52:26+05:30",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "quick": false,
+  "results": [
+    {
+      "name": "put, 1 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 1
+      },
+      "metrics": {
+        "bytes_per_put": 155,
+        "file_bytes": 1240032,
+        "max_us": 18706,
+        "ops_per_sec": 2645.6982731924227,
+        "p50_us": 520,
+        "p99_us": 1162
+      },
+      "seconds": 3.0237764
+    },
+    {
+      "name": "put, 4 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 4
+      },
+      "metrics": {
+        "bytes_per_put": 155,
+        "file_bytes": 1240032,
+        "max_us": 6887,
+        "ops_per_sec": 2602.593842620825,
+        "p50_us": 1569,
+        "p99_us": 2779
+      },
+      "seconds": 3.0738565
+    },
+    {
+      "name": "put, 16 writer(s)",
+      "config": {
+        "ops": 8000,
+        "value_size": 100,
+        "writers": 16
+      },
+      "metrics": {
+        "bytes_per_put": 155,
+        "file_bytes": 1240032,
+        "max_us": 14128,
+        "ops_per_sec": 2613.123590097333,
+        "p50_us": 6009,
+        "p99_us": 7546
+      },
+      "seconds": 3.0614702
+    },
+    {
+      "name": "mixed: 4 readers + 4 writers",
+      "config": {
+        "keys": 100000,
+        "readers": 4,
+        "seconds": 4,
+        "writers": 4
+      },
+      "metrics": {
+        "get_max_us": 4506,
+        "get_ops_per_sec": 10555.667670284396,
+        "get_p50_us": 0,
+        "get_p99_us": 1637,
+        "put_max_us": 7119,
+        "put_ops_per_sec": 2167.2644846155335,
+        "put_p50_us": 2004,
+        "put_p99_us": 3667
+      },
+      "seconds": 4.0013575
+    },
+    {
+      "name": "compaction, 100k keys, 50% dead",
+      "config": {
+        "keys": 100000
+      },
+      "metrics": {
+        "alloc_bytes": 110568632,
+        "bytes_after": 12300128,
+        "bytes_before": 20910576,
+        "bytes_written_per_live_byte": 1.0000104065040651,
+        "compact_ms": 3079.793,
+        "reader_get_max_us": 36032,
+        "reader_get_p50_us": 0,
+        "reader_get_p99_us": 1010,
+        "temp_file_bytes": 12300128
+      },
+      "seconds": 3.0797933
+    }
+  ],
+  "notes": [
+    "Every PUT/DELETE/BATCH is synced before it returns (the engine has no other mode).",
+    "Latencies are wall time around one public API call, measured by this tool."
+  ]
+}

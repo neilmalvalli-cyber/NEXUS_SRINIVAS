@@ -1,0 +1,67 @@
+{
+  "tool": "kvdb-perf",
+  "label": "baseline",
+  "started": "2026-11-07T01:50:06+05:30",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "quick": false,
+  "results": [
+    {
+      "name": "get, 1 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 1
+      },
+      "metrics": {
+        "allocs_per_op": 2.0043,
+        "bytes_per_op": 148.11364,
+        "ns_per_op": 6344.023,
+        "ops_per_sec": 157628.6845113897
+      },
+      "seconds": 2.5376092
+    },
+    {
+      "name": "get, 8 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 8
+      },
+      "metrics": {
+        "allocs_per_op": 2.0067025,
+        "bytes_per_op": 148.41936,
+        "ns_per_op": 73623.598,
+        "ops_per_sec": 108660.81280080878
+      },
+      "seconds": 3.6811799
+    },
+    {
+      "name": "compaction, 100k keys, 50% dead",
+      "config": {
+        "keys": 100000
+      },
+      "metrics": {
+        "alloc_bytes": 60549448,
+        "bytes_after": 12300128,
+        "bytes_before": 20910576,
+        "bytes_written_per_live_byte": 1.0000104065040651,
+        "compact_ms": 501.739,
+        "reader_get_max_us": 501739,
+        "reader_get_p50_us": 0,
+        "reader_get_p99_us": 1001,
+        "temp_file_bytes": 12300128
+      },
+      "seconds": 0.5017391
+    }
+  ],
+  "notes": [
+    "Every PUT/DELETE/BATCH is synced before it returns (the engine has no other mode).",
+    "Latencies are wall time around one public API call, measured by this tool."
+  ]
+}

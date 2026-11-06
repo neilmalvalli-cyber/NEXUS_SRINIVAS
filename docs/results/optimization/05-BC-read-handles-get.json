@@ -1,0 +1,49 @@
+{
+  "tool": "kvdb-perf",
+  "label": "B+C",
+  "started": "2026-11-07T01:54:59+05:30",
+  "machine": {
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cpus": "16",
+    "go": "go1.27.3",
+    "host": "DESKTOP-DSGLTLJ",
+    "os": "windows/amd64"
+  },
+  "quick": false,
+  "results": [
+    {
+      "name": "get, 1 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 1
+      },
+      "metrics": {
+        "allocs_per_op": 2.000095,
+        "bytes_per_op": 136.05664,
+        "ns_per_op": 6304.51,
+        "ops_per_sec": 158616.60937963458
+      },
+      "seconds": 2.521804
+    },
+    {
+      "name": "get, 8 thread(s)",
+      "config": {
+        "keys": 100000,
+        "reads": 400000,
+        "threads": 8
+      },
+      "metrics": {
+        "allocs_per_op": 2.0004375,
+        "bytes_per_op": 136.11288,
+        "ns_per_op": 25312.982,
+        "ops_per_sec": 316043.36462610366
+      },
+      "seconds": 1.2656491
+    }
+  ],
+  "notes": [
+    "Every PUT/DELETE/BATCH is synced before it returns (the engine has no other mode).",
+    "Latencies are wall time around one public API call, measured by this tool."
+  ]
+}

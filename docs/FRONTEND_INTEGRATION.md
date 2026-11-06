@@ -1,6 +1,83 @@
 # Frontend integration — readiness and API contract
 
-Status: **assessment and specification only.** Nothing in this document is
+## 0. As built (2026-11-07) — this section supersedes sections 2–3 below
+
+The adapter and dashboard now exist: `src/cmd/nexus-api` (standard-library
+Go, no new dependency) and `frontend/` (Next.js). The engine and its file
+format were not changed. Sections 1–7 below are the original assessment,
+kept for history; where they differ from this section (paths, response
+fields, the absence of `/api/torture/scenarios/latest`,
+`/api/torture/runs/{id}/iterations` and `/api/benchmarks/run`), this section
+is what the code does. Verified by `src/cmd/nexus-api/*_test.go` and
+`frontend/scripts/api-integration.mjs`.
+
+**Start:** `nexus-api --addr 127.0.0.1:8080 --db <dir>/nexus.kv --work <dir>/api-work
+--evidence docs/results/final --allow-origin http://localhost:3000`. Optional
+`--max-bytes`, `--kvdb`, `--torture`. `kvdb-bench` and `kvdb-mutant` are
+looked up next to `nexus-api`, then in the current directory; when missing,
+the endpoints that need them answer 503 and `/api/health` reports the tool
+as `null`. No authentication: keep it on localhost.
+
+**Prompt 19 additions:** pages `/xray` (scan, timeline, filters, expandable
+findings, export, lab, confirmed repair of test copies only) and `/reliability`
+(Power-Cut Explorer). Also: an X-RAY panel and a recorded optimization panel on
+Overview, recorded optimization history plus LIVE kvdb-perf runs on Benchmark,
+links from Recovery and Torture, X-RAY and Power-cut flows on Architecture,
+updated Comparison, and a mobile navigation drawer. Start nexus-api with
+`--perf-history docs/results/optimization/history.json`; `kvdb-perf` and
+`nexus-powercut` are found next to nexus-api. Endpoints: [XRAY_API.md](XRAY_API.md).
+
+**Every endpoint** (JSON in and out; errors are
+`{"error":{"class","message","outcome_unknown"}}`):
+
+| Method & path | Does | Response (main fields) |
+|---|---|---|
+| GET `/api/health` | liveness, tool discovery | `status, db_open, db_path, torture_running, tools{kvdb, nexus_torture, kvdb_bench, kvdb_mutant}` |
+| GET `/api/overview` | `Stats`, `Recovery`, adapter counters | `stats, database, format_version, last_open, last_compaction, last_verify, limits, adapter` |
+| GET `/api/activity?limit` | operations this adapter performed | `items[{id, at, op, key, result, elapsed_ms, detail}]` |
+| GET `/api/metrics?window&step` | per-bucket counts/latency of adapter calls | `buckets[{start, ops{op:{count,total_ms}}}]` |
+| GET `/api/keys?prefix&after&limit` | paged `Range` | `items, next_after, scanned` |
+| GET/PUT/DELETE `/api/keys/{key}` | `Get` / `Put` / `Delete` | GET: `key, value, size`, 404 `notfound`; PUT: `ok, durable, action: inserted\|updated`; DELETE: `action: deleted\|absent` (absent = nothing written) |
+| POST `/api/batch` `{ops:[{op:"put"\|"del", key, value}]}` | `Batch`, one frame | `ok, durable, ops, elapsed_ms`; invalid op → 400, nothing written |
+| GET `/api/dump?limit≤5000&q` | DUMP via `Range`, substring filter | `items[{key, value (≤4 KiB preview), size, value_truncated}], total_keys, matched, truncated` |
+| POST `/api/compact` | `Compact` | `size_before, size_after, keys, elapsed_ms` |
+| POST `/api/verify` | CHECK via `Verify` | `ok, keys, frames, elapsed_ms` |
+| GET `/api/storage` | files of the database, layout facts | `stats, files[], last_compaction, layout` |
+| GET `/api/storage/frames?limit≤500` | read-only log map using the engine's own decoders | `superblock, frames[{offset, size, seq, op_count, entries[≤8]}], total_frames, last_seq, valid_end, stop{kind: clean\|damaged\|corrupt\|io\|sequence\|limit}, index_sample` (scan cap 64 MiB) |
+| GET `/api/databases` | `.kv` files in the main database's directory | `directory, current, files[]` |
+| POST `/api/databases/open` `{name, create}` | close current, open/create another (runs recovery); reopens the previous one on failure | `action: opened\|created, last_open, stats`; name must match `^[A-Za-z0-9][A-Za-z0-9_-]{0,47}$` (no paths) |
+| GET `/api/recovery` | last open, verify history, demo state | `last_open, verify_history, demo` |
+| GET `/api/recovery/demo`; POST `.../reset {keys}`, `.../crash {writes, kill_after_ms}`, `.../inspect`, `.../tear {bytes}`, `.../recover` | crash drill on a separate disposable `work/recovery-demo/demo.kv` with real `kvdb serve` processes and real kills | demo state with `last_crash, last_inspect, last_recovery, events` |
+| GET `/api/recovery/demo/frames?limit` | log map of the demo file (shows a torn tail before recovery) | as `/api/storage/frames`; 409 if the demo file does not exist |
+| GET `/api/torture/modes`, GET `/api/torture/scenarios`, GET `/api/torture/mutants` | catalogs from the tester itself | modes; 32 scenarios; 7 mutations (`none` is the control) + `available` |
+| POST `/api/torture/runs {mode, seed, iterations≤1000}` | `nexus-torture run` | run status; 409 if any run is active |
+| POST `/api/torture/scenarios {only[]}` | `nexus-torture scenarios --only` | run status |
+| POST `/api/torture/mutants {only[], iterations 1–100, seed}` | `nexus-torture mutants` | run status; 503 without `kvdb-mutant` |
+| POST `/api/torture/runs/{id}/replay {iteration}` | re-run one failed iteration from its saved `failures/iter-N/pre/db.kv` | run status; 404 when there is no saved pre-crash file, 400 for a non-workload run or out-of-range iteration |
+| POST `/api/bench/runs {n 2000–100000, runs 1–3, value_size 0–65536, batch_size 1–10000}` | `kvdb-bench --json` in a scratch directory | run status (`kind: bench`); 503 without `kvdb-bench` |
+| GET `/api/torture/runs`, `/api/torture/runs/{id}`, `/{id}/log?lines`, POST `/{id}/cancel` | list, status (progress parsed from the tool's console; `summary` = the tool's result file verbatim), log tail, cancel (kills the process tree) | `run{id, kind, state, args, …}, progress, summary` |
+| GET `/api/evidence`, `/api/evidence/{name}`, `/api/benchmarks/latest` | recorded files from `--evidence`, read-only; traversal refused | file list; file bytes; recorded bench |
+
+**Safety:** child processes are started with argument vectors (no shell)
+from validated fields only; one run at a time; destructive actions run only
+on disposable databases under `--work` and the dashboard asks for
+confirmation first; user input never becomes a filesystem path except a
+validated bare database name inside the main database's directory. Main
+database requests hold a read lock that database switching takes
+exclusively; adapter writes are serialized so the inserted/updated report is
+exact.
+
+**Limitations:** per-step write-path timings are not measured (only the whole
+call); automatic compactions inside the engine are not reported individually;
+the log map stops listing after 500 frames and scanning after 64 MiB;
+`/api/dump` and `/api/keys` hold the database read lock while scanning; run
+history lives only in the adapter process's memory and its work directory;
+the offline "sample data" mode of the dashboard has none of the new
+endpoints and says so.
+
+---
+
+Original status (before implementation): **assessment and specification only.** Nothing in this document is
 implemented yet. No HTTP server exists in the repository today (there is no
 `net/http` import anywhere), and there are no frontend files. The engine
 (`src/kvdb`, `src/internal/...`) is not changed by anything proposed here.

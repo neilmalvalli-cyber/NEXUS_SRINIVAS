@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"sync/atomic"
 
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/admission"
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/dberr"
@@ -36,9 +37,26 @@ type Config struct {
 }
 
 // Log is an open database: the recovered log file, its index and the single
-// commit path. All methods are safe for concurrent use: one sync.RWMutex
-// (DESIGN §16) serializes writers and lets readers share.
+// commit path. All methods are safe for concurrent use.
+//
+// Locking (DESIGN §16, refined in docs/PERFORMANCE_OPTIMIZATION.md):
+//
+//   - wmu serializes everything that changes the database: commits,
+//     compaction and Close. Exactly one goroutine holds it while a frame is
+//     written and synced, so invariant I1 holds unchanged: at most one
+//     unsynced frame exists, and it is the last one.
+//   - mu protects the fields readers use (state, f, idx, end, nextSeq).
+//     Those fields change only while BOTH wmu and mu are held exclusively,
+//     so a wmu holder may read them without mu. Writers take mu exclusively
+//     only for the short in-memory steps (index update, handle swap, state
+//     change), not across the write and fsync: a reader never waits for a
+//     disk sync. Readers cannot observe an unsynced write, because the index
+//     points at a new entry only after its frame is durable, and bytes at an
+//     indexed offset never change (append-only).
+//
+// Lock order: wmu before mu.
 type Log struct {
+	wmu     sync.Mutex
 	mu      sync.RWMutex
 	state   handleState
 	failErr error // the failure that put the handle in FAILED
@@ -54,7 +72,34 @@ type Log struct {
 	nextSeq uint64 // 0: sequence space exhausted
 
 	recovered RecoveryInfo // what Open did (for the CLI; never used by the write path)
+
+	rpool   chan fileio.File // idle read-only handles (readpool.go)
+	ropened atomic.Int32     // read-only handles currently open
+
+	qmu   sync.Mutex   // guards queue
+	queue []*commitReq // commits waiting for the writer role (group commit)
 }
+
+// commitReq is one Commit waiting in the group-commit queue. err and done
+// are written by the leader while it holds wmu and read by the owner after
+// it acquires wmu, so wmu orders them.
+type commitReq struct {
+	entries    []format.Entry
+	payloadLen uint64
+	err        error
+	done       bool
+}
+
+// GroupPayloadCap bounds the payload of a frame that merges several
+// concurrent commits (group commit). A single commit larger than this is
+// still written, alone. The bound keeps one group's write short.
+const GroupPayloadCap = 8 << 20
+
+// errSplit tells runGroup to commit the members of a group one by one: the
+// merged frame needs something other than a plain append (a compacting
+// commit or ErrFull under max_bytes), whose outcome must be decided per
+// caller as before.
+var errSplit = errors.New("storage: group must be split")
 
 // Open recovers the database at path with no size cap and automatic
 // compaction enabled.
@@ -83,6 +128,7 @@ func OpenWith(fsys fileio.FS, path string, cfg Config) (*Log, error) {
 		end:       rs.Scan.End,
 		nextSeq:   rs.Scan.NextSeq,
 		recovered: recoveryInfo(rs),
+		rpool:     make(chan fileio.File, ReadHandles),
 	}, nil
 }
 
@@ -99,9 +145,12 @@ func (l *Log) checkUsable() error {
 }
 
 // fail moves the handle to FAILED. It never touches the index (DESIGN §13.2).
+// Callers hold wmu and not mu.
 func (l *Log) fail(cause error) {
+	l.mu.Lock()
 	l.state = stateFailed
 	l.failErr = cause
+	l.mu.Unlock()
 }
 
 // Commit writes entries as one atomic operation and applies them to the
@@ -139,12 +188,86 @@ func (l *Log) Commit(entries []format.Entry) error {
 		return usageError(err)
 	}
 
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	if err := l.checkUsable(); err != nil {
-		return err
+	// Group commit (docs/PERFORMANCE_OPTIMIZATION.md, change A): enqueue,
+	// then compete for the writer role. Whoever gets wmu commits every
+	// queued request, merging consecutive ones into a single frame with a
+	// single fsync. A request is complete when a leader set done, which it
+	// does only after the frame holding it was synced (or failed). No timer:
+	// a lone writer commits immediately, exactly as before.
+	req := &commitReq{entries: entries, payloadLen: payloadLen}
+	l.qmu.Lock()
+	l.queue = append(l.queue, req)
+	l.qmu.Unlock()
+
+	l.wmu.Lock()
+	defer l.wmu.Unlock()
+	if req.done {
+		return req.err // a previous leader committed it
 	}
-	return l.commitLocked(entries, payloadLen)
+	l.qmu.Lock()
+	batch := l.queue
+	l.queue = nil
+	l.qmu.Unlock()
+	l.runGroup(batch) // batch contains req: it was queued before wmu was taken
+	return req.err
+}
+
+// runGroup commits batch in queue order with wmu held. Consecutive requests
+// are merged into one frame while the merged frame stays within
+// MaxFrameOps operations and GroupPayloadCap bytes.
+//
+// Semantics of a merged frame: it is one atomic frame (recovery applies a
+// frame whole or not at all), so the merged requests become durable
+// together or not at all. Each caller is acknowledged only after that
+// frame is synced. Entries apply in queue order, so the result is the same
+// as committing the requests one after another in that order. On a write or
+// sync failure every member gets the same error (they shared the frame).
+func (l *Log) runGroup(batch []*commitReq) {
+	for i := 0; i < len(batch); {
+		j, ops, payload := i, 0, uint64(0)
+		for j < len(batch) {
+			r := batch[j]
+			if j > i && (ops+len(r.entries) > format.MaxFrameOps || payload+r.payloadLen > GroupPayloadCap) {
+				break
+			}
+			ops += len(r.entries)
+			payload += r.payloadLen
+			j++
+		}
+		group := batch[i:j]
+		if len(group) == 1 {
+			r := group[0]
+			r.err = l.checkUsable()
+			if r.err == nil {
+				r.err = l.commitLocked(r.entries, r.payloadLen, false)
+			}
+		} else {
+			merged := make([]format.Entry, 0, ops)
+			for _, r := range group {
+				merged = append(merged, r.entries...)
+			}
+			err := l.checkUsable()
+			if err == nil {
+				err = l.commitLocked(merged, payload, true)
+			}
+			if errors.Is(err, errSplit) {
+				for _, r := range group {
+					r.err = l.checkUsable()
+					if r.err == nil {
+						r.err = l.commitLocked(r.entries, r.payloadLen, false)
+					}
+				}
+			} else {
+				for _, r := range group {
+					r.err = err
+				}
+			}
+		}
+		for _, r := range group {
+			r.done = true
+		}
+		i = j
+	}
 }
 
 // Delete removes key. Deleting a missing key succeeds with no I/O: the index
@@ -179,7 +302,7 @@ func isTooLarge(err error) bool {
 
 // netEffect reports whether the commit changes the live state at all, and
 // whether its net effect leaves some key holding a PUT ("PUT-bearing",
-// DESIGN §12.3). Callers hold mu.
+// DESIGN §12.3). Callers hold wmu.
 func (l *Log) netEffect(entries []format.Entry) (changes, putBearing bool) {
 	if len(entries) == 1 {
 		e := entries[0]
@@ -204,8 +327,11 @@ func (l *Log) netEffect(entries []format.Entry) (changes, putBearing bool) {
 	return changes, false
 }
 
-// commitLocked runs DESIGN §6.2 steps 4–7 with mu held exclusively.
-func (l *Log) commitLocked(entries []format.Entry, payloadLen uint64) error {
+// commitLocked runs DESIGN §6.2 steps 4–7 with wmu held (and mu not held).
+// grouped is true for a frame that merges several callers' commits: it may
+// only be appended, so any other admission outcome returns errSplit before
+// any I/O.
+func (l *Log) commitLocked(entries []format.Entry, payloadLen uint64, grouped bool) error {
 	if l.nextSeq == 0 {
 		return fmt.Errorf("%w: sequence numbers exhausted", dberr.ErrFull)
 	}
@@ -225,6 +351,9 @@ func (l *Log) commitLocked(entries []format.Entry, payloadLen uint64) error {
 		plan = l.planSnapshot(entries)
 		return plan.size
 	})
+	if grouped && dec != admission.Append {
+		return errSplit
+	}
 	switch dec {
 	case admission.Full:
 		return fmt.Errorf("%w: commit of %d bytes does not fit max_bytes %d (file %d bytes, compacted with the commit: %d bytes)",
@@ -238,12 +367,19 @@ func (l *Log) commitLocked(entries []format.Entry, payloadLen uint64) error {
 	}
 	start := l.end
 	w := &offsetWriter{f: l.f, off: start}
-	n, werr := format.WriteFrame(w, l.nextSeq, entries, format.MaxBatchOps)
+	maxOps := format.MaxBatchOps
+	if grouped {
+		maxOps = format.MaxFrameOps // as compaction frames; recovery accepts both
+	}
+	n, werr := format.WriteFrame(w, l.nextSeq, entries, maxOps)
 	if werr == nil && n != int64(frameSize) {
 		werr = fmt.Errorf("storage: frame wrote %d bytes, expected %d: %w", n, frameSize, io.ErrShortWrite)
 	}
 	if werr != nil {
 		if n == 0 && format.Classify(werr) == format.ClassUsage {
+			if grouped {
+				return errSplit // nothing written: let each caller get its own answer
+			}
 			return usageError(werr) // rejected before any byte was written
 		}
 		return l.rollbackAfterWriteError(start, werr)
@@ -258,7 +394,8 @@ func (l *Log) commitLocked(entries []format.Entry, payloadLen uint64) error {
 		return fmt.Errorf("%w: syncing frame %d: %v", dberr.ErrOutcomeUnknown, l.nextSeq, err)
 	}
 
-	// Durable: apply to the index in order.
+	// Durable: apply to the index in order. Readers are excluded only now.
+	l.mu.Lock()
 	off := start + format.FrameHeaderSize
 	for _, e := range entries {
 		size := int64(format.EntryHeaderSize + len(e.Key) + len(e.Value))
@@ -275,6 +412,7 @@ func (l *Log) commitLocked(entries []format.Entry, payloadLen uint64) error {
 	} else {
 		l.nextSeq = 0
 	}
+	l.mu.Unlock()
 
 	// The commit is durable and acknowledged whatever happens next. An
 	// automatic compaction that fails either aborts cleanly (handle OPEN)
@@ -321,7 +459,10 @@ func (l *Log) Get(key []byte) ([]byte, error) {
 	if !ok {
 		return nil, dberr.ErrNotFound
 	}
-	return readEntryValue(l.f, key, loc)
+	f, pooled := l.readHandle()
+	v, err := readEntryValue(f, key, loc)
+	l.putHandle(f, pooled)
+	return v, err
 }
 
 // readEntryValue reads and verifies the PUT entry at loc and returns its
@@ -368,6 +509,8 @@ func (l *Log) Stats() Stats {
 // allowed in the FAILED state, and closing twice returns nil. Waits for
 // in-flight operations (it takes the exclusive lock).
 func (l *Log) Close() error {
+	l.wmu.Lock()
+	defer l.wmu.Unlock()
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	if l.state == stateClosed {
@@ -375,6 +518,7 @@ func (l *Log) Close() error {
 	}
 	l.state = stateClosed
 	var errs []error
+	errs = append(errs, l.closeReadHandles())
 	if l.f != nil {
 		errs = append(errs, l.f.Close())
 		l.f = nil

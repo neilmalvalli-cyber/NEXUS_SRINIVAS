@@ -111,8 +111,8 @@ func (l *Log) estimateSnapshot() uint64 {
 // ErrFailed if the replacement failed without a proven restore (the data
 // is intact on disk in .old or .compact and the next Open resolves it).
 func (l *Log) Compact() error {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+	l.wmu.Lock()
+	defer l.wmu.Unlock()
 	if err := l.checkUsable(); err != nil {
 		return err
 	}
@@ -127,7 +127,9 @@ func (l *Log) Compact() error {
 }
 
 // compactLocked writes plan into path.compact and replaces path with it
-// (DESIGN §10.2), with mu held exclusively. commit is the compacting
+// (DESIGN §10.2), with wmu held and mu not held: Phase A (building the
+// sealed .compact file) changes no in-memory state, so readers continue;
+// mu is taken exclusively for Phase B (handle close, renames, swap). commit is the compacting
 // commit's operations (already folded into plan), or nil for a plain
 // compaction. The old file and index stay authoritative until the new file
 // is in place and validated.
@@ -169,6 +171,18 @@ func (l *Log) compactLocked(commit []format.Entry, p *snapshotPlan) error {
 	if err != nil {
 		return abort(nil, fmt.Errorf("creating %s: %w", cpath, err))
 	}
+	// Copy live entries through a read handle of our own, so the copy does
+	// not queue behind concurrent readers on the main handle (change C).
+	// It is given back before Phase B closes all read handles.
+	src, pooled := l.readHandle()
+	srcHeld := true
+	release := func() {
+		if srcHeld {
+			l.putHandle(src, pooled)
+			srcHeld = false
+		}
+	}
+	defer release()
 	off, seq := int64(format.SuperblockSize), firstSeq
 	start := 0
 	for _, end := range p.bounds {
@@ -177,7 +191,7 @@ func (l *Log) compactLocked(commit []format.Entry, p *snapshotPlan) error {
 			it := &p.items[i]
 			v := it.value
 			if it.fromLog {
-				if v, err = readEntryValue(l.f, []byte(it.key), it.loc); err != nil {
+				if v, err = readEntryValue(src, []byte(it.key), it.loc); err != nil {
 					return abort(cf, err)
 				}
 			}
@@ -212,9 +226,14 @@ func (l *Log) compactLocked(commit []format.Entry, p *snapshotPlan) error {
 	}
 
 	// ---- Phase B: replacement (DESIGN §11.1, §11.3). From here a failure
-	// without a proven restore puts the handle in FAILED.
+	// without a proven restore puts the handle in FAILED. Readers are
+	// excluded from here on: the data handle is closed and swapped.
+	release()
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	unknown := func(cause error) error {
-		l.fail(fmt.Errorf("compaction replacement failed: %w", cause))
+		l.state = stateFailed // mu is held: set directly (l.fail would re-lock)
+		l.failErr = fmt.Errorf("compaction replacement failed: %w", cause)
 		if isCommit {
 			return fmt.Errorf("%w: compacting commit: %v", dberr.ErrOutcomeUnknown, cause)
 		}
@@ -233,7 +252,9 @@ func (l *Log) compactLocked(commit []format.Entry, p *snapshotPlan) error {
 	}
 
 	// Windows cannot move a file that has an open handle (Go opens without
-	// FILE_SHARE_DELETE), so the data handle is closed first (§11.1).
+	// FILE_SHARE_DELETE), so every handle is closed first (§11.1): the
+	// read-only pool (idle: mu is held exclusively), then the data handle.
+	_ = l.closeReadHandles()
 	err = l.f.Close()
 	l.f = nil
 	if err != nil {

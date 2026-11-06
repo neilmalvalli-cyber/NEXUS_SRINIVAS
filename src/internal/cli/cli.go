@@ -37,6 +37,9 @@ const Usage = `usage:
   kvdb dump  <path>                        every key and value, sorted by key
   kvdb check <path> [--no-repair]          verify the whole file; print OK or the reason
   kvdb serve <path> [--max-bytes N]        read ops from stdin; print "ACK <op-id>" after each durable write
+  kvdb xray  <path> [--json] [--verbose]   read-only diagnostics: every finding with location, cause and action
+  kvdb xray  <path> --repair --yes [--backup-dir DIR]
+                                           back up, apply what a normal open repairs, re-verify
 
 serve input, one per line ("<writer-id> " may be omitted):
   <writer-id> <op-id> put <key> <value>
@@ -55,8 +58,12 @@ reads with the same rules, prints OK if nothing needs repair, or
 NEEDS REPAIR: <what open would change> (exit 4); damage that is not a
 normal crash state is CORRUPT / BAD FORMAT either way.
 
+xray never modifies anything unless --repair --yes is given; it never
+repairs committed data (refused files stay untouched). Exit 0: nothing to
+do; 4: a normal open would repair something; 1: ERROR/CRITICAL findings.
+
 exit status: 0 ok, 1 failed (nothing changed), 2 usage, 3 outcome unknown,
-4 needs repair (check --no-repair only; nothing changed).
+4 needs repair (check --no-repair and xray; nothing changed).
 `
 
 // Env is the process environment of one CLI invocation (injectable for tests).
@@ -82,6 +89,13 @@ type args struct {
 	maxBytes int64
 	hasMax   bool
 	noRepair bool // check --no-repair
+
+	// xray flags
+	json      bool
+	verbose   bool
+	repair    bool
+	yes       bool
+	backupDir string
 }
 
 // parseArgs separates positional arguments from the one flag, --max-bytes,
@@ -111,6 +125,20 @@ func parseArgs(in []string) (args, error) {
 			a.maxBytes, a.hasMax = n, true
 		case s == "--no-repair" || s == "-no-repair":
 			a.noRepair = true
+		case s == "--json":
+			a.json = true
+		case s == "--verbose" || s == "-v":
+			a.verbose = true
+		case s == "--repair":
+			a.repair = true
+		case s == "--yes":
+			a.yes = true
+		case s == "--backup-dir":
+			if i+1 >= len(in) {
+				return a, usagef("--backup-dir needs a value")
+			}
+			i++
+			a.backupDir = in[i]
 		case s == "-h" || s == "--help":
 			return a, usagef("")
 		case strings.HasPrefix(s, "--"):
@@ -157,6 +185,8 @@ func Run(argv []string, env Env) int {
 		return ExitUsage
 	case errors.Is(err, errNeedsRepair):
 		return ExitNeedsRepair
+	case errors.As(err, new(quietError)):
+		return ExitError
 	case errors.Is(err, kvdb.ErrOutcomeUnknown):
 		fmt.Fprintf(env.Stderr, "kvdb %s: OUTCOME UNKNOWN (%s): %v\n", cmd, ErrorClass(err), err)
 		return ExitUnknown
@@ -181,6 +211,9 @@ func dispatch(cmd string, a args, env Env) error {
 	}
 	if a.noRepair && cmd != "check" {
 		return usagef("--no-repair is only used by check")
+	}
+	if (a.json || a.verbose || a.repair || a.yes || a.backupDir != "") && cmd != "xray" {
+		return usagef("--json, --verbose, --repair, --yes and --backup-dir are only used by xray")
 	}
 	switch cmd {
 	case "open":
@@ -255,6 +288,14 @@ func dispatch(cmd string, a args, env Env) error {
 			return err
 		}
 		return cmdServe(a, env)
+	case "xray":
+		if err := need(1, "<path>"); err != nil {
+			return err
+		}
+		if err := noMax(); err != nil {
+			return err
+		}
+		return cmdXRay(a, env)
 	case "help", "-h", "--help":
 		fmt.Fprint(env.Stdout, Usage)
 		return nil
