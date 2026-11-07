@@ -1,6 +1,7 @@
 package xray
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -140,7 +141,7 @@ func TestLabEngineOutcomes(t *testing.T) {
 		"clean": "clean", "bad-magic": "refused", "unsupported-version": "refused",
 		"superblock-checksum": "refused", "torn-tail": "repairable", "incomplete-header": "repairable",
 		"final-payload-checksum": "repairable", "committed-frame-corrupted": "refused",
-		"header-damaged-mid-log": "repairable", "invalid-seq": "refused", "invalid-op": "refused",
+		"header-damaged-mid-log": "refused", "invalid-seq": "refused", "invalid-op": "refused",
 		"entry-checksum": "refused", "snapshot-corrupted": "refused",
 		"interrupted-compaction": "repairable", "compaction-leftover": "repairable", "lock-conflict": "clean",
 	}
@@ -174,20 +175,26 @@ func TestLabEngineOutcomes(t *testing.T) {
 	}
 }
 
-// TestMidLogHeaderDamageWouldLoseCommittedFrames proves the X-RAY forward
-// check is right: opening the damaged copy really does drop committed keys.
-func TestMidLogHeaderDamageWouldLoseCommittedFrames(t *testing.T) {
+// TestMidLogHeaderDamageRefusedNotTruncated (judge attack P7): a damaged
+// header in the middle of the log, with committed frames after it, makes a
+// normal open refuse with ErrCorruption (rule C3) and leaves every byte of
+// the file in place, so the committed frames behind the damage survive.
+// X-RAY reports the same verdict and repair refuses.
+func TestMidLogHeaderDamageRefusedNotTruncated(t *testing.T) {
 	root := t.TempDir()
 	c, err := buildCase(root, "header-damaged-mid-log")
 	if err != nil {
 		t.Fatal(err)
 	}
 	r, _ := Scan(c.Path, Options{})
-	if r.Walk == nil || r.Walk.LaterFrameSeq == nil {
-		t.Fatalf("forward check found nothing: %s", codes(r))
+	if r.Walk == nil || r.Walk.LaterFrameSeq == nil || r.Walk.StopRule != "C3" {
+		t.Fatalf("C3 evidence not reported: %s", codes(r))
 	}
-	if !strings.HasPrefix(r.Recovery.DataLoss, "YES") || r.Recovery.Status != Detected {
-		t.Fatalf("summary does not warn: %+v", r.Recovery)
+	if r.Engine.Outcome != "refused" || r.Engine.ScanRule != "C3" || r.Recovery.Status != Refused {
+		t.Fatalf("engine/summary not refused: %+v / %+v", r.Engine, r.Recovery)
+	}
+	if f := find(r, "XRAY_ENGINE_DISAGREEMENT"); f != nil {
+		t.Fatalf("X-RAY and engine disagree: %s", f.Technical)
 	}
 	rep, err := Repair(c.Path, filepath.Join(root, "bak"), Options{})
 	if err != nil {
@@ -196,17 +203,27 @@ func TestMidLogHeaderDamageWouldLoseCommittedFrames(t *testing.T) {
 	if rep.Repair.Verified || rep.Repair.OpenError == "" || rep.Modified {
 		t.Fatalf("repair must refuse: %+v", rep.Repair)
 	}
-	// Evidence: a normal open of a copy loses keys written after frame 3.
+	// A normal open of a copy refuses and does not modify the copy.
 	cp := filepath.Join(t.TempDir(), "copy.kv")
-	b, _ := os.ReadFile(c.Path)
-	os.WriteFile(cp, b, 0o644)
-	db, err := kvdb.Open(cp, 0)
-	if err != nil {
+	orig, _ := os.ReadFile(c.Path)
+	if err := os.WriteFile(cp, orig, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
-	if _, err := db.Get([]byte("user:6")); !errors.Is(err, kvdb.ErrNotFound) {
-		t.Fatalf("expected the committed key user:6 to be lost by a normal open, got %v", err)
+	db, err := kvdb.Open(cp, 0)
+	if err == nil {
+		db.Close()
+		t.Fatal("normal open succeeded; it must refuse mid-log header damage")
+	}
+	if !errors.Is(err, kvdb.ErrCorruption) {
+		t.Fatalf("open error %v, want ErrCorruption", err)
+	}
+	after, _ := os.ReadFile(cp)
+	if !bytes.Equal(after, orig) {
+		t.Fatalf("refused open changed the file: %d -> %d bytes", len(orig), len(after))
+	}
+	// The committed frame behind the damage (it holds user:6) is still on disk.
+	if !bytes.Contains(after[*r.Walk.LaterFrameOffset:], []byte("user:6")) {
+		t.Fatal("committed key user:6 no longer present after the damaged header")
 	}
 }
 

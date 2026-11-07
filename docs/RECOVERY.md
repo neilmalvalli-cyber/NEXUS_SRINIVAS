@@ -43,8 +43,8 @@ tail rule below depends on it:
 |---|---|---|
 | C0 | `pos < snapshot_end` | Refuse, `ErrCorruption` |
 | C1 | `size − pos < 32` | Truncate to `pos` |
-| C2 | Bad magic or bad header CRC | Truncate to `pos` |
-| C3 | — | Never scan forward past a damaged header |
+| C2 | Bad magic or bad header CRC, and no complete valid frame after it | Truncate to `pos` |
+| C3 | Bad magic or bad header CRC, and a complete valid frame (seq ≥ expected) follows | Refuse, `ErrCorruption`; never apply or truncate past a damaged header |
 | C4 | Valid header, payload runs past EOF | Truncate to `pos` |
 | C5 | Valid header, bad payload CRC, declared end == `size` | Truncate to `pos` |
 | C6 | Valid header, bad payload CRC, declared end < `size` | Refuse, `ErrCorruption` |
@@ -56,15 +56,40 @@ Format-layer support already in place (Phase 1): `format.HeaderFits`,
 `format.ScanPayload` (drains a structurally bad payload to decide Damaged vs
 Corrupt by its CRC), `format.NextSeq`.
 
-### Why no forward scan (C3)
+### Rule C3: refuse when a valid frame follows a damaged header (amended 2026-11-07)
 
-A user value can contain bytes that form a perfectly valid frame header, even
-one with the next expected sequence number. If a frame carrying such a value is
-killed partway through and recovery searched forward for "another valid frame",
-it would find the fake one and refuse to open a file our own engine wrote.
-`format.TestTornFrameContainingEmbeddedFrameHeader` pins down the format-level
-half of this. The cost is accepted risk: real bit-rot behind a damaged header is
-not detected (outside the official crash model).
+Before the amendment C3 said "never scan forward": every damaged header was
+treated as the torn final frame and truncated (C2). That silently dropped
+committed frames when a header in the *middle* of the log was damaged (judge
+attack P7: one flipped bit in frame 3's header made a normal open delete
+frames 3–8).
+
+Amended rule. When a header is damaged at `pos` (outside the snapshot),
+recovery looks for a **complete, fully valid frame** after it: header CRC
+valid, `seq >= expected`, payload inside the file, payload CRC valid
+(`recovery.LaterCommittedFrame`). If one exists, open **refuses** with
+`ErrCorruption` (rule C3) and changes nothing. Otherwise the damaged header
+is the torn final frame and C2 truncates as before. Nothing past a damaged
+header is ever applied; the forward check is evidence only.
+
+Why this cannot refuse an ordinary crash. Frames are written one at a time
+and each is synced before the next starts (I1), so a torn write only ever
+affects the last frame, and a process kill leaves a *prefix* of it. A prefix
+with 32 or more bytes has an intact header, so it is handled by C4/C5, not
+C2; a shorter one is C1. The forward check therefore runs only when all 32
+header bytes are present but wrong.
+
+Remaining trade-off (KNOWN_LIMITATIONS.md). The old C3 rationale still holds
+in one narrow case: a user value can contain bytes forming a valid frame. If a
+power loss persisted the last frame's sectors out of order, losing the header
+sector but keeping later ones, *and* that frame's value embedded a complete
+valid frame with a future sequence number, open now refuses a file our own
+engine wrote. That outcome is a refusal with the file untouched (X-RAY
+explains it), never data loss; we prefer it to silently truncating committed
+data on any mid-log header damage. Pinned by
+`TestTailC3CraftedValueBehindLostHeaderRefusesSafely`.
+`format.TestTornFrameContainingEmbeddedFrameHeader` still holds: a value full of
+valid-looking headers never changes how a *prefix-torn* frame is classified.
 
 ### Why C5 requires "exactly EOF"
 

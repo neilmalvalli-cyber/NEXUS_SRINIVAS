@@ -1,0 +1,472 @@
+{
+  "when": "2026-11-07T03:22:34.350Z",
+  "control": false,
+  "seed": 3,
+  "writers": 12,
+  "real_processes": true,
+  "totals": {
+    "iterations": 50,
+    "requests": 31784,
+    "acked": 31223,
+    "definite": 0,
+    "unknown": 561,
+    "unknownApplied": 13,
+    "unknownNotApplied": 106,
+    "batches": 6373,
+    "unknownBatches": 119,
+    "keysVerified": 2400,
+    "violations": []
+  },
+  "perIter": [
+    {
+      "iter": 1,
+      "killAtMs": 158,
+      "startMs": 36,
+      "requests": 285,
+      "acked": 279,
+      "definite": 0,
+      "unknown": 6
+    },
+    {
+      "iter": 2,
+      "killAtMs": 439,
+      "startMs": 38,
+      "requests": 964,
+      "acked": 953,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 3,
+      "killAtMs": 90,
+      "startMs": 41,
+      "requests": 177,
+      "acked": 166,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 4,
+      "killAtMs": 220,
+      "startMs": 38,
+      "requests": 462,
+      "acked": 451,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 5,
+      "killAtMs": 287,
+      "startMs": 45,
+      "requests": 625,
+      "acked": 614,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 6,
+      "killAtMs": 191,
+      "startMs": 43,
+      "requests": 444,
+      "acked": 433,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 7,
+      "killAtMs": 67,
+      "startMs": 44,
+      "requests": 125,
+      "acked": 114,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 8,
+      "killAtMs": 507,
+      "startMs": 45,
+      "requests": 1137,
+      "acked": 1126,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 9,
+      "killAtMs": 246,
+      "startMs": 40,
+      "requests": 568,
+      "acked": 557,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 10,
+      "killAtMs": 166,
+      "startMs": 34,
+      "requests": 346,
+      "acked": 334,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 11,
+      "killAtMs": 354,
+      "startMs": 39,
+      "requests": 754,
+      "acked": 743,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 12,
+      "killAtMs": 57,
+      "startMs": 35,
+      "requests": 102,
+      "acked": 90,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 13,
+      "killAtMs": 149,
+      "startMs": 39,
+      "requests": 347,
+      "acked": 336,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 14,
+      "killAtMs": 138,
+      "startMs": 43,
+      "requests": 290,
+      "acked": 279,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 15,
+      "killAtMs": 287,
+      "startMs": 36,
+      "requests": 631,
+      "acked": 620,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 16,
+      "killAtMs": 318,
+      "startMs": 42,
+      "requests": 724,
+      "acked": 712,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 17,
+      "killAtMs": 377,
+      "startMs": 40,
+      "requests": 793,
+      "acked": 782,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 18,
+      "killAtMs": 476,
+      "startMs": 42,
+      "requests": 1006,
+      "acked": 995,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 19,
+      "killAtMs": 116,
+      "startMs": 39,
+      "requests": 231,
+      "acked": 220,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 20,
+      "killAtMs": 419,
+      "startMs": 44,
+      "requests": 896,
+      "acked": 885,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 21,
+      "killAtMs": 512,
+      "startMs": 36,
+      "requests": 1158,
+      "acked": 1147,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 22,
+      "killAtMs": 236,
+      "startMs": 33,
+      "requests": 517,
+      "acked": 506,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 23,
+      "killAtMs": 370,
+      "startMs": 39,
+      "requests": 855,
+      "acked": 843,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 24,
+      "killAtMs": 72,
+      "startMs": 35,
+      "requests": 131,
+      "acked": 119,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 25,
+      "killAtMs": 286,
+      "startMs": 41,
+      "requests": 637,
+      "acked": 626,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 26,
+      "killAtMs": 190,
+      "startMs": 41,
+      "requests": 414,
+      "acked": 402,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 27,
+      "killAtMs": 48,
+      "startMs": 47,
+      "requests": 76,
+      "acked": 65,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 28,
+      "killAtMs": 279,
+      "startMs": 33,
+      "requests": 611,
+      "acked": 599,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 29,
+      "killAtMs": 526,
+      "startMs": 34,
+      "requests": 1193,
+      "acked": 1182,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 30,
+      "killAtMs": 298,
+      "startMs": 34,
+      "requests": 654,
+      "acked": 642,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 31,
+      "killAtMs": 292,
+      "startMs": 46,
+      "requests": 649,
+      "acked": 638,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 32,
+      "killAtMs": 420,
+      "startMs": 40,
+      "requests": 932,
+      "acked": 920,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 33,
+      "killAtMs": 372,
+      "startMs": 46,
+      "requests": 841,
+      "acked": 830,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 34,
+      "killAtMs": 246,
+      "startMs": 36,
+      "requests": 534,
+      "acked": 523,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 35,
+      "killAtMs": 508,
+      "startMs": 33,
+      "requests": 1128,
+      "acked": 1117,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 36,
+      "killAtMs": 68,
+      "startMs": 48,
+      "requests": 126,
+      "acked": 115,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 37,
+      "killAtMs": 440,
+      "startMs": 45,
+      "requests": 974,
+      "acked": 963,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 38,
+      "killAtMs": 254,
+      "startMs": 45,
+      "requests": 549,
+      "acked": 537,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 39,
+      "killAtMs": 504,
+      "startMs": 44,
+      "requests": 1158,
+      "acked": 1147,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 40,
+      "killAtMs": 372,
+      "startMs": 41,
+      "requests": 813,
+      "acked": 802,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 41,
+      "killAtMs": 457,
+      "startMs": 47,
+      "requests": 1042,
+      "acked": 1031,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 42,
+      "killAtMs": 344,
+      "startMs": 40,
+      "requests": 754,
+      "acked": 743,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 43,
+      "killAtMs": 53,
+      "startMs": 46,
+      "requests": 134,
+      "acked": 122,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 44,
+      "killAtMs": 254,
+      "startMs": 46,
+      "requests": 570,
+      "acked": 558,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 45,
+      "killAtMs": 420,
+      "startMs": 45,
+      "requests": 942,
+      "acked": 931,
+      "definite": 0,
+      "unknown": 11
+    },
+    {
+      "iter": 46,
+      "killAtMs": 490,
+      "startMs": 46,
+      "requests": 1098,
+      "acked": 1086,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 47,
+      "killAtMs": 246,
+      "startMs": 39,
+      "requests": 544,
+      "acked": 532,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 48,
+      "killAtMs": 70,
+      "startMs": 37,
+      "requests": 167,
+      "acked": 155,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 49,
+      "killAtMs": 388,
+      "startMs": 44,
+      "requests": 876,
+      "acked": 864,
+      "definite": 0,
+      "unknown": 12
+    },
+    {
+      "iter": 50,
+      "killAtMs": 360,
+      "startMs": 36,
+      "requests": 800,
+      "acked": 789,
+      "definite": 0,
+      "unknown": 11
+    }
+  ]
+}

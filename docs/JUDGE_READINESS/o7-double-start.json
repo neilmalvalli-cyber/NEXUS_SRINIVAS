@@ -1,0 +1,137 @@
+{
+  "when": "2026-11-07T03:30:38.636Z",
+  "real_processes": true,
+  "results": [
+    {
+      "id": "O7.1a",
+      "title": "first instance starts",
+      "pass": true
+    },
+    {
+      "id": "O7.1b",
+      "title": "second instance on the same database exits with an error",
+      "pass": true,
+      "detail": "exit 1 after 1032 ms"
+    },
+    {
+      "id": "O7.1c",
+      "title": "its error says the database is locked",
+      "pass": true,
+      "detail": "2026/11/07 09:00:27 nexus-api: opening C:\\Users\\MYPC~1\\AppData\\Local\\Temp\\claude\\8bd721bb8349a66b\\5535522f-6a01-4088-9d42-4a637e03f8be\\scratchpad\\o7\\run1\\one\\db.kv: kvdb: database is locked by another process: C:\\Users\\MYPC~1\\AppData\\Local\\Temp\\claude\\8bd721bb8349a66b\\5535522f-6a01-4088-9d42-4a637e03f8be\\scratchpad\\o7\\run1\\one\\db.kv.lock (still busy after 15 attempts): lock C:\\Users\\MYPC~1\\AppData\\Local\\Temp\\claude\\8bd721bb8349a66b\\5535522f-6a01-4088-9d42-4a637e03f8be\\scratchpad\\o7\\run1\\one\\db.kv.lock: The process cannot access the file because it is being used by another process."
+    },
+    {
+      "id": "O7.1d",
+      "title": "first instance still healthy and accepts writes",
+      "pass": true
+    },
+    {
+      "id": "O7.1e",
+      "title": "first instance's data intact",
+      "pass": true
+    },
+    {
+      "id": "O7.5",
+      "title": "after the first is killed, a new instance opens the database with all data",
+      "pass": true
+    },
+    {
+      "id": "O7.2a",
+      "title": "first instance starts",
+      "pass": true
+    },
+    {
+      "id": "O7.2b",
+      "title": "second instance on the same port exits with an error",
+      "pass": true,
+      "detail": "exit 1: 2026/11/07 09:00:27 nexus-api: listen tcp 127.0.0.1:56727: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted."
+    },
+    {
+      "id": "O7.2c",
+      "title": "first instance still answers on that port with its own data",
+      "pass": true
+    },
+    {
+      "id": "O7.2d",
+      "title": "the second instance released its database when it exited",
+      "pass": true
+    },
+    {
+      "id": "O7.3",
+      "title": "simultaneous start: exactly one instance serves, the other exits \"locked\" (10 races)",
+      "pass": true,
+      "detail": "10/10; loser exit after 1028–1032 ms",
+      "races": [
+        {
+          "i": 0,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1028
+        },
+        {
+          "i": 1,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1029
+        },
+        {
+          "i": 2,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1029
+        },
+        {
+          "i": 3,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1029
+        },
+        {
+          "i": 4,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1029
+        },
+        {
+          "i": 5,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1030
+        },
+        {
+          "i": 6,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1029
+        },
+        {
+          "i": 7,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1029
+        },
+        {
+          "i": 8,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1032
+        },
+        {
+          "i": 9,
+          "aHealthy": true,
+          "bHealthy": false,
+          "loserExit": 1,
+          "loserMs": 1028
+        }
+      ]
+    }
+  ]
+}

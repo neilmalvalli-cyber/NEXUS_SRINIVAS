@@ -394,7 +394,7 @@ The decoder distinguishes three classes:
 | C0 | `pos < snapshot_end` (any failure inside the sealed snapshot) | **Refuse** with `ErrCorruption`. Never truncate. |
 | C1 | Fewer than 32 bytes remain (`size − pos < 32`) | Torn final frame → truncate to `pos`. |
 | C2 | Header has bad magic or bad header CRC | Torn final frame → truncate to `pos`. |
-| C3 | (applies to C2) | **Do not scan forward** for another valid-looking frame header. User values may contain byte sequences that form valid headers, even with the expected seq; a forward scan would make Open refuse a file our own engine wrote (breaking invariant rule 5). Under I1 and the official crash model (no bit-rot), a damaged header can only be the torn final frame. |
+| C3 | (applies to C2; amended 2026-11-07, §28) | If a **complete, fully valid frame** (header CRC, seq ≥ expected, payload inside the file, payload CRC) follows the damaged header, **refuse** (`ErrCorruption`) instead of truncating: under I1 a torn write affects only the last frame, so a valid later frame proves mid-log damage. Nothing past a damaged header is ever applied. ~~Do not scan forward~~ (original rule: it truncated committed frames behind mid-log header damage, judge attack P7). |
 | C4 | Header valid, `payload_len` runs past EOF (`!PayloadFits`) | Torn final frame → truncate to `pos`. |
 | C5 | Header valid, payload fits, payload CRC wrong, and the declared frame end `pos + 32 + payload_len` **equals** `size` | Torn final frame → truncate to `pos`. |
 | C6 | Header valid, payload fits, payload CRC wrong, declared frame end **< `size`** | **Refuse** with `ErrCorruption`. Bytes after a torn frame are impossible under I1. |
@@ -1267,9 +1267,11 @@ This must be resolved before relying on concurrency testing.
 
 A scanner, indexer or backup tool holding `path.lock` can make Open report `ErrLocked` when no database process is running (§16.1, limitation 1). A tool holding `path` during compaction makes R1 fail; compaction then aborts cleanly and the database stays usable.
 
-### No forward scan after a damaged header *(added 2026-11-06)*
+### No forward scan after a damaged header *(added 2026-11-06; superseded 2026-11-07)*
 
-Rule C3 (§8.2) trusts the crash model: real mid-file damage (bit-rot) behind a damaged header would be truncated away without detection. Bit-rot is outside the official model [REQ §5 G]; refusing instead would let a crafted user value make Open fail on our own file.
+Rule C3 (§8.2) trusted the crash model: real mid-file damage (bit-rot) behind a damaged header would be truncated away without detection. Bit-rot is outside the official model [REQ §5 G]; refusing instead would let a crafted user value make Open fail on our own file.
+
+**Amendment (2026-11-07, judge-readiness audit P7).** Silently truncating committed frames is worse than a rare refusal, so C3 now refuses when a complete valid frame with seq ≥ expected follows the damaged header (`recovery.LaterCommittedFrame`, shared with X-RAY). A process kill leaves a prefix of the last frame (intact header, so C1/C4/C5 apply), so ordinary crashes are unaffected. The crafted-value risk remains only for an out-of-order power loss that loses the header sector of the last frame while keeping later sectors, *and* a value embedding a valid future frame; the result is a refusal with the file untouched, never data loss (docs/RECOVERY.md, KNOWN_LIMITATIONS.md). No format change.
 
 ### Phase 3 risks *(added 2026-11-06)*
 
@@ -1387,7 +1389,7 @@ The following invariants must hold throughout implementation.
 |---|---|---|---|
 | 1 | Process lock acquired before any recovery file operation | §8 step 0, §11.4 precondition, §16.1, inv. 19 | Spec T-LOCK-1, T-LOCK-2 |
 | 2 | Payload-CRC failure truncated only if the declared end is exactly EOF and outside the snapshot | §8.2 C0, C5, C6, inv. 20 | Spec T-REC-5, T-REC-6, T-REC-9; format support `PayloadFits` |
-| 3 | Damaged header is the final torn frame; no forward scan | §8.2 C2, C3 | `format.TestTornFrameContainingEmbeddedFrameHeader`; spec T-REC-3, T-REC-4 |
+| 3 | Damaged header is the final torn frame unless a complete valid frame follows it (then refuse, C3 amended 2026-11-07) | §8.2 C2, C3 | `format.TestTornFrameContainingEmbeddedFrameHeader`; `TestTailC3MidLogHeaderDamageRefused`, `TestTailC2LaterFrameNotProof`, `TestTailC3CraftedValueBehindLostHeaderRefusesSafely`; spec T-REC-3, T-REC-4 |
 | 4 | I1 stated explicitly with its enforcement points | §2.4, inv. 18 | Spec T-I1-1 … T-I1-4 |
 | 5 | Replacement protocol uses `syscall.MoveFile`, never `os.Rename`; close handle before R1 | §11.1, inv. 14 | `platform` move and Windows tests |
 | 6 | Lock-file implementation and limitations | §16.1, §25 | `platform.TestExclusiveShareModeLock`; spec T-LOCK-* |
@@ -1442,7 +1444,7 @@ No change to the binary format, the write path, recovery, admission or compactio
 | 28 | CLI output contract: `open` prints `keys= recovery_ms= size=`; `get` prints the value or `NOTFOUND`; `dump` sorted by key, Go-quoted when not plain; `check` = recovery + full-file `Verify`, prints `OK` or `CORRUPT:`/`BAD FORMAT:`/`ERROR:`; exit codes 0/1/2/3 (3 = outcome unknown) | §18.1 | `cli.TestCommandsRoundTrip`, `TestDumpSortedAndQuoted`, `TestCheckReportsCorruptionAndTornTail` |
 | 29 | serve protocol (the statement fixes only `ACK <op-id>`): `<writer-id> <op-id> put|del|get|batch <n>|compact`, writer ID optional; replies `ACK`/`VALUE`/`NOTFOUND`/`ERR <op-id> <class> <msg>`; per-writer goroutine + FIFO; ACK only after a nil return; an unterminated final line or an incomplete batch is never executed | §18.2–18.4 | `cli.TestServeProtocol`, `TestServeConcurrentWritersKeepOrder`, `TestServeNeverAcksFailedWrites`, `TestServeIgnoresIncompleteFinalLine`, `FuzzParseRequest` |
 | 30 | `--max-bytes` accepted by every writing command and by serve, per invocation (the cap is not stored in the file) | §12, §18 | `cli.TestMaxBytesFlag`, `TestServeMaxBytesErrorsAreClean` |
-| 31 | Torture tool in `torture/` with an independent oracle (`torture/model.go`): real-time-order register check per key over all applied/not-applied choices of unknown requests | §21 | `torture/model_test.go`; mutation runs (BREAKING.md §4) |
+| 31 | Torture tool in `torture/` (moved to `src/cmd/torture/` on 2026-11-07) with an independent oracle (`model.go`): real-time-order register check per key over all applied/not-applied choices of unknown requests | §21 | `torture/model_test.go`; mutation runs (BREAKING.md §4) |
 | 32 | Official scenarios as `src/scenarios` tests; 1M PUT/DELETE acceptance test | §20, §23 | [results](results/) |
 
 ### 2026-11-06 — Prompt 10: competition-readiness hardening (pending review)

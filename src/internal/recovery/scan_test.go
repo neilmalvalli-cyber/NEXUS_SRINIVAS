@@ -294,16 +294,18 @@ func TestTailC2DamagedHeader(t *testing.T) {
 	badCRC := append([]byte(nil), next...)
 	badCRC[9] ^= 0x01 // a seq byte: header CRC no longer matches
 	cases := map[string][]byte{
-		"bad-magic":            badMagic[:format.FrameHeaderSize],
-		"bad-magic+payload":    badMagic,
-		"bad-header-crc":       badCRC,
-		"bad-header-crc+junk":  cat(badCRC, []byte("arbitrary junk after the frame")),
-		"zero-filled-4k":       make([]byte, 4096),
-		"zero-header+ones":     cat(make([]byte, 32), bytes.Repeat([]byte{1}, 100)),
-		"header-crc-zeroed":    cat(next[:28], []byte{0, 0, 0, 0}, next[32:]),
-		"ascii-text-at-tail":   []byte(strings.Repeat("not a frame header ", 4)),
-		"bad-magic-only-32":    bytes.Repeat([]byte{0xFF}, 32),
-		"bad-magic-plus-frame": cat(bytes.Repeat([]byte{0xEE}, 32), frame(t, 10, put("x", "y"))),
+		"bad-magic":           badMagic[:format.FrameHeaderSize],
+		"bad-magic+payload":   badMagic,
+		"bad-header-crc":      badCRC,
+		"bad-header-crc+junk": cat(badCRC, []byte("arbitrary junk after the frame")),
+		"zero-filled-4k":      make([]byte, 4096),
+		"zero-header+ones":    cat(make([]byte, 32), bytes.Repeat([]byte{1}, 100)),
+		"header-crc-zeroed":   cat(next[:28], []byte{0, 0, 0, 0}, next[32:]),
+		"ascii-text-at-tail":  []byte(strings.Repeat("not a frame header ", 4)),
+		"bad-magic-only-32":   bytes.Repeat([]byte{0xFF}, 32),
+		// A valid frame with seq < expected after the junk is not evidence of
+		// committed data (it cannot be a later write), so C2 still applies.
+		"bad-magic-plus-stale-frame": cat(bytes.Repeat([]byte{0xEE}, 32), frame(t, 3, put("x", "y"))),
 	}
 	for name, tail := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -319,20 +321,89 @@ func TestTailC2DamagedHeader(t *testing.T) {
 	}
 }
 
-// T-REC-3 (C3): a damaged header followed by a perfectly valid next frame is
-// still truncated at the damaged header. No forward scan; the valid-looking
-// frame after it is discarded (documented accepted risk, DESIGN §25).
-func TestTailC3NoForwardScan(t *testing.T) {
+// T-REC-3 (C3, amended): a damaged header followed by a complete, fully valid
+// frame with seq >= expected cannot be a torn final write (frames are written
+// one at a time and each is synced before the next starts). Truncating would
+// drop committed data, so open refuses with ErrCorruption and leaves the file
+// byte-for-byte unchanged. Nothing past the damaged header is ever applied.
+func TestTailC3MidLogHeaderDamageRefused(t *testing.T) {
+	data, _ := base(t)
+	damaged := frame(t, 10, put("d", "4"))
+	damaged[0] ^= 0xFF
+	badCRC := frame(t, 10, put("d", "4"))
+	badCRC[9] ^= 0x01
+	cases := map[string][]byte{
+		"bad-magic+next-frame":      cat(data, damaged, frame(t, 11, put("e", "5"))),
+		"bad-header-crc+next-frame": cat(data, badCRC, frame(t, 11, put("e", "5"))),
+		"junk-header+same-seq":      cat(data, bytes.Repeat([]byte{0xEE}, 32), frame(t, 10, put("x", "y"))),
+		"bad-magic+two-frames":      cat(data, damaged, frame(t, 11, put("e", "5")), frame(t, 12, put("f", "6"))),
+	}
+	for name, file := range cases {
+		t.Run(name, func(t *testing.T) {
+			_, db := writeDB(t, file)
+			_, err := Open(fileio.OS{}, db, Options{})
+			if !errors.Is(err, dberr.ErrCorruption) {
+				t.Fatalf("err = %v, want ErrCorruption", err)
+			}
+			var se *ScanError
+			if !errors.As(err, &se) || se.Rule != "C3" || se.Offset != uint64(len(data)) {
+				t.Fatalf("err = %#v, want ScanError rule C3 at offset %d", err, len(data))
+			}
+			if !bytes.Equal(readFile(t, db), file) {
+				t.Fatal("refused open modified the file")
+			}
+		})
+	}
+}
+
+// Documented trade-off of amended C3 (KNOWN_LIMITATIONS.md). A process kill
+// leaves a prefix of the last frame, so its header is intact and C1/C4
+// apply; the forward check never runs. Only an out-of-order power loss that
+// loses the header sector but keeps later sectors, AND a value that embeds a
+// complete valid frame with a future seq, reaches this state. NEXUS then
+// refuses (availability loss) and never truncates or modifies the file: it
+// fails safe instead of risking silent loss of committed frames.
+func TestTailC3CraftedValueBehindLostHeaderRefusesSafely(t *testing.T) {
+	data, _ := base(t)
+	embedded := frame(t, 11, put("fake", "frame"))
+	outer := frame(t, 10, put("k", "prefix|"+string(embedded)+"|suffix"))
+	copy(outer[:format.FrameHeaderSize], make([]byte, format.FrameHeaderSize)) // header sector lost
+	file := cat(data, outer)
+	_, db := writeDB(t, file)
+	_, err := Open(fileio.OS{}, db, Options{})
+	var se *ScanError
+	if !errors.As(err, &se) || se.Rule != "C3" {
+		t.Fatalf("err = %v, want C3 refusal", err)
+	}
+	if !bytes.Equal(readFile(t, db), file) {
+		t.Fatal("refused open modified the file")
+	}
+}
+
+// A damaged header followed only by an incomplete or payload-damaged frame
+// is not proof of committed data: C2 still truncates.
+func TestTailC2LaterFrameNotProof(t *testing.T) {
 	data, want := base(t)
 	damaged := frame(t, 10, put("d", "4"))
 	damaged[0] ^= 0xFF
-	_, db := writeDB(t, cat(data, damaged, frame(t, 11, put("e", "5"))))
-	got, st := openState(t, fileio.OS{}, db)
-	if !reflect.DeepEqual(got, want) || st.Scan.Tail != TailC2 || st.Scan.NextSeq != 10 {
-		t.Fatalf("%v %+v", got, st.Scan)
+	next := frame(t, 11, put("e", "5"))
+	badPayload := append([]byte(nil), next...)
+	badPayload[len(badPayload)-1] ^= 0xFF
+	cases := map[string][]byte{
+		"next-frame-cut":         next[:len(next)-3],
+		"next-frame-bad-payload": badPayload,
 	}
-	if !bytes.Equal(readFile(t, db), data) {
-		t.Fatal("not truncated at the damaged header")
+	for name, after := range cases {
+		t.Run(name, func(t *testing.T) {
+			_, db := writeDB(t, cat(data, damaged, after))
+			got, st := openState(t, fileio.OS{}, db)
+			if !reflect.DeepEqual(got, want) || st.Scan.Tail != TailC2 {
+				t.Fatalf("%v tail=%q", got, st.Scan.Tail)
+			}
+			if !bytes.Equal(readFile(t, db), data) {
+				t.Fatal("not truncated at the damaged header")
+			}
+		})
 	}
 }
 

@@ -1,0 +1,876 @@
+{
+  "when": "2026-11-07T03:22:39.228Z",
+  "control": true,
+  "seed": 1,
+  "writers": 12,
+  "real_processes": false,
+  "totals": {
+    "iterations": 5,
+    "requests": 2526,
+    "acked": 2430,
+    "definite": 61,
+    "unknown": 35,
+    "unknownApplied": 0,
+    "unknownNotApplied": 5,
+    "batches": 489,
+    "unknownBatches": 5,
+    "keysVerified": 240,
+    "violations": [
+      {
+        "iter": 2,
+        "what": "w0/k1 = <absent>, allowed: s1-i1-w0-n22|w0/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w0/k2 = <absent>, allowed: s1-i1-w0-n23|w0/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i1-w0-n24|w0/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w0/k3 = <absent>, allowed: s1-i1-w0-n22|w0/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w1/k1 = <absent>, allowed: s1-i1-w1-n23|w1/k1|xxxxxxxxxxxxxxxxxxxxx | s1-i1-w1-n24|w1/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w1/k2 = <absent>, allowed: s1-i1-w1-n23|w1/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w2/k1 = <absent>, allowed: s1-i1-w2-n19|w2/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w2/k2 = <absent>, allowed: s1-i1-w2-n23|w2/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w2/k3 = <absent>, allowed: s1-i1-w2-n22|w2/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w3/k0 = <absent>, allowed: s1-i1-w3-n15|w3/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w3/k1 = <absent>, allowed: s1-i1-w3-n21|w3/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w3/k2 = <absent>, allowed: s1-i1-w3-n23|w3/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w3/k3 = <absent>, allowed: s1-i1-w3-n22|w3/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w4/k0 = <absent>, allowed: s1-i1-w4-n22|w4/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w4/k1 = <absent>, allowed: s1-i1-w4-n21|w4/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w4/k2 = <absent>, allowed: s1-i1-w4-n23|w4/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w4/k3 = <absent>, allowed: s1-i1-w4-n19|w4/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w5/k1 = <absent>, allowed: s1-i1-w5-n21|w5/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w5/k2 = <absent>, allowed: s1-i1-w5-n22|w5/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w5/k3 = <absent>, allowed: s1-i1-w5-n19|w5/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w6/k0 = <absent>, allowed: s1-i1-w6-n23|w6/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w6/k1 = <absent>, allowed: s1-i1-w6-n23|w6/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w6/k2 = <absent>, allowed: s1-i1-w6-n23|w6/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w6/k3 = <absent>, allowed: s1-i1-w6-n23|w6/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w7/k0 = <absent>, allowed: s1-i1-w7-n22|w7/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w7/k1 = <absent>, allowed: s1-i1-w7-n19|w7/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w7/k2 = <absent>, allowed: s1-i1-w7-n23|w7/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w7/k3 = <absent>, allowed: s1-i1-w7-n22|w7/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w8/k1 = <absent>, allowed: s1-i1-w8-n20|w8/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w8/k2 = <absent>, allowed: s1-i1-w8-n22|w8/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w8/k3 = <absent>, allowed: s1-i1-w8-n23|w8/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w9/k0 = <absent>, allowed: s1-i1-w9-n15|w9/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w9/k1 = <absent>, allowed: s1-i1-w9-n23|w9/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w9/k2 = <absent>, allowed: s1-i1-w9-n22|w9/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w9/k3 = <absent>, allowed: s1-i1-w9-n14|w9/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w10/k0 = <absent>, allowed: s1-i1-w10-n15|w10/k0|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w10/k1 = <absent>, allowed: s1-i1-w10-n21|w10/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w10/k3 = <absent>, allowed: s1-i1-w10-n23|w10/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w11/k1 = <absent>, allowed: s1-i1-w11-n22|w11/k1|xxxxxxxxxxxxxxxxxxx | s1-i1-w11-n23|w11/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 2,
+        "what": "w11/k2 = <absent>, allowed: s1-i1-w11-n21|w11/k2|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w0/k0 = <absent>, allowed: s1-i2-w0-n54|w0/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w0/k1 = <absent>, allowed: s1-i2-w0-n61|w0/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w0/k3 = <absent>, allowed: s1-i2-w0-n55|w0/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w1/k3 = <absent>, allowed: s1-i2-w1-n60|w1/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w2/k0 = <absent>, allowed: s1-i2-w2-n62|w2/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w2/k1 = <absent>, allowed: s1-i2-w2-n57|w2/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w2/k2 = <absent>, allowed: s1-i2-w2-n63|w2/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w2/k3 = <absent>, allowed: s1-i2-w2-n54|w2/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w3/k0 = <absent>, allowed: s1-i2-w3-n62|w3/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w3/k1 = <absent>, allowed: s1-i2-w3-n61|w3/k1|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w3-n63|w3/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w3/k2 = <absent>, allowed: s1-i2-w3-n61|w3/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w3-n63|w3/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w3/k3 = <absent>, allowed: s1-i2-w3-n61|w3/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w4/k1 = <absent>, allowed: s1-i2-w4-n60|w4/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w4/k2 = <absent>, allowed: s1-i2-w4-n58|w4/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w4-n63|w4/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w4/k3 = <absent>, allowed: s1-i2-w4-n57|w4/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w5/k0 = <absent>, allowed: s1-i2-w5-n61|w5/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w5/k1 = <absent>, allowed: s1-i2-w5-n61|w5/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w5/k2 = <absent>, allowed: s1-i2-w5-n61|w5/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w5/k3 = <absent>, allowed: s1-i2-w5-n62|w5/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w5-n63|w5/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w6/k0 = <absent>, allowed: s1-i2-w6-n62|w6/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w6/k1 = <absent>, allowed: s1-i2-w6-n62|w6/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w6/k2 = <absent>, allowed: s1-i2-w6-n58|w6/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w7/k0 = <absent>, allowed: s1-i2-w7-n58|w7/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w7/k1 = <absent>, allowed: s1-i2-w7-n62|w7/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w7/k2 = <absent>, allowed: s1-i2-w7-n61|w7/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w7/k3 = <absent>, allowed: s1-i2-w7-n61|w7/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w7-n63|w7/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w8/k1 = <absent>, allowed: s1-i2-w8-n59|w8/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w8/k2 = <absent>, allowed: s1-i2-w8-n62|w8/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w8-n63|w8/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w8/k3 = <absent>, allowed: s1-i2-w8-n58|w8/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w8-n63|w8/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w9/k0 = <absent>, allowed: s1-i2-w9-n62|w9/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w9/k1 = <absent>, allowed: s1-i2-w9-n61|w9/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w9/k2 = <absent>, allowed: s1-i2-w9-n55|w9/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w9/k3 = <absent>, allowed: s1-i2-w9-n61|w9/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i2-w9-n63|w9/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w10/k1 = <absent>, allowed: s1-i2-w10-n61|w10/k1|xxxxxxxxxxxxxxxxxxx | s1-i2-w10-n63|w10/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w10/k2 = <absent>, allowed: s1-i2-w10-n62|w10/k2|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w10/k3 = <absent>, allowed: s1-i2-w10-n60|w10/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w11/k1 = <absent>, allowed: s1-i2-w11-n61|w11/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w11/k2 = <absent>, allowed: s1-i2-w11-n51|w11/k2|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 3,
+        "what": "w11/k3 = <absent>, allowed: s1-i2-w11-n62|w11/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w0/k0 = <absent>, allowed: s1-i3-w0-n46|w0/k0|xxxxxxxxxxxxxxxxxxxxx | s1-i3-w0-n47|w0/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w0/k1 = <absent>, allowed: s1-i3-w0-n46|w0/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w0/k2 = <absent>, allowed: s1-i3-w0-n45|w0/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w0/k3 = <absent>, allowed: s1-i3-w0-n38|w0/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w1/k0 = <absent>, allowed: s1-i3-w1-n45|w1/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w1/k1 = <absent>, allowed: s1-i3-w1-n46|w1/k1|xxxxxxxxxxxxxxxxxxxxx | s1-i3-w1-n47|w1/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w1/k2 = <absent>, allowed: s1-i3-w1-n45|w1/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w1/k3 = <absent>, allowed: s1-i3-w1-n45|w1/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w2/k0 = <absent>, allowed: s1-i3-w2-n38|w2/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w2/k1 = <absent>, allowed: s1-i3-w2-n45|w2/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w2/k2 = <absent>, allowed: s1-i3-w2-n44|w2/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w2/k3 = <absent>, allowed: s1-i3-w2-n46|w2/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i3-w2-n47|w2/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w3/k0 = <absent>, allowed: s1-i3-w3-n43|w3/k0|xxxxxxxxxxxxxxxxxxxxx | s1-i3-w3-n47|w3/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w3/k1 = <absent>, allowed: s1-i3-w3-n46|w3/k1|xxxxxxxxxxxxxxxxxxxxx | s1-i3-w3-n47|w3/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w3/k3 = <absent>, allowed: s1-i3-w3-n44|w3/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w4/k0 = <absent>, allowed: s1-i3-w4-n45|w4/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w4/k1 = <absent>, allowed: s1-i3-w4-n43|w4/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w4/k3 = <absent>, allowed: s1-i3-w4-n45|w4/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w5/k0 = <absent>, allowed: s1-i3-w5-n46|w5/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w5/k1 = <absent>, allowed: s1-i3-w5-n43|w5/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w5/k2 = <absent>, allowed: s1-i3-w5-n45|w5/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i3-w5-n47|w5/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w5/k3 = <absent>, allowed: s1-i3-w5-n45|w5/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w6/k0 = <absent>, allowed: s1-i3-w6-n46|w6/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w6/k2 = <absent>, allowed: s1-i3-w6-n46|w6/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w6/k3 = <absent>, allowed: s1-i3-w6-n42|w6/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w7/k0 = <absent>, allowed: s1-i3-w7-n43|w7/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w7/k2 = <absent>, allowed: s1-i3-w7-n46|w7/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w7/k3 = <absent>, allowed: s1-i3-w7-n40|w7/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w8/k0 = <absent>, allowed: s1-i3-w8-n44|w8/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w8/k1 = <absent>, allowed: s1-i3-w8-n46|w8/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w8/k2 = <absent>, allowed: s1-i3-w8-n45|w8/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w8/k3 = <absent>, allowed: s1-i3-w8-n43|w8/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w9/k0 = <absent>, allowed: s1-i3-w9-n46|w9/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w9/k1 = <absent>, allowed: s1-i3-w9-n43|w9/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w9/k2 = <absent>, allowed: s1-i3-w9-n44|w9/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w9/k3 = <absent>, allowed: s1-i3-w9-n40|w9/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w10/k0 = <absent>, allowed: s1-i3-w10-n45|w10/k0|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w10/k1 = <absent>, allowed: s1-i3-w10-n43|w10/k1|xxxxxxxxxxxxxxxxxxx | s1-i3-w10-n46|w10/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w10/k2 = <absent>, allowed: s1-i3-w10-n42|w10/k2|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w10/k3 = <absent>, allowed: s1-i3-w10-n44|w10/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w11/k0 = <absent>, allowed: s1-i3-w11-n45|w11/k0|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w11/k1 = <absent>, allowed: s1-i3-w11-n45|w11/k1|xxxxxxxxxxxxxxxxxxx | s1-i3-w11-n46|w11/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w11/k2 = <absent>, allowed: s1-i3-w11-n45|w11/k2|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 4,
+        "what": "w11/k3 = <absent>, allowed: s1-i3-w11-n45|w11/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w0/k0 = <absent>, allowed: s1-i4-w0-n39|w0/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w0/k2 = <absent>, allowed: s1-i4-w0-n37|w0/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i4-w0-n42|w0/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w0/k3 = <absent>, allowed: s1-i4-w0-n40|w0/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w1/k0 = <absent>, allowed: s1-i4-w1-n41|w1/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w1/k1 = <absent>, allowed: s1-i4-w1-n40|w1/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w1/k2 = <absent>, allowed: s1-i4-w1-n39|w1/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w1/k3 = <absent>, allowed: s1-i4-w1-n35|w1/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i4-w1-n42|w1/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w2/k0 = <absent>, allowed: s1-i4-w2-n41|w2/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w2/k1 = <absent>, allowed: s1-i4-w2-n41|w2/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w2/k2 = <absent>, allowed: s1-i4-w2-n41|w2/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w2/k3 = <absent>, allowed: s1-i4-w2-n41|w2/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i4-w2-n42|w2/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w3/k0 = <absent>, allowed: s1-i4-w3-n36|w3/k0|xxxxxxxxxxxxxxxxxxxxx | s1-i4-w3-n42|w3/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w3/k1 = <absent>, allowed: s1-i4-w3-n41|w3/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w3/k2 = <absent>, allowed: s1-i4-w3-n40|w3/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w4/k0 = <absent>, allowed: s1-i4-w4-n37|w4/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w4/k1 = <absent>, allowed: s1-i4-w4-n41|w4/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w5/k0 = <absent>, allowed: s1-i4-w5-n40|w5/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w5/k1 = <absent>, allowed: s1-i4-w5-n37|w5/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w5/k2 = <absent>, allowed: s1-i4-w5-n39|w5/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w5/k3 = <absent>, allowed: s1-i4-w5-n41|w5/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w6/k0 = <absent>, allowed: s1-i4-w6-n34|w6/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w6/k1 = <absent>, allowed: s1-i4-w6-n38|w6/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w6/k2 = <absent>, allowed: s1-i4-w6-n41|w6/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w6/k3 = <absent>, allowed: s1-i4-w6-n35|w6/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w7/k0 = <absent>, allowed: s1-i4-w7-n38|w7/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w7/k1 = <absent>, allowed: s1-i4-w7-n41|w7/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w7/k2 = <absent>, allowed: s1-i4-w7-n41|w7/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w8/k0 = <absent>, allowed: s1-i4-w8-n34|w8/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w8/k1 = <absent>, allowed: s1-i4-w8-n37|w8/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w8/k2 = <absent>, allowed: s1-i4-w8-n41|w8/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w8/k3 = <absent>, allowed: s1-i4-w8-n39|w8/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w9/k0 = <absent>, allowed: s1-i4-w9-n39|w9/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w9/k1 = <absent>, allowed: s1-i4-w9-n39|w9/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w9/k2 = <absent>, allowed: s1-i4-w9-n39|w9/k2|xxxxxxxxxxxxxxxxxxxxx | s1-i4-w9-n41|w9/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w9/k3 = <absent>, allowed: s1-i4-w9-n40|w9/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w10/k0 = <absent>, allowed: s1-i4-w10-n39|w10/k0|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w10/k1 = <absent>, allowed: s1-i4-w10-n40|w10/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w10/k3 = <absent>, allowed: s1-i4-w10-n39|w10/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w11/k0 = <absent>, allowed: s1-i4-w11-n39|w11/k0|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 5,
+        "what": "w11/k1 = <absent>, allowed: s1-i4-w11-n40|w11/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w0/k0 = <absent>, allowed: s1-i5-w0-n35|w0/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w0/k1 = <absent>, allowed: s1-i5-w0-n34|w0/k1|xxxxxxxxxxxxxxxxxxxxx | s1-i5-w0-n37|w0/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w0/k2 = <absent>, allowed: s1-i5-w0-n35|w0/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w0/k3 = <absent>, allowed: s1-i5-w0-n36|w0/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w1/k0 = <absent>, allowed: s1-i5-w1-n35|w1/k0|xxxxxxxxxxxxxxxxxxxxx | s1-i5-w1-n37|w1/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w1/k1 = <absent>, allowed: s1-i5-w1-n33|w1/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w1/k2 = <absent>, allowed: s1-i5-w1-n31|w1/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w1/k3 = <absent>, allowed: s1-i5-w1-n36|w1/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w2/k0 = <absent>, allowed: s1-i5-w2-n36|w2/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w2/k1 = <absent>, allowed: s1-i5-w2-n34|w2/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w2/k3 = <absent>, allowed: s1-i5-w2-n30|w2/k3|xxxxxxxxxxxxxxxxxxxxx | s1-i5-w2-n37|w2/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w3/k0 = <absent>, allowed: s1-i5-w3-n34|w3/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w3/k1 = <absent>, allowed: s1-i5-w3-n34|w3/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w3/k2 = <absent>, allowed: s1-i5-w3-n35|w3/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w3/k3 = <absent>, allowed: s1-i5-w3-n36|w3/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w4/k0 = <absent>, allowed: s1-i5-w4-n33|w4/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w4/k1 = <absent>, allowed: s1-i5-w4-n35|w4/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w4/k2 = <absent>, allowed: s1-i5-w4-n23|w4/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w4/k3 = <absent>, allowed: s1-i5-w4-n36|w4/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w5/k2 = <absent>, allowed: s1-i5-w5-n36|w5/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w5/k3 = <absent>, allowed: s1-i5-w5-n28|w5/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w6/k0 = <absent>, allowed: s1-i5-w6-n34|w6/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w6/k1 = <absent>, allowed: s1-i5-w6-n30|w6/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w6/k2 = <absent>, allowed: s1-i5-w6-n36|w6/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w6/k3 = <absent>, allowed: s1-i5-w6-n35|w6/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w7/k0 = <absent>, allowed: s1-i5-w7-n27|w7/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w7/k1 = <absent>, allowed: s1-i5-w7-n33|w7/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w7/k2 = <absent>, allowed: s1-i5-w7-n35|w7/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w7/k3 = <absent>, allowed: s1-i5-w7-n36|w7/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w8/k0 = <absent>, allowed: s1-i5-w8-n31|w8/k0|xxxxxxxxxxxxxxxxxxxxx | s1-i5-w8-n36|w8/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w8/k1 = <absent>, allowed: s1-i5-w8-n35|w8/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w8/k2 = <absent>, allowed: s1-i5-w8-n30|w8/k2|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w8/k3 = <absent>, allowed: s1-i5-w8-n34|w8/k3|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w9/k0 = <absent>, allowed: s1-i5-w9-n35|w9/k0|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w9/k1 = <absent>, allowed: s1-i5-w9-n36|w9/k1|xxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w10/k3 = <absent>, allowed: s1-i5-w10-n27|w10/k3|xxxxxxxxxxxxxxxxxxx | s1-i5-w10-n36|w10/k3|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w11/k0 = <absent>, allowed: s1-i5-w11-n35|w11/k0|xxxxxxxxxxxxxxxxxxx | s1-i5-w11-n36|w11/k0|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "w11/k1 = <absent>, allowed: s1-i5-w11-n29|w11/k1|xxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "iter": 6,
+        "what": "batch from iteration 5 partially applied: false,true,false"
+      },
+      {
+        "iter": 6,
+        "what": "batch from iteration 5 partially applied: true,false,false,false"
+      }
+    ]
+  },
+  "perIter": [
+    {
+      "iter": 1,
+      "killAtMs": 158,
+      "startMs": 89,
+      "requests": 278,
+      "acked": 272,
+      "definite": 3,
+      "unknown": 3
+    },
+    {
+      "iter": 2,
+      "killAtMs": 264,
+      "startMs": 92,
+      "requests": 756,
+      "acked": 729,
+      "definite": 18,
+      "unknown": 9
+    },
+    {
+      "iter": 3,
+      "killAtMs": 167,
+      "startMs": 72,
+      "requests": 558,
+      "acked": 539,
+      "definite": 11,
+      "unknown": 8
+    },
+    {
+      "iter": 4,
+      "killAtMs": 148,
+      "startMs": 75,
+      "requests": 498,
+      "acked": 476,
+      "definite": 14,
+      "unknown": 8
+    },
+    {
+      "iter": 5,
+      "killAtMs": 127,
+      "startMs": 80,
+      "requests": 436,
+      "acked": 414,
+      "definite": 15,
+      "unknown": 7
+    }
+  ]
+}

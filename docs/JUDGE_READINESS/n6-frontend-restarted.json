@@ -1,0 +1,95 @@
+{
+  "label": "frontend-restarted",
+  "when": "2026-11-07T03:54:20.511Z",
+  "interfacesUp": [
+    "Ethernet 2",
+    "Wi-Fi"
+  ],
+  "internet": "not probed (pass --probe-internet)",
+  "results": [
+    {
+      "id": "api-health",
+      "title": "nexus-api answers on loopback with the database open",
+      "pass": true,
+      "detail": "http://127.0.0.1:8080"
+    },
+    {
+      "id": "api-roundtrip",
+      "title": "PUT (durable) / GET / DELETE round trip",
+      "pass": true,
+      "detail": "offline-check:frontend-restarted:1794023659332"
+    },
+    {
+      "id": "api-xray",
+      "title": "X-RAY summary served",
+      "pass": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "web/",
+      "title": "dashboard / served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 50905 bytes"
+    },
+    {
+      "id": "web/database",
+      "title": "dashboard /database served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 63682 bytes"
+    },
+    {
+      "id": "web/storage",
+      "title": "dashboard /storage served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 49894 bytes"
+    },
+    {
+      "id": "web/recovery",
+      "title": "dashboard /recovery served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 29743 bytes"
+    },
+    {
+      "id": "web/torture",
+      "title": "dashboard /torture served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 42970 bytes"
+    },
+    {
+      "id": "web/xray",
+      "title": "dashboard /xray served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 35566 bytes"
+    },
+    {
+      "id": "web/reliability",
+      "title": "dashboard /reliability served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 26666 bytes"
+    },
+    {
+      "id": "web/benchmark",
+      "title": "dashboard /benchmark served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 37117 bytes"
+    },
+    {
+      "id": "web/architecture",
+      "title": "dashboard /architecture served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 48468 bytes"
+    },
+    {
+      "id": "web/comparison",
+      "title": "dashboard /comparison served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 47209 bytes"
+    },
+    {
+      "id": "web/demo",
+      "title": "dashboard /demo served without external resources",
+      "pass": true,
+      "detail": "HTTP 200, 32393 bytes"
+    }
+  ]
+}

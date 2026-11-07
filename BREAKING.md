@@ -164,3 +164,16 @@ implementation would do · how NEXUS handles it · the test · expected result.
 | `.new` / `.compact` / `.old` left over | which file is real? | deletes the only complete copy | A1–A7: delete temps only when `path` is valid; adopt only sealed files; non-overwriting moves | C3–C5, `recovery.TestAuthorityTable` | data intact, temps removed |
 | `maxBytes` exhaustion | file grows past cap or half-writes | partial write, file over cap | admission before any byte; compacting commit if the result fits; else `ErrFull` | E1, E2, E5, torture `disk-full` | `ERR full`, file ≤ cap, data intact |
 | Interrupted compacting commit | commit + compaction in one step | commit half-applied or data lost | the commit is inside the sealed snapshot; acknowledged only after swap + validation | E4(c), `kvdb.TestKillDuringCompactingCommits` | old state or old + commit |
+
+## Final readiness pass (2026-11-07)
+
+Found and fixed during the last judge-readiness pass, each with a regression test:
+
+| Issue | Impact | Fix | Test |
+|---|---|---|---|
+| Mid-log frame-header damage was truncated as if it were a torn tail (attack P7) | silent loss of acknowledged frames after one flipped bit | rule C3 amended: refuse when a complete valid later frame exists | `recovery.TestTailC3MidLogHeaderDamageRefused` and 3 more |
+| `./torture` was a folder, not a program, in a clean clone; the README build line did not build it | the judge's first command fails | tool moved to `src/cmd/torture/`; the README builds it | `scenarios` harness builds `./src/cmd/torture` |
+| `--seed 12abc` silently ran seed 12 | the run reports a different seed from the one the judge typed | strict integer parse, exit 2 | `torture.TestSeedMustBeExactInteger` |
+| The dashboard showed lost write answers as "failed" | an op that may be durable shown as not applied | outcome-unknown state | `frontend/scripts/write-outcome-test.mjs` |
+
+Measured, not modelled: 1M-key recovery 0.55–0.80 s (worst case one frame per key), compaction 103 MB → 10.3 MB after 90% deletes, 12 manual kill cycles with 19,492 ACKs and 0 lost. See `docs/JUDGE_READINESS/`.

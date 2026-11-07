@@ -27,7 +27,7 @@ directory and the repository directory). Kills are `TerminateProcess`
 
 ## Torture tool (judge invocations and extra modes)
 
-`go build -o . ./src/cmd/kvdb ./torture`, then:
+`go build -o . ./src/cmd/kvdb ./src/cmd/torture` (the tool was in `./torture` until 2026-11-07), then:
 
 | Command | Result | Acked writes | Rejected | Unknown | Notes | Time |
 |---|---|---|---|---|---|---|

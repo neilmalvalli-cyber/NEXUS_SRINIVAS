@@ -221,7 +221,7 @@ mutation testing. Full design:
 The first-generation tool below is kept because `go test ./src/scenarios`
 builds and uses it.
 
-`torture/` (separate binary, talks to the engine only through `kvdb serve`
+`src/cmd/torture/` (separate binary, talks to the engine only through `kvdb serve`
 over pipes):
 
 1. Starts `kvdb serve <db>` as a child; N writers (≥ 2) each send one request,
@@ -234,7 +234,7 @@ over pipes):
    already written to the pipe, then `Wait`.
 4. Runs `kvdb open` (and in `recovery-crash` mode first kills 1–3 `kvdb open`
    runs mid-recovery), `kvdb check` (must print `OK`), `kvdb dump`.
-5. **Oracle check** (`torture/model.go`): starting from the verified state of
+5. **Oracle check** (`src/cmd/torture/model.go`): starting from the verified state of
    the previous iteration, each write is acked, rejected (definite `ERR`
    class) or unknown (no reply / `ERR unknown`). For every key, the recovered
    value must be the previous value or the effect of an acked or applied-unknown
@@ -245,7 +245,7 @@ over pipes):
 6. One summary line per iteration; on the first violation it stops and prints
    the key, expected candidates, found value and every op ID on that key.
 
-`torture/model_test.go` proves the checker rejects lost writes, stale values,
+`src/cmd/torture/model_test.go` proves the checker rejects lost writes, stale values,
 partial batches, garbage and rejected values, and accepts all legal outcomes;
 deliberately broken `kvdb` builds were caught (BREAKING.md §4).
 
@@ -348,4 +348,4 @@ a time. Every one of these states is produced and reopened by
   is not a NEXUS dependency.
 * **Torture tools:** Torture Engine 2.0 (`torture2/`, `nexus-torture`) is the
   official tester ([docs/TORTURE_ARCHITECTURE.md](docs/TORTURE_ARCHITECTURE.md));
-  the first-generation `torture/` is used by the Go scenario tests.
+  the first-generation `src/cmd/torture/` is used by the Go scenario tests.

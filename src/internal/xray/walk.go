@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/format"
+	"github.com/neilmalvalli-cyber/NEXUS_SRINIVAS/src/internal/recovery"
 )
 
 // Byte offsets of on-disk fields (docs/FILE_FORMAT.md). The decoders in
@@ -187,7 +188,7 @@ func (x *walker) walkFrames(f *os.File, sb format.Superblock, size int64) error 
 				}
 				x.tailFinding("FRAME_HEADER_DAMAGED", "C2", inSnapshot(), pos, frameNo, nil,
 					"Damaged frame header",
-					"The header of this frame does not pass its integrity check. NEXUS never searches past a damaged header for more data (rule C3), so this frame and everything after it are treated as the torn end of the log.",
+					"The header of this frame does not pass its integrity check, and no complete intact frame follows it, so this frame and everything after it are the torn end of an interrupted write (rule C2). NEXUS never applies anything past a damaged header.",
 					tech+fmt.Sprintf("; %d bytes from here to end of file", usize-pos), exp, act, err)
 				if !inSnapshot() {
 					x.laterFrames(f, pos, usize, expected)
@@ -476,50 +477,20 @@ func (r *sliceReader) Read(p []byte) (int, error) {
 	return n, nil
 }
 
-// laterFrames is diagnosis only; recovery never does this (rule C3). After a
-// damaged header outside the snapshot, open would treat [pos, EOF) as a
-// torn tail and cut it. A torn write can only affect the last frame, so if
-// a complete, CRC-valid frame header with a later sequence number exists
-// inside that region, cutting it would discard frames that were committed.
-// laterFrames searches the region for the frame magic and decodes a header
-// at each candidate; it reports the first CRC-valid one whose sequence
-// number is >= expected and whose payload fits in the file. Its existence
-// is a fact about the bytes; it raises the finding to CRITICAL and makes
-// repair refuse.
+// laterFrames applies the engine's own rule C3 evidence check
+// (recovery.LaterCommittedFrame, the same function open uses, so X-RAY and
+// the engine cannot disagree). After a damaged header outside the snapshot,
+// a torn write can only affect the last frame, so a complete, fully valid
+// frame with a sequence number >= expected after it proves mid-log damage.
+// Open then refuses instead of truncating; X-RAY reports the same.
 func (x *walker) laterFrames(f *os.File, pos, size, expected uint64) {
-	var magic [4]byte
-	binary.LittleEndian.PutUint32(magic[:], format.FrameMagic)
-	const chunk = 1 << 20
-	buf := make([]byte, chunk+3)
-	for start := pos + 1; start < size; start += chunk {
-		n, err := f.ReadAt(buf, int64(start))
-		if n <= 0 && err != nil {
-			return
-		}
-		b := buf[:n]
-		for i := 0; i+4 <= len(b); i++ {
-			if b[i] != magic[0] || b[i+1] != magic[1] || b[i+2] != magic[2] || b[i+3] != magic[3] {
-				continue
-			}
-			at := start + uint64(i)
-			if !format.HeaderFits(at, size) {
-				return
-			}
-			var hb [format.FrameHeaderSize]byte
-			if _, err := f.ReadAt(hb[:], int64(at)); err != nil {
-				return
-			}
-			h, err := format.DecodeFrameHeader(hb[:])
-			if err != nil || (expected != 0 && h.Seq < expected) || !format.PayloadFits(at, size, h.PayloadLen) {
-				continue
-			}
-			x.raiseTailLoss(pos, at, h.Seq, size)
-			return
-		}
+	if at, seq, ok := recovery.LaterCommittedFrame(f, pos, size, expected); ok {
+		x.raiseTailLoss(pos, at, seq, size)
 	}
 }
 
-// raiseTailLoss rewrites the C2 finding at pos: committed frames follow.
+// raiseTailLoss rewrites the C2 finding at pos into the C3 refusal:
+// committed frames follow the damaged header.
 func (x *walker) raiseTailLoss(pos, at, seq, size uint64) {
 	for i := range x.r.Findings {
 		g := &x.r.Findings[i]
@@ -527,14 +498,16 @@ func (x *walker) raiseTailLoss(pos, at, seq, size uint64) {
 			continue
 		}
 		g.Severity = Critical
-		g.Recovery = Detected
+		g.Rule = "C3"
+		g.Recovery = Refused
 		g.Title = "Damaged frame header with committed frames after it"
-		g.Simple = fmt.Sprintf("This frame's header is damaged. A normal open would treat everything from here to the end of the file as an interrupted write and cut it off, but X-RAY found an intact frame (sequence %d) at offset %d after it. That frame was committed, so cutting the file would lose acknowledged data.", seq, at)
-		g.Technical += fmt.Sprintf("; X-RAY forward check (diagnosis only, not used by recovery, rule C3): CRC-valid frame header seq %d at offset %d, inside the %d bytes open would truncate", seq, at, size-pos)
-		g.DataImpact = fmt.Sprintf("A normal open would truncate %d bytes, including at least one committed frame (seq %d). Acknowledged data would be lost.", size-pos, seq)
-		g.Action = "Do NOT open this database normally. Make a byte-for-byte backup first, then restore from a backup or keep the file for expert recovery. X-RAY repair refuses this case."
+		g.Simple = fmt.Sprintf("This frame's header is damaged, but an intact frame (sequence %d) follows it at offset %d. An interrupted write can only damage the last frame, so this is damage in the middle of the log. Cutting the file here would lose acknowledged data, so NEXUS refuses to open it and leaves the file untouched.", seq, at)
+		g.Technical += fmt.Sprintf("; rule C3: complete valid frame seq %d at offset %d inside the %d bytes after the damaged header; open refuses (ErrCorruption) without truncating", seq, at, size-pos)
+		g.DataImpact = fmt.Sprintf("No data is lost by opening: open refuses and changes nothing. The %d bytes after the damaged header include at least one committed frame (seq %d) that is not readable until the file is restored.", size-pos, seq)
+		g.Action = "Keep a byte-for-byte backup and restore from a known-good backup, or keep the file for expert recovery. X-RAY repair refuses this case."
 		g.Expected = g.Expected + "; no intact frame after a torn write"
 		g.Actual = g.Actual + fmt.Sprintf("; intact frame seq %d at offset %d", seq, at)
+		x.w.StopRule = "C3"
 		x.w.LaterFrameOffset, x.w.LaterFrameSeq = i64(int64(at)), u64(seq)
 		return
 	}

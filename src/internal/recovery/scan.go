@@ -19,7 +19,7 @@ type TailRule string
 const (
 	TailClean TailRule = ""   // the last frame ends exactly at EOF
 	TailC1    TailRule = "C1" // fewer than 32 bytes after the last frame
-	TailC2    TailRule = "C2" // damaged header (bad magic / header CRC); no forward scan (C3)
+	TailC2    TailRule = "C2" // damaged header (bad magic / header CRC) with no complete valid later frame (else C3 refusal)
 	TailC4    TailRule = "C4" // valid header, payload runs past EOF
 	TailC5    TailRule = "C5" // payload CRC wrong, frame ends exactly at EOF
 )
@@ -120,7 +120,13 @@ func Scan(r io.ReaderAt, path string, sb format.Superblock, size int64) (*ScanRe
 		h, err := format.DecodeFrameHeader(hdr[:])
 		if err != nil {
 			switch format.Classify(err) {
-			case format.ClassDamaged: // C2; C3: never scan forward
+			case format.ClassDamaged: // C2
+				// C3: never apply anything past a damaged header, but refuse
+				// to truncate when a complete valid later frame proves this
+				// is mid-log damage rather than a torn final write.
+				if at, seq, ok := LaterCommittedFrame(r, pos, usize, expected); ok && pos >= snapEnd {
+					return nil, corrupt("C3", fmt.Errorf("%w; a complete valid frame (seq %d) follows at offset %d, so this is not a torn final write and truncating would drop committed data", err, seq, at))
+				}
 				return tail(TailC2, err)
 			default: // CRC-valid but malformed header: C7
 				return nil, corrupt("C7", err)

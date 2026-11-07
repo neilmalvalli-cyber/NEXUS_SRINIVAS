@@ -44,7 +44,7 @@ step "1M-key recovery benchmark (KVDB_PERF)"
 KVDB_PERF=1 go test ./src/internal/recovery -run 'TestOpenMillionKeysTiming' -v -count=1 -timeout 30m > "$R/05-perf-1M-recovery.log" 2>&1
 echo "perf exit $?"; grep -E 'ms|^(ok|FAIL|---)' "$R/05-perf-1M-recovery.log" | tail -6
 
-go build -o "$ROOT" ./src/cmd/kvdb ./torture || exit 1
+go build -o "$ROOT" ./src/cmd/kvdb ./src/cmd/torture || exit 1  # moved from ./torture on 2026-11-07
 run() {
   name=$1; shift
   step "torture $*"

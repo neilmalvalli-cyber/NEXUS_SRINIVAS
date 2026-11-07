@@ -80,7 +80,7 @@ tail rules. A problem inside the compacted snapshot region is always C0
 | Code | Rule | Severity | Recovery | Cause |
 |---|---|---|---|---|
 | `FRAME_TORN_HEADER` | C1 | WARNING | recoverable | Fewer than 32 header bytes at the end of the file. |
-| `FRAME_HEADER_DAMAGED` | C2 | WARNING, or **CRITICAL** | recoverable, or **detected** | Header magic or CRC fails. If a **later CRC-valid frame** exists (forward check), committed frames would be lost by a normal open (C3 forbids scanning past it), so the finding is raised to CRITICAL / detected and repair refuses. |
+| `FRAME_HEADER_DAMAGED` | C2 or **C3** | WARNING, or **CRITICAL** | recoverable, or **refused** | Header magic or CRC fails. With no complete valid frame after it, this is the torn tail (C2, truncated). If a **complete valid later frame** exists (the engine's own `recovery.LaterCommittedFrame` check), it is mid-log damage: open refuses (C3), the file is untouched, and repair refuses. |
 | `FRAME_PAYLOAD_TRUNCATED` | C4 | WARNING | recoverable | Header valid, payload cut by end of file. |
 | `FRAME_PAYLOAD_CHECKSUM` | C5 | WARNING | recoverable | Payload CRC fails on the final frame, which ends exactly at EOF (a torn final write). |
 | `FRAME_PAYLOAD_CHECKSUM` | C6 / C0 | CRITICAL | refused | Payload CRC fails on a frame with intact frames after it, or in the snapshot: corruption of committed data. |
@@ -151,20 +151,21 @@ rewrite or drop committed frames.
 
 ## Example (lab case `header-damaged-mid-log`)
 
-One bit of frame 3's `payload_len` was flipped, so its header CRC fails. The
-engine classifies this as C2 and, by C3, would truncate from frame 3 onward,
-silently dropping five committed frames. X-RAY's forward check finds the
-CRC-valid frame 4 behind it:
+One bit of frame 3's `payload_len` was flipped, so its header CRC fails.
+Five complete, valid committed frames follow it. Under amended rule C3
+(2026-11-07) the engine refuses to open the file instead of truncating them,
+and X-RAY reports the same verdict (engine and walk agree):
 
 ```
-CRITICAL FRAME_HEADER_DAMAGED @ <offset of frame 3>   rule C2   recovery: detected
-  data impact: a normal open would truncate N bytes, including at least one committed frame
-  action: do NOT open normally; back up, then restore or keep for expert recovery (repair refuses)
+CRITICAL FRAME_HEADER_DAMAGED @ <offset of frame 3>   rule C3   recovery: refused
+  data impact: no data is lost by opening: open refuses and changes nothing
+  action: keep a backup; restore from a known-good backup or keep for expert recovery (repair refuses)
 ```
 
-`kvdb.Open` on this file does lose `user:6`, as shown by
-`TestMidLogHeaderDamageWouldLoseCommittedFrames`. This is a documented engine
-limitation that X-RAY makes visible. The engine was not changed in Prompt 19.
+`TestMidLogHeaderDamageRefusedNotTruncated` shows that `kvdb.Open` returns
+`ErrCorruption`, the file is byte-for-byte unchanged, and the committed frame
+holding `user:6` is still on disk. Before the amendment a normal open
+truncated frames 3–8 (judge attack P7).
 
 ## Test coverage
 

@@ -34,20 +34,49 @@ Torture Engine 2.0: [architecture](docs/TORTURE_ARCHITECTURE.md),
 [test plan](docs/TORTURE_TEST_PLAN.md), [results](docs/TORTURE_RESULTS.md),
 [command line](docs/TORTURE_CLI.md).
 
-## Build (one command)
+## Quick start for judges (clean clone, works offline)
 
-Requires only the Go toolchain (1.22 or newer; developed with 1.27.3) on 64-bit
-Windows (the primary target), Linux, macOS or FreeBSD. From the repository root:
+Requires only the Go toolchain (1.22 or newer; developed with 1.27.3). Standard
+library only: nothing is downloaded, so it builds with no network. From the
+repository root:
 
 ```bash
-go build -o . ./src/cmd/kvdb ./torture2/cmd/nexus-torture ./torture2/mutants/kvdb-mutant ./src/cmd/kvdb-bench
+go build -o . ./src/cmd/kvdb ./src/cmd/torture
 ```
 
-This produces `kvdb.exe`, `nexus-torture.exe` (Torture Engine 2.0),
-`kvdb-mutant.exe` (deliberately broken builds for mutation testing; the real
-`kvdb` is never modified) and `kvdb-bench.exe` (benchmark) in the repository
-root (no `.exe` suffix on other systems). There are no dependencies to download. The older tool in
-`torture/` is still built by `go test ./src/scenarios`, which uses it.
+This puts `kvdb` and `torture` in the repository root (`kvdb.exe` and
+`torture.exe` on Windows). The same commands work in bash (Linux, macOS, Git
+Bash) and in PowerShell (`./torture` runs `torture.exe`):
+
+```bash
+./torture --iterations 200 --seed 12345                    # random crash torture; any integer seed
+./torture --iterations 200 --seed 12345 --mode compaction
+./torture --iterations 200 --seed 12345 --mode recovery-crash
+./kvdb check judge.db                                        # after a manual kill: OK
+./kvdb dump judge.db
+```
+
+Each run ends with `RESULT: PASS` and exits 0. Exit 1 means a database
+violation was found: the run stops, prints `FAIL at iteration N` and keeps the
+database. Exit 2 means a usage error (for example `--seed 12abc` is refused) or a
+tool error that is not a database verdict. On the development laptop, 200
+iterations took about 70 s in the default mode and about 160 s with
+`--mode compaction`. The step-by-step judging script, including manual kills of
+`kvdb serve`, is in [docs/JUDGE_READINESS/FINAL_COMMAND_REFERENCE.md](docs/JUDGE_READINESS/FINAL_COMMAND_REFERENCE.md).
+
+## Build everything
+
+```bash
+go build -o . ./src/cmd/kvdb ./src/cmd/torture ./torture2/cmd/nexus-torture ./torture2/mutants/kvdb-mutant ./src/cmd/kvdb-bench
+```
+
+This adds `nexus-torture` (Torture Engine 2.0: 12 modes, the 32 scenarios
+against the real executable, and mutation testing), `kvdb-mutant`
+(deliberately broken builds for mutation testing; the real `kvdb` is never
+modified) and `kvdb-bench` (benchmark). `torture` is the first-generation
+tool, which takes `--iterations N --seed N [--mode M]` directly. It lived in
+`torture/` until 2026-11-07 and moved to `src/cmd/torture/` so that the binary
+`./torture` no longer collides with a folder of the same name.
 
 ## Judge demonstration (copy and paste)
 
@@ -57,7 +86,7 @@ development machine. The expected output is shown; numbers marked ≈ vary from
 run to run.
 
 ```powershell
-go build -o . ./src/cmd/kvdb ./torture2/cmd/nexus-torture ./torture2/mutants/kvdb-mutant ./src/cmd/kvdb-bench
+go build -o . ./src/cmd/kvdb ./src/cmd/torture ./torture2/cmd/nexus-torture ./torture2/mutants/kvdb-mutant ./src/cmd/kvdb-bench
 
 # 1. The eight commands
 .\kvdb.exe open demo.db                 # keys=0 recovery_ms=≈2 size=32   (stderr: created a new empty database)
@@ -264,7 +293,7 @@ history, a minimized failing history and the database files. Design:
 [docs/TORTURE_CLI.md](docs/TORTURE_CLI.md). Results:
 [docs/TORTURE_RESULTS.md](docs/TORTURE_RESULTS.md).
 
-The first-generation tool in `torture/` is kept because the Go scenario
+The first-generation tool in `src/cmd/torture/` is kept because the Go scenario
 tests build and use it; its earlier results are in § Results.
 
 ## The 32 official crash scenarios

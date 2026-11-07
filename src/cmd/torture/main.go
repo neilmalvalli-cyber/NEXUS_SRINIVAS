@@ -22,9 +22,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -67,10 +69,14 @@ func run(argv []string) int {
 		fmt.Fprintln(os.Stderr, "torture: --seed is mandatory (for example --seed 12345)")
 		return 2
 	}
-	if _, err := fmt.Sscan(*seed, &cfg.seed); err != nil {
-		fmt.Fprintf(os.Stderr, "torture: --seed %q is not an integer\n", *seed)
+	// Strict parse: fmt.Sscan read "12abc" as 12 and silently ran (and
+	// reported) a different seed from the one typed.
+	v, err := strconv.ParseInt(strings.TrimSpace(*seed), 10, 64)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "torture: --seed %q is not an integer between %d and %d\n", *seed, int64(math.MinInt64), int64(math.MaxInt64))
 		return 2
 	}
+	cfg.seed = v
 	wl, err := modeWorkload(cfg.mode)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "torture:", err)
@@ -99,7 +105,7 @@ func run(argv []string) int {
 		cfg.kvdb = findKvdb()
 	}
 	if _, err := os.Stat(cfg.kvdb); err != nil {
-		fmt.Fprintf(os.Stderr, "torture: kvdb binary not found at %s (build it: go build -o . ./src/cmd/kvdb ./torture)\n", cfg.kvdb)
+		fmt.Fprintf(os.Stderr, "torture: kvdb binary not found at %s (build it: go build -o . ./src/cmd/kvdb ./src/cmd/torture)\n", cfg.kvdb)
 		return 2
 	}
 	if cfg.dir == "" {

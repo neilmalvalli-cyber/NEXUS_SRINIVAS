@@ -53,7 +53,7 @@ Files are built byte by byte with the Phase 1 encoder (`recovery/scan_test.go`).
 | — | `TestOpenRebuildsIndex` (batches, overwrite, delete, live/dead bytes, clean Open changes nothing), `TestOpenFreshDatabase`, `TestStateCloseReleasesEverything` | ✅ |
 | T-REC-1 | `TestTailC1ShortTrailer` (1…31 bytes, zeros and non-zeros; Sync after the truncate; no writes) | ✅ |
 | T-REC-2 | `TestTailC2DamagedHeader` (bad magic, bad header CRC, zero fill, junk after) | ✅ |
-| T-REC-3 | `TestTailC3NoForwardScan` | ✅ |
+| T-REC-3 | `TestTailC3MidLogHeaderDamageRefused`, `TestTailC2LaterFrameNotProof`, `TestTailC3CraftedValueBehindLostHeaderRefusesSafely` | ✅ |
 | T-REC-4, T-REC-11 | `TestTailKillPointSweep` (cut at every byte of a batch whose value contains valid frame headers with the expected seq; torn batch never partially applied; second Open clean) | ✅ |
 | T-REC-5 | `TestTailC5PayloadCRCAtEOF` (each payload byte flipped; zero-filled suffixes) | ✅ |
 | T-REC-6 | `TestTailC6BytesAfterBadPayload` | ✅ |
@@ -134,7 +134,7 @@ Construct files byte by byte with the Phase 1 encoder, then Open.
 |---|---|---|---|
 | T-REC-1 | C1 | valid frames + 1…31 trailing bytes | truncated to the last frame end; Sync recorded after truncate |
 | T-REC-2 | C2 | valid frames + header with bad magic / bad header CRC (+ arbitrary bytes after) | truncated to the damaged header start |
-| T-REC-3 | C3 | valid frames + damaged header + a perfectly valid next frame after it | still truncated at the damaged header (no forward scan); documented accepted risk |
+| T-REC-3 | C3 (amended 2026-11-07) | valid frames + damaged header + a perfectly valid next frame after it | refused with `ErrCorruption` (rule C3), file byte-for-byte unchanged; a damaged header followed only by an incomplete or payload-damaged frame is still C2-truncated |
 | T-REC-4 | C3 | a frame whose value contains valid frame headers with seq = next, cut at every byte | always opens; truncated to the frame start |
 | T-REC-5 | C5 | last frame with valid header, payload ends exactly at EOF, one payload byte flipped / zero-filled | truncated to that frame's start |
 | T-REC-6 | C6 | same frame but with ≥ 1 extra byte (or another valid frame) after its declared end | `ErrCorruption`; file bytes unchanged |

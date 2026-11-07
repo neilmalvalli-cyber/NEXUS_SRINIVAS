@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNexus } from "@/components/providers";
 import { useCanAct, useInvalidateDb } from "@/lib/queries";
-import { describeError } from "@/lib/api/client";
+import { describeError, isApiError } from "@/lib/api/client";
 import { WRITE_PATH, putFrameSize } from "@/lib/format-spec";
 import { byteLength, formatMs } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -100,11 +100,15 @@ export function WritePath({ compact }: { compact?: boolean }) {
             <span className="text-ok">Acknowledged</span> ({put.data.action ?? "stored"}) after the durable write, {formatMs(put.data.elapsed_ms)} measured by nexus-api around kvdb.Put. The steps are shown in order; the engine does not report per-step times.
           </span>
         )}
-        {failed && (
+        {failed && isApiError(put.error) && put.error.outcomeUnknown ? (
+          <span className="text-warn">
+            Outcome unknown: {describeError(put.error)}. The engine may have made this write durable before the answer was lost. It was not retried; read the key back to find out.
+          </span>
+        ) : failed ? (
           <span className="text-bad">
             Not acknowledged: {describeError(put.error)}. A write that is not acknowledged may be absent after a crash.
           </span>
-        )}
+        ) : null}
       </div>
     </div>
   );

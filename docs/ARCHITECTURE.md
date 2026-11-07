@@ -49,7 +49,7 @@ src/
     admission/         max_bytes decision + auto-compaction trigger   <- Phase 3
     locking/           process lock file + ErrLocked after retries    <- Phase 2 Stage 1
     cli/               the eight commands and the serve protocol      <- Phase 4
-torture/               torture tool (repository root, separate binary)  <- Phase 4
+src/cmd/torture/       torture tool (separate binary; moved from repository-root torture/ on 2026-11-07)  <- Phase 4
 tests/                 pointer to where the tests live
 ```
 

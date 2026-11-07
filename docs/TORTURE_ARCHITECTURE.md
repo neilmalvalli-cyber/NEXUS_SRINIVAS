@@ -36,7 +36,7 @@ it tests: [TORTURE_TEST_PLAN.md](TORTURE_TEST_PLAN.md). Measured results:
 | `mutation` + `mutants/kvdb-mutant` | proof that the tester catches broken databases | `e2e/e2e_test.go` (all 6 mutations caught, control passes) |
 | `cmd/nexus-torture` | command line: `run`, `scenarios`, `mutants`, `modes` | — |
 
-The older tool in [`torture/`](../torture) is kept unchanged because the Go
+The older tool in [`src/cmd/torture/`](../src/cmd/torture) is kept unchanged because the Go
 scenario tests in `src/scenarios` build and use it. Torture Engine 2.0 is a
 new design, not a rename. It keeps only the request protocol of `kvdb serve`
 and the idea of unique values. The oracle, process handling, workloads,

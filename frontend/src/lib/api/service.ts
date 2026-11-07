@@ -116,8 +116,8 @@ export const liveService: NexusService = {
   listKeys: (p) => request(`/api/keys?${listQuery(p)}`, { schema: S.KeyList, timeoutMs: 30_000 }),
   getKey: (key) => request(`/api/keys/${keyPath(key)}`, { schema: S.GetResult }),
   putKey: (key, value, encoding) =>
-    request(`/api/keys/${keyPath(key)}`, { method: "PUT", body: { value, encoding }, schema: S.WriteResult, timeoutMs: 30_000 }),
-  deleteKey: (key) => request(`/api/keys/${keyPath(key)}`, { method: "DELETE", schema: S.WriteResult, timeoutMs: 30_000 }),
+    request(`/api/keys/${keyPath(key)}`, { method: "PUT", body: { value, encoding }, schema: S.WriteResult, timeoutMs: 30_000, write: true }),
+  deleteKey: (key) => request(`/api/keys/${keyPath(key)}`, { method: "DELETE", schema: S.WriteResult, timeoutMs: 30_000, write: true }),
   compact: () => request("/api/compact", { method: "POST", schema: S.CompactResult, timeoutMs: LONG }),
   verify: () => request("/api/verify", { method: "POST", schema: S.VerifyResult, timeoutMs: LONG }),
   storage: () => request("/api/storage", { schema: S.Storage }),
@@ -145,7 +145,7 @@ export const liveService: NexusService = {
   databases: () => request("/api/databases", { schema: S.DbList }),
   openDatabase: (name, create) =>
     request("/api/databases/open", { method: "POST", body: { name, create }, schema: S.OpenDbResult, timeoutMs: 120_000 }),
-  batch: (ops) => request("/api/batch", { method: "POST", body: { ops }, schema: S.WriteResult, timeoutMs: 60_000 }),
+  batch: (ops) => request("/api/batch", { method: "POST", body: { ops }, schema: S.WriteResult, timeoutMs: 60_000, write: true }),
   dump: (q, limit) => request(`/api/dump?limit=${limit}${q ? `&q=${encodeURIComponent(q)}` : ""}`, { schema: S.Dump, timeoutMs: 60_000 }),
   frames: (limit) => request(`/api/storage/frames?limit=${limit}`, { schema: S.LogMap, timeoutMs: 60_000 }),
   demoFrames: (limit) => request(`/api/recovery/demo/frames?limit=${limit}`, { schema: S.LogMap, timeoutMs: 60_000 }),

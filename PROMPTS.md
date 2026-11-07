@@ -5363,3 +5363,985 @@ Prioritize correctness, measurable improvements and real integration over visual
 ````text
 Implement and integrate Power-Cut Explorer as a separate reliability-testing module. Preserve the existing database engine and torture framework. Record actual write bytes and synchronization events, generate modeled power-loss disk images, and validate each image using the real NEXUS recovery implementation. Integrate its results into the frontend Reliability Lab and connect failures to X-RAY. Clearly document the storage failure model, assumptions, coverage limitations and reproducibility information. Never describe a finite generated test set as exhaustive proof of all possible power-loss states.
 ````
+
+### Prompt 20
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-07 08:02 (local time; 02:32 UTC, from the session transcript)
+- **Notes:** Pasted by the user; extracted verbatim from the session transcript by script (not retyped). Adversarial judge-readiness audit. Follow-up replies in the same session approved each phase step: "Yes, fix P7 first", "Yes, do N2/N3", "Yes, do O8", "Yes, do S3/S4", "Yes, do O7", "Yes, prepare N7/N8", "I'll toggle now", then the user ran the Airplane-mode checks and asked to "complete rest of the checks". Results: `docs/JUDGE_READINESS/`. Full text as sent:
+
+````text
+NEXUS — FINAL ADVERSARIAL JUDGE-READINESS AUDIT
+You are acting as a senior database reliability engineer, storage-systems researcher, Windows systems engineer and adversarial QA tester.
+Your task is to prepare NEXUS for a live hackathon judging demonstration in which judges may deliberately interrupt operations, disconnect networks, terminate processes, corrupt files, fill storage and test recovery.
+This is NOT a request to make the dashboard look impressive or simply run the existing test suite.
+Your objective is to determine whether NEXUS genuinely survives the failure scenarios a technically knowledgeable judge could try.
+1. PROJECT CONTEXT
+Repository: NEXUS_SRINIVAS
+NEXUS is a custom persistent key-value database engine written in Go.
+Core architecture:
+
+* Append-only binary log.
+* In-memory hash index.
+* PUT, GET, DELETE and BATCH operations.
+* Checksummed frames and sequence numbers.
+* Sync-before-ACK durability.
+* Recovery by sequential log scanning.
+* Compaction with crash-safe file replacement.
+* Database locking.
+* X-RAY diagnostics.
+* Torture Engine.
+* Power-Cut Explorer.
+* Recovery Engine.
+* Next.js frontend connected to a Go API.
+
+Primary judging environment: Windows.
+Existing evidence has reported:
+
+* 32/32 crash scenarios passing.
+* Process crash and partial-write testing.
+* Batch atomicity validation.
+* Disk-full and compaction testing.
+* Concurrent operation testing.
+* Reproducible torture workloads.
+* Mutation testing.
+* Power-Cut Explorer simulated persistence testing.
+
+Treat these as historical reported results. Independently verify the current implementation and evidence before relying on them.
+2. ABSOLUTE SAFETY RULES
+Before testing:
+
+1. Audit the repository and understand the current implementation.
+2. Read README.md, ARCHITECTURE.md, BREAKING.md and relevant docs.
+3. Inspect the existing crash scenarios, torture tools, Power-Cut Explorer, X-RAY and recovery code.
+4. Inspect the existing frontend and API integration.
+5. Identify existing tests before adding duplicates.
+
+NEVER:
+
+* Delete or overwrite the user's actual database.
+* Run destructive corruption tests against the original database.
+* Modify the binary storage format unnecessarily.
+* weaken sync-before-ACK guarantees.
+* remove existing tests to obtain a passing result.
+* fabricate successful test results.
+* hide inconclusive tests.
+* claim physical power-loss protection based only on simulation.
+* commit, push, reset, rebase, amend or change branches.
+* overwrite existing test evidence.
+
+All destructive testing must use isolated disposable database copies.
+Preserve the existing architecture and Windows compatibility.
+3. CREATE A COMPLETE JUDGE ATTACK MATRIX
+Create a detailed matrix of possible judge actions.
+For every scenario document:
+
+* Scenario ID.
+* What the judge does.
+* Which subsystem is affected.
+* Exact test procedure.
+* Expected database behaviour.
+* Expected frontend behaviour.
+* Expected recovery behaviour.
+* How to verify data integrity.
+* Whether the current implementation passes.
+* Evidence location.
+* Any limitations or untested assumptions.
+
+Classify results as:
+PASS / FAIL / INCONCLUSIVE / NOT IMPLEMENTED.
+Do not mark a scenario as passed merely because the process did not crash.
+4. DATABASE WRITE FAILURE TESTS
+Test all of these:
+A. Kill the database:
+
+* Before a PUT.
+* During a PUT.
+* Immediately after writing data but before Sync.
+* During Sync, where safely injectable.
+* Immediately after Sync but before ACK.
+* Immediately after ACK.
+* During DELETE.
+* During BATCH.
+* During a large-value write.
+
+B. Partial writes:
+
+* Write only part of a frame.
+* Truncate the last frame.
+* Corrupt the frame header.
+* Corrupt the payload.
+* Corrupt checksums.
+* Corrupt sequence numbers.
+* Insert incomplete records.
+* Introduce malformed lengths.
+
+C. Verify:
+
+* Acknowledged durable operations survive restart.
+* An operation without a completed durability barrier is not incorrectly treated as guaranteed.
+* Recovery never invents records.
+* Batch atomicity follows the documented format and guarantees.
+* Valid earlier records remain accessible when the tail is damaged.
+
+5. NETWORK AND INTERNET INTERRUPTION TESTS
+This is particularly important for live judging.
+Test the following separately:
+A. Frontend-to-API connection:
+
+* Disconnect the client while a request is being sent.
+* Interrupt the connection during a PUT.
+* Interrupt the connection during a GET.
+* Interrupt the connection during a DELETE.
+* Disconnect immediately after the server processes a request but before the client receives the response.
+* Restart the API while the frontend remains open.
+* Restart the frontend while the API remains active.
+* Attempt operations while the API is unavailable.
+* Restore the connection and retry.
+
+B. Network interruption:
+
+* Disable the active network adapter during a test.
+* Restore the adapter.
+* Test API connectivity after restoration.
+* Test interrupted requests and client timeout handling.
+* Test duplicate request retries.
+* Check whether an operation may have succeeded even though the client never received its response.
+
+C. Internet-specific distinction:
+NEXUS is locally hosted in the demo configuration. Turning off internet access does not necessarily interrupt localhost communication.
+Verify this explicitly rather than claiming that internet disconnection tests localhost resilience.
+D. Verify:
+
+* No frontend hangs indefinitely.
+* No false success messages.
+* No misleading error messages.
+* No silent data loss.
+* The frontend clearly distinguishes timeout, unavailable API and failed database operation.
+* Retrying an uncertain write does not silently produce inconsistent state.
+* After reconnection, the application can reconnect and query actual database state.
+
+Do not implement automatic retries for non-idempotent operations without analysing duplicate-write consequences.
+6. PROCESS AND OPERATING SYSTEM FAILURE TESTS
+Test:
+
+* Graceful shutdown.
+* Forced process termination.
+* Task Manager termination.
+* Termination during active writes.
+* Termination during compaction.
+* Termination during recovery.
+* API termination while the frontend is open.
+* Frontend termination while the API is running.
+* Simultaneous API restart attempts.
+* Reopening the database after an abnormal exit.
+
+Use safe process-tree termination methods appropriate to Windows.
+Verify lock-file handling, stale locks, process ownership and safe reopening.
+7. STORAGE AND FILESYSTEM FAILURE TESTS
+Test:
+
+* Disk full during PUT.
+* Disk full during BATCH.
+* Disk full during compaction.
+* Insufficient write permissions.
+* Read-only database directory.
+* Missing database file.
+* Missing parent directory.
+* Database file locked by another process.
+* Unexpected file truncation.
+* File access denied.
+* Temporary compaction file left behind.
+* Old file and new file both present after interrupted replacement.
+* Interrupted rename or replacement.
+* Corrupted superblock.
+* Corrupted log.
+* Unexpected filesystem errors.
+
+Verify that the engine reports errors correctly and never acknowledges an operation that it cannot safely persist.
+Pay special attention to Windows file replacement and flush semantics.
+8. POWER-CUT EXPLORER TESTS
+Audit the Power-Cut Explorer implementation thoroughly.
+Check whether it accurately records:
+
+* Bytes written.
+* Write ordering.
+* File synchronization.
+* Directory synchronization where relevant.
+* File creation.
+* Truncation.
+* Rename and replacement.
+* Temporary files.
+* Persistence barriers.
+* Torn writes according to its declared model.
+
+Generate and recover disposable disk images.
+Verify that:
+
+* Every generated image is tested using the actual NEXUS recovery implementation.
+* The oracle checks acknowledged durable operations.
+* Unacknowledged operations are treated according to documented guarantees.
+* Recovery does not invent data.
+* Violations are reproducible.
+* Seed-based replay works.
+* Inconclusive cases are reported honestly.
+
+Audit the completeness of the failure model.
+Do not claim every possible physical disk state is covered unless the model mathematically establishes that within a defined finite model.
+Do not confuse simulated power failure with a real hardware power-cut experiment.
+9. COMPACTION AND RECOVERY INTERACTION
+Test:
+
+* Crash before compaction.
+* Crash while writing compacted output.
+* Crash after compacted output is synced.
+* Crash during replacement.
+* Crash after replacement but before reopening.
+* Recovery with stale temporary files.
+* Recovery with old and new database files.
+* Repeated compaction.
+* Compaction during heavy writes.
+* Recovery immediately after compaction.
+* Crash during recovery itself.
+
+Verify that the database always opens into a valid state or reports an explicit unrecoverable error.
+Never silently select a potentially incomplete database version.
+10. CONCURRENCY TESTS
+Test:
+
+* Multiple simultaneous readers.
+* Multiple simultaneous writers.
+* Same-key concurrent writes.
+* Different-key concurrent writes.
+* Concurrent reads and writes.
+* Concurrent batches.
+* Concurrent compaction and reads.
+* Concurrent compaction and writes.
+* Multiple processes attempting to open the same database.
+* API requests arriving simultaneously.
+
+Check for:
+
+* Data races.
+* Deadlocks.
+* Lost updates.
+* Index/log inconsistencies.
+* Corrupted frames.
+* Incorrect ACK ordering.
+
+Run Go race detection where the required toolchain is available. If unavailable, clearly report the limitation.
+11. TORTURE ENGINE VALIDATION
+Verify:
+
+* Reproducible random seeds.
+* Failure replay.
+* Large values.
+* Large batches.
+* Compaction workloads.
+* Disk-full workloads.
+* Recovery crashes.
+* Concurrent workloads.
+* Mutation testing.
+* Independent verification where available.
+
+Run existing tests first.
+Only add new scenarios where there is a meaningful coverage gap.
+Do not artificially increase test counts by repeating identical tests and presenting them as independent coverage.
+12. X-RAY AND RECOVERY ENGINE VALIDATION
+Create controlled corruption cases and verify that X-RAY:
+
+* Identifies the correct file.
+* Reports the correct offset.
+* Identifies the correct frame or sequence where available.
+* Distinguishes corruption from normal incomplete tail conditions.
+* Explains the likely impact.
+* Reports recovery status.
+* Recommends safe next steps.
+* Does not fabricate diagnostic information.
+
+Test:
+
+* Healthy database.
+* Damaged tail.
+* Corrupted frame.
+* Corrupted checksum.
+* Invalid sequence.
+* Invalid superblock.
+* Missing database.
+* Unreadable database.
+* Interrupted compaction artifacts.
+
+Verify that read-only scans do not modify the database.
+Verify that repair operations are explicit and operate only on the intended disposable copy.
+13. FRONTEND AND LIVE JUDGE INTERACTION
+Test every major page:
+
+* Overview.
+* Database Explorer.
+* Storage Engine.
+* Recovery.
+* Torture Lab.
+* Reliability Lab.
+* Benchmark.
+* Architecture.
+* Database Comparison.
+* X-RAY.
+* X-RAY Test Lab.
+* Power-Cut Explorer, if separately exposed.
+
+Test actual API integration, not just page loading.
+For each page verify:
+
+* Real data is displayed.
+* Loading states work.
+* Error states work.
+* Disconnected states work.
+* Empty states work.
+* Buttons perform their advertised operations.
+* Results update after operations.
+* Historical data is clearly labelled.
+* No fake success states.
+* No mock data is presented as live engine output.
+
+Pay particular attention to the judge trying an operation while the API is unavailable.
+14. LIVE JUDGE ATTACK SIMULATION
+Create a dedicated judge simulation script or test harness.
+Simulate a judge performing the following sequence:
+
+1. Open NEXUS.
+2. Insert a key-value pair.
+3. Read it.
+4. Update it.
+5. Delete it.
+6. Start a large batch.
+7. Kill the database during a write.
+8. Restart the API.
+9. Inspect the database with X-RAY.
+10. Verify acknowledged operations.
+11. Corrupt a disposable database copy.
+12. Run recovery.
+13. Disconnect the frontend/API communication path during an operation.
+14. Restore the connection.
+15. Verify the final state.
+16. Trigger a compaction.
+17. Interrupt compaction.
+18. Reopen and verify.
+19. Run a Power-Cut Explorer test.
+20. Inspect the final evidence.
+
+Record exact commands, timings, expected outcomes and actual outcomes.
+Create a concise repeatable judge demonstration procedure.
+15. IMPLEMENTATION POLICY
+Work in phases:
+PHASE 1 — AUDIT
+Inspect existing code and tests. Produce the attack matrix and identify missing coverage.
+PHASE 2 — SAFE TEST HARNESS
+Add isolated, reproducible tests for missing scenarios. Prefer existing infrastructure.
+PHASE 3 — FIXES
+Only fix genuine bugs found by tests. Preserve all existing guarantees and the on-disk format.
+PHASE 4 — REGRESSION
+Run the full existing suite and new targeted tests.
+PHASE 5 — FRONTEND VALIDATION
+Verify every live frontend operation against the actual API.
+PHASE 6 — JUDGE REHEARSAL
+Run the complete simulated judge attack sequence.
+Do not make broad architectural changes simply to improve the test results.
+If a scenario requires a physical power cut or hardware unavailable in this environment, mark it NOT TESTED rather than pretending to have tested it.
+16. FINAL DELIVERABLES
+Create:
+docs/JUDGE_READINESS/
+
+* JUDGE_ATTACK_MATRIX.md
+* JUDGE_TEST_RESULTS.md
+* NETWORK_FAILURE_TESTS.md
+* POWER_FAILURE_MODEL.md
+* FRONTEND_FAILURE_TESTS.md
+* KNOWN_LIMITATIONS.md
+* LIVE_JUDGE_DEMO.md
+
+Include machine-readable results where practical.
+The final report must clearly state:
+
+1. Total scenarios attempted.
+2. Pass count.
+3. Fail count.
+4. Inconclusive count.
+5. Not implemented count.
+6. Not tested count.
+7. Bugs discovered.
+8. Bugs fixed.
+9. Regression results.
+10. Remaining risks.
+11. Exact commands to reproduce important tests.
+12. Which tests were simulated versus performed on real Windows processes and filesystems.
+
+17. FINAL OBJECTIVE
+I want NEXUS to withstand an aggressive live demonstration.
+A judge should be able to:
+
+* Kill the database during writes.
+* Disconnect the network.
+* Restart services.
+* Interrupt compaction.
+* Fill the disk.
+* Damage a disposable database.
+* Trigger recovery.
+* Inspect the problem through X-RAY.
+* Run simulated power-cut tests.
+
+And NEXUS should respond predictably, preserve every guarantee it actually makes, report failures honestly and recover into a consistent state wherever its documented recovery guarantees allow.
+Do not optimize for a 100% pass percentage by weakening the tests or guarantees.
+Optimize for genuine reliability.
+Start with PHASE 1. Do not modify source code until you have produced the audit findings and identified the highest-priority coverage gaps.
+Do not commit or push anything. I will review and commit changes manually.
+````
+
+### Prompt 21
+
+- **Tool:** Claude Code (Claude desktop app, Code tab), model Claude Opus 5.5
+- **Approximate timestamp:** 2026-11-07 09:33 (local time; 04:03 UTC, from the session transcript)
+- **Notes:** Pasted by the user; extracted verbatim from the session transcript by script (not retyped). Final competition-readiness pass. Sent in the same Claude Code session as Prompt 20 (the session was continued after an automatic context summary; the summary is not a prompt and is not logged). Prompts 1–19a are in the last commit (451b7df); Prompts 20 and 21 were added afterwards and are not yet committed. Results: `docs/JUDGE_READINESS/`. Full text as sent:
+
+````text
+# NEXUS — FINAL COMPETITION READINESS, HARDENING AND JUDGE PREPARATION
+
+You are working on NEXUS, a custom persistent key-value database engine written in Go.
+
+Your responsibility is to bring the EXISTING project to its highest realistically achievable level of readiness for the official judging session.
+
+This is not a request to add random features.
+
+This is the final engineering, testing, documentation, reproducibility and judging-preparation phase.
+
+The objective is simple:
+
+**When this task is finished, I should be able to disconnect from the internet, sit in front of the judges, follow the official 15-minute schedule, and demonstrate the project without needing further development or emergency fixes.**
+
+You must work systematically. Do not simply generate a report claiming everything works. Actually inspect, execute, verify and fix the project.
+
+---
+
+# PART 1 — OFFICIAL JUDGING CRITERIA
+
+The judging session lasts exactly 15 minutes.
+
+## Minute 0–1: Clean clone and build
+
+The judge clones the repository and builds using the README instructions.
+
+Requirements:
+- Clean clone must build successfully.
+- No dependence on ignored local files.
+- No dependency on precompiled executables.
+- Correct executable paths.
+- All required modules and source files present.
+- Build must work offline if the judging environment has no Wi-Fi.
+- README commands must be accurate and complete.
+
+## Minute 1–4: Randomized torture test
+
+Judge executes:
+
+`./torture --iterations 200 --seed <judge's choice>`
+
+Requirements:
+- Zero failures.
+- Zero tool crashes.
+- No hanging.
+- Correct handling of arbitrary seeds.
+- Reproducible failure reports.
+- Accurate reporting of acknowledged operations.
+
+## Minute 4–6: Compaction and recovery-crash tests
+
+Judge runs the torture tool in compaction and recovery-crash modes with their own seeds.
+
+Requirements:
+- Zero failures.
+- No corruption.
+- No lost acknowledged writes.
+- Correct recovery after interruptions.
+- Compaction preserves all live records.
+- Recovery does not expose partial operations.
+
+## Minute 6–8: Manual server and process termination
+
+Judge:
+1. Starts `./kvdb serve`.
+2. Sends a batch manually.
+3. Kills the process 5–10 times at moments of their choosing.
+4. Restarts the database.
+5. Runs `check` and `dump`.
+
+Requirements:
+- Invariants hold every time.
+- `check` reports OK.
+- Acknowledged writes survive.
+- Incomplete batches never become partially visible.
+- No corrupted or unopenable database.
+- Recovery works after each termination.
+
+## Minute 8–12: Three crash-here questions
+
+Judge opens the source code and points to three different lines in the write or recovery path.
+
+You must explain:
+- What is on disk at that exact moment?
+- What may be missing?
+- What does the next Open() do?
+- Which records are visible?
+- Can acknowledged data be lost?
+- Can partial operations be applied?
+
+Answers must refer to actual implementation details.
+
+## Minute 12–15: Expiry-time design extension
+
+Judge asks:
+
+"Add an expiry time to every key. Keys past expiry must be invisible and must be purged during compaction. Do not write code. Tell me what changes and what breaks."
+
+Prepare a technically correct design explanation covering:
+- On-disk format.
+- Versioning and compatibility.
+- Recovery.
+- GET visibility.
+- Compaction.
+- Batch overwrite semantics.
+- Clock moving backwards.
+- Expired keys and overwrites.
+- Crash consistency.
+
+Do not implement this extension unless explicitly requested. This is a design examination.
+
+---
+
+# PART 2 — THE OFFICIAL POINT DEDUCTIONS
+
+These are mandatory acceptance criteria.
+
+## A. One-million-key recovery
+
+Requirement:
+Recovery must take less than 2 seconds at 1,000,000 keys.
+
+Actions:
+- Inspect the existing benchmark implementation.
+- Run the actual recovery path against one million keys.
+- Measure multiple runs.
+- Distinguish cold and warm measurements where possible.
+- Record hardware, Go version, OS, database size and methodology.
+- Identify whether the benchmark measures actual database reopening and index reconstruction.
+- Optimise only if required.
+- Re-run all regression tests after optimisation.
+
+Do not report a benchmark based on a mock or a prebuilt in-memory index.
+
+If the target is not achieved, report it honestly and identify the bottleneck.
+
+## B. File shrinkage after deletes and compaction
+
+Requirement:
+The physical database file must shrink after deleting records and compacting.
+
+Actions:
+- Create a disposable database with a substantial number of records.
+- Record its physical size.
+- Delete a substantial proportion of the records.
+- Run compaction.
+- Measure the physical file size again.
+- Reopen the database.
+- Verify all remaining live records.
+- Verify deleted records are absent.
+- Verify compaction crash safety.
+
+Do not use a tiny database where filesystem allocation makes the result misleading.
+
+## C. Disk-full behaviour
+
+Requirement:
+Disk-full behaviour must not corrupt data or make the database unopenable.
+
+Actions:
+- Audit maxBytes and ErrFull handling.
+- Test clean rejection of writes when capacity is exhausted.
+- Verify existing acknowledged records remain accessible.
+- Verify the database can reopen.
+- Verify compaction and subsequent writes behave correctly.
+- Distinguish artificial capacity limits from actual filesystem exhaustion.
+- If physical disk exhaustion is unsafe or impractical, document that limitation honestly.
+
+Do not fill the user's real system drive.
+Use a disposable test environment.
+
+## D. PROMPTS.md
+
+Requirement:
+PROMPTS.md must exist.
+
+Actions:
+- Verify it is tracked and included in the repository.
+- Audit that Prompt 20 is recorded.
+- Record the actual prompts used for the work.
+- Do not invent missing historical prompts.
+- Clearly distinguish historical prompts from newly recorded final prompts.
+
+A missing or incomplete PROMPTS.md must be treated as a release blocker.
+
+## E. Git history
+
+Requirement:
+The judging rules say that commit history must demonstrate work was done during the event.
+
+Actions:
+- Inspect current branch, commits, timestamps and working tree.
+- Identify whether the existing history satisfies the organisers' requirement.
+- Do not fabricate commits.
+- Do not rewrite timestamps.
+- Do not amend, rebase or manipulate history to misrepresent when work occurred.
+- Do not commit or push anything without my explicit instruction.
+
+If the existing history cannot satisfy the rule, flag it immediately. Explain that this requires clarification with the organisers. Never disguise the issue.
+
+---
+
+# PART 3 — FULL DATABASE RELIABILITY AUDIT
+
+Inspect the complete database implementation.
+
+Pay particular attention to:
+
+1. Frame construction.
+2. Header writing.
+3. Payload writing.
+4. Checksums.
+5. Sequence numbers.
+6. Sync-before-ACK.
+7. PUT.
+8. DELETE.
+9. BATCH.
+10. Recovery scanning.
+11. Torn-tail handling.
+12. Mid-log corruption.
+13. C2/C3 recovery rules.
+14. LaterCommittedFrame.
+15. Superblock validation.
+16. Compaction.
+17. Temporary files.
+18. File replacement.
+19. Lock handling.
+20. MaxBytes and disk-full behaviour.
+21. Concurrent operations.
+22. Windows filesystem behaviour.
+
+Verify the actual source implementation rather than relying on documentation.
+
+Preserve the binary format unless a genuine correctness defect makes a change unavoidable.
+
+Any change to recovery behaviour must have dedicated regression tests.
+
+Do not weaken existing invariants to make tests pass.
+
+---
+
+# PART 4 — ADVERSARIAL CRASH TESTING
+
+Create a comprehensive test plan covering:
+
+- Kill before frame header.
+- Kill during frame header.
+- Kill after header but before payload.
+- Kill during payload.
+- Kill after payload but before sync.
+- Kill during or around sync.
+- Kill after sync but before ACK.
+- Kill after ACK.
+- Kill during DELETE.
+- Kill during BATCH.
+- Kill during compaction.
+- Kill during recovery.
+- Kill during temporary-file creation.
+- Kill during replacement.
+- Repeated restart.
+- Stale lock handling.
+- Disk-full conditions.
+- Truncated frames.
+- Bad header checksums.
+- Bad payload checksums.
+- Sequence discontinuity.
+- Mid-log corruption.
+- Large values.
+- Maximum batch size.
+- Concurrent readers and writers.
+- API process termination during requests.
+
+For every scenario record:
+- Setup.
+- Failure injection point.
+- Expected disk state.
+- Expected recovery behaviour.
+- Expected visible state.
+- Actual result.
+- PASS/FAIL/INCONCLUSIVE/NOT TESTED.
+
+Use disposable databases only.
+
+Do not claim that simulated process termination proves physical power-loss durability.
+
+---
+
+# PART 5 — HTTP API AND DASHBOARD
+
+Audit the real existing frontend and API.
+
+Do not build a new website.
+
+Verify:
+- Dashboard loads offline.
+- All application resources are local.
+- No hidden external API dependency.
+- API reconnect behaviour.
+- PUT, GET and DELETE.
+- Batch requests.
+- Timeouts.
+- Connection drops.
+- Unreadable responses.
+- Unknown write outcomes.
+- API restart while dashboard remains open.
+- API killed during PUT.
+- API killed during BATCH.
+- Duplicate requests and retry semantics.
+
+The client must distinguish:
+- Confirmed success.
+- Confirmed failure.
+- Unknown outcome.
+
+A timeout or unreadable response must never automatically be presented as a definite write failure.
+
+Verify the actual UI, not just the API integration test.
+
+The website is supplementary. The CLI and database engine must remain fully usable without it.
+
+---
+
+# PART 6 — CLEAN-CLONE OFFLINE READINESS
+
+This is a critical judging requirement.
+
+Create a genuinely fresh clone in a separate disposable directory.
+
+Do not copy ignored binaries or local build outputs into it.
+
+Follow the README exactly.
+
+Verify:
+- Go toolchain requirements.
+- Module dependencies.
+- Build commands.
+- Torture executable generation.
+- Database executable generation.
+- All documented test commands.
+- No hidden configuration.
+- No internet dependency.
+- No untracked file dependency.
+
+Test the exact executable names and paths in the judging criteria.
+
+The judge should not need to know the repository's internal directory structure.
+
+If the judging command says `./torture`, make sure the documented build produces the correct executable at the expected location.
+
+Do not assume Windows and Linux command syntax are interchangeable. Identify the actual judging OS and prepare the correct instructions.
+
+Create a clean, minimal and accurate README quick-start section.
+
+---
+
+# PART 7 — JUDGE REHEARSAL
+
+Reproduce the complete official 15-minute judging sequence.
+
+### Rehearsal A: Clean build
+Start from a fresh clone.
+
+### Rehearsal B: Random torture
+Use multiple seeds with 200 iterations.
+
+### Rehearsal C: Compaction and recovery-crash
+Run the exact modes and commands the judge will use.
+
+### Rehearsal D: Manual process kills
+Perform at least ten disposable-database kill/restart cycles.
+
+Run check and dump after each.
+
+### Rehearsal E: Crash-here oral examination
+Prepare three actual source-code locations.
+
+For each, write a precise answer:
+- Disk contents before crash.
+- Disk contents after crash.
+- Recovery scanner behaviour.
+- Final visible state.
+
+### Rehearsal F: Expiry extension
+Prepare the complete verbal design answer.
+
+Do not add a new expiry feature to the production database.
+
+---
+
+# PART 8 — FINAL DOCUMENTATION
+
+Create or update:
+
+`docs/JUDGE_READINESS/`
+
+Required documents:
+
+1. FINAL_READINESS_REPORT.md
+2. CLEAN_CLONE_VERIFICATION.md
+3. ONE_MILLION_KEY_RECOVERY.md
+4. COMPACTION_SHRINK_TEST.md
+5. DISK_FULL_VALIDATION.md
+6. CRASH_SCENARIO_RESULTS.md
+7. MANUAL_KILL_REHEARSAL.md
+8. CRASH_HERE_ANSWERS.md
+9. EXPIRY_EXTENSION_DESIGN.md
+10. OFFLINE_DEMO_CHECKLIST.md
+11. KNOWN_LIMITATIONS.md
+12. FINAL_COMMAND_REFERENCE.md
+
+Update README.md, BREAKING.md, PROMPTS.md and relevant existing documentation where required.
+
+Avoid contradictory documentation.
+
+Every result must include:
+- Exact command.
+- Environment.
+- Test configuration.
+- Actual output or evidence.
+- Result classification.
+
+Never turn an untested scenario into PASS.
+
+---
+
+# PART 9 — FINAL TERMINAL COMMAND REFERENCE
+
+Prepare one concise command sheet containing the exact commands a judge or team member needs for:
+
+- Building from a clean clone.
+- Running 200 torture iterations with a supplied seed.
+- Running compaction mode.
+- Running recovery-crash mode.
+- Starting the server.
+- Sending a manual batch.
+- Stopping the server.
+- Running check.
+- Running dump.
+- Running the benchmark.
+
+Verify every command against the real executable and CLI implementation.
+
+Do not invent command flags.
+
+Prepare both the judging OS commands and Windows equivalents if required.
+
+---
+
+# PART 10 — STRICT ENGINEERING RULES
+
+These constraints are mandatory.
+
+- No random feature additions.
+- No agentic AI integration.
+- No unnecessary dependencies.
+- No changes to the binary format without an explicit correctness justification.
+- No breaking changes without compatibility tests.
+- No destructive testing against real user data.
+- No fake test results.
+- No fabricated benchmarks.
+- No false claims of physical power-loss testing.
+- No treating UNKNOWN writes as confirmed failures.
+- No treating a process crash as equivalent to a physical power cut.
+- No weakening checksums, durability, atomicity or recovery guarantees.
+- No deleting existing tests.
+- No hiding failures.
+- No Git commit, push, reset, rebase, amend, checkout or branch switch.
+- Preserve all existing user work.
+- The user performs all Git commits manually.
+
+When a defect is found:
+1. Explain it.
+2. Identify its impact.
+3. Propose the smallest safe fix.
+4. Add a regression test.
+5. Implement only when the change is justified.
+6. Run the complete regression suite.
+
+---
+
+# PART 11 — FINAL ACCEPTANCE GATE
+
+Do not declare the project ready merely because the code compiles.
+
+The final readiness report must include:
+
+| Requirement | Result |
+|---|---|
+| Clean clone build | |
+| Offline build | |
+| Torture 200 iterations | |
+| Arbitrary seed handling | |
+| Compaction mode | |
+| Recovery-crash mode | |
+| Manual kill cycles | |
+| Check after recovery | |
+| Dump after recovery | |
+| 1M-key recovery under 2 seconds | |
+| File shrinks after compaction | |
+| Disk-full safety | |
+| PROMPTS.md complete | |
+| Git history compliant | |
+| API uncertain outcomes | |
+| Offline dashboard | |
+| Three crash-here answers | |
+| Expiry extension design | |
+
+Every row must be marked:
+- PASS
+- FAIL
+- NOT TESTED
+- INCONCLUSIVE
+- BLOCKED
+
+A test is PASS only if it was actually executed and the evidence supports the result.
+
+## Final release decision
+
+Give one of these outcomes:
+
+1. READY FOR JUDGING
+2. READY WITH DOCUMENTED LIMITATIONS
+3. NOT READY — BLOCKING ISSUES REMAIN
+
+If any mandatory judging criterion is unverified, do not give the first outcome.
+
+At the end, provide:
+- The exact remaining blockers.
+- The exact commands for the final rehearsal.
+- The exact files to inspect before judging.
+- The final 15-minute schedule.
+- Three crash-here answers I must memorise.
+- The expiry extension answer I must be able to explain.
+
+Start with a full repository audit and prioritized gap report.
+
+Work through the phases systematically. Do not stop after producing a plan. Continue until the project reaches the highest verified readiness possible.
+
+The final objective is not to make NEXUS look impressive.
+
+**The objective is to make NEXUS survive the judge's tests, preserve every invariant, and make its engineering understandable under pressure.**
+````

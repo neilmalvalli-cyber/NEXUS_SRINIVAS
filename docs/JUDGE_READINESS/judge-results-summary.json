@@ -1,0 +1,78 @@
+{
+  "audit": "Prompt 20 judge-readiness",
+  "date": "2026-11-07",
+  "rows": 50,
+  "counts": {
+    "pass_existing": 35,
+    "pass_new_or_fixed": 12,
+    "fail": 0,
+    "inconclusive": 0,
+    "not_implemented": 0,
+    "not_tested": 3
+  },
+  "pass_new_or_fixed": [
+    "P7",
+    "N2",
+    "N3",
+    "N4",
+    "O7",
+    "O8",
+    "S3",
+    "S4",
+    "N6",
+    "N7",
+    "N8",
+    "PC3"
+  ],
+  "not_tested": {
+    "S2": "real disk full needs admin (VHD)",
+    "C2": "race detector needs a C toolchain",
+    "PC4": "physical power cut needs hardware"
+  },
+  "bugs_fixed": [
+    {
+      "id": "P7",
+      "area": "engine recovery",
+      "files": [
+        "src/internal/recovery/forward.go",
+        "src/internal/recovery/scan.go",
+        "src/internal/xray/walk.go"
+      ],
+      "format_change": false
+    },
+    {
+      "id": "N2/N3",
+      "area": "dashboard API client",
+      "files": [
+        "frontend/src/lib/api/client.ts",
+        "frontend/src/lib/api/service.ts",
+        "frontend/src/components/write-path.tsx"
+      ]
+    }
+  ],
+  "evidence_files": [
+    "o8-kill-seed-1.json",
+    "o8-kill-seed-2.json",
+    "o8-kill-seed-3.json",
+    "o8-kill-control.json",
+    "o7-double-start.json",
+    "write-outcome-results.json",
+    "offline-check-network-on.json",
+    "offline-check-adapter-off.json",
+    "offline-check-network-restored.json",
+    "offline-check-adapter-off.INVALID-network-was-on.json",
+    "n6-frontend-restarted.json",
+    "pc3-replay.json"
+  ],
+  "regression": {
+    "go_packages_ok": 21,
+    "go_packages_failed": 0,
+    "write_outcome": "13/13",
+    "api_integration": "25/25",
+    "powercut_after_fix": {
+      "images": 3937,
+      "failures": 0
+    },
+    "torture_after_fix": "200/200"
+  }
+}

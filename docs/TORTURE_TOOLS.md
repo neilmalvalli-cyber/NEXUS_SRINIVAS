@@ -5,13 +5,13 @@
 > [TORTURE_ARCHITECTURE.md](TORTURE_ARCHITECTURE.md). This page records the
 > decision as it stood before that, and is kept unchanged below.
 
-## Official tool: `torture/` (Go, this repository)
+## Official tool: `src/cmd/torture/` (Go, this repository)
 
-The competition tool is the Go program in [`torture/`](../torture). It is built
-with the engine (`go build -o . ./src/cmd/kvdb ./torture`), launches the real
+The competition tool is the Go program in [`src/cmd/torture/`](../src/cmd/torture) (in repository-root `torture/` until 2026-11-07). It is built
+with the engine (`go build -o . ./src/cmd/kvdb ./src/cmd/torture`), launches the real
 `kvdb serve` binary, kills it with `TerminateProcess` at a random millisecond,
 runs `kvdb open`, `kvdb check` and `kvdb dump`, and checks the recovered state
-against its own oracle (`torture/model.go`). It has been run end to end
+against its own oracle (`src/cmd/torture/model.go`). It has been run end to end
 against NEXUS, and the results are recorded in
 [results/validation/](results/validation/) and [results/](results/).
 

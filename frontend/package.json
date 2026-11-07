@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test:api": "node scripts/api-integration.mjs"
+    "test:api": "node scripts/api-integration.mjs",
+    "test:write-outcome": "node --no-warnings scripts/write-outcome-test.mjs",
+    "test:api-kill": "node scripts/api-kill-test.mjs",
+    "test:double-start": "node scripts/api-double-start-test.mjs",
+    "test:offline": "node scripts/offline-check.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

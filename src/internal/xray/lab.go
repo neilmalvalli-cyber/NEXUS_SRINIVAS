@@ -194,8 +194,8 @@ func buildCase(root, name string) (LabCase, error) {
 		c.ExpectCode, c.ExpectSeverity, c.ExpectRule, c.ExpectRecovery, c.ExpectOffset = "FRAME_PAYLOAD_CHECKSUM", Critical, "C6", Refused, i64(mid.off)
 	case "header-damaged-mid-log":
 		err = edit(path, func(b []byte) []byte { b[mid.off+fhOffPayLen] ^= 0x01; return b })
-		c.Title, c.Description = "Damaged header in the middle of the log", "One bit of frame 3's payload_len flipped (header CRC now fails). By rule C3 open would cut everything from frame 3 on; X-RAY finds the committed frames behind it."
-		c.ExpectCode, c.ExpectSeverity, c.ExpectRule, c.ExpectRecovery, c.ExpectOffset = "FRAME_HEADER_DAMAGED", Critical, "C2", Detected, i64(mid.off)
+		c.Title, c.Description = "Damaged header in the middle of the log", "One bit of frame 3's payload_len flipped (header CRC now fails). Five intact committed frames follow it, so by rule C3 open refuses instead of truncating them; the file is left untouched."
+		c.ExpectCode, c.ExpectSeverity, c.ExpectRule, c.ExpectRecovery, c.ExpectOffset = "FRAME_HEADER_DAMAGED", Critical, "C3", Refused, i64(mid.off)
 	case "invalid-seq":
 		err = edit(path, func(b []byte) []byte {
 			binary.LittleEndian.PutUint64(b[mid.off+fhOffSeq:], 99)

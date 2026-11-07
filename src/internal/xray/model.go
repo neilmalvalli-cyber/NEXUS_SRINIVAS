@@ -179,9 +179,9 @@ type Walk struct {
 	// starts exactly where the damaged frame ends (evidence that committed
 	// frames follow the damage).
 	NextFrameIntact *bool `json:"next_frame_intact,omitempty"`
-	// LaterFrame*: after a damaged header (C2), the first CRC-valid frame
-	// header with a later sequence number found inside the region open
-	// would truncate (diagnosis only; see walk.go laterFrames).
+	// LaterFrame*: after a damaged header, the first complete valid frame
+	// with sequence >= expected (rule C3 evidence: open refuses instead of
+	// truncating; see recovery.LaterCommittedFrame).
 	LaterFrameOffset *int64  `json:"later_frame_offset,omitempty"`
 	LaterFrameSeq    *uint64 `json:"later_frame_seq,omitempty"`
 }

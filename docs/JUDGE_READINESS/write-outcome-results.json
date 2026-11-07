@@ -1,0 +1,181 @@
+{
+  "when": "2026-11-07T03:00:53.591Z",
+  "node": "v24.18.1",
+  "simulated": true,
+  "results": [
+    {
+      "id": "N2",
+      "title": "PUT: body received and committed, connection reset before any response",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "network",
+        "outcomeUnknown": true,
+        "text": "Connection to nexus-api lost before an answer arrived (fetch failed) (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N2",
+      "title": "DELETE: committed, connection reset",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "network",
+        "outcomeUnknown": true,
+        "text": "Connection to nexus-api lost before an answer arrived (fetch failed) (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N2",
+      "title": "BATCH-style POST: committed, connection reset",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "network",
+        "outcomeUnknown": true,
+        "text": "Connection to nexus-api lost before an answer arrived (fetch failed) (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N2",
+      "title": "PUT: committed, response cut off mid-body",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "network",
+        "outcomeUnknown": true,
+        "text": "Connection to nexus-api lost before an answer arrived (connection closed while reading the response) (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N3",
+      "title": "PUT: committed, server never answers, client timeout",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "timeout",
+        "outcomeUnknown": true,
+        "text": "nexus-api did not answer in time (0.4s) (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N2",
+      "title": "PUT: bare 502 from something in between",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "malformed",
+        "outcomeUnknown": true,
+        "status": 502,
+        "text": "Unexpected response from nexus-api: HTTP 502: body is not JSON (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N2",
+      "title": "PUT: HTTP 200 with an unreadable body",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "malformed",
+        "outcomeUnknown": true,
+        "status": 200,
+        "text": "Unexpected response from nexus-api: HTTP 200: body is not JSON (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "N2",
+      "title": "PUT: connection refused (browser cannot tell it from a reset)",
+      "pass": true,
+      "sent": 0,
+      "got": {
+        "ok": false,
+        "kind": "network",
+        "outcomeUnknown": true,
+        "text": "Connection to nexus-api lost before an answer arrived (fetch failed) (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "ctl",
+      "title": "PUT: definite engine rejection (400 invalid) is a plain failure",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "http",
+        "outcomeUnknown": false,
+        "status": 400,
+        "text": "invalid: key too long"
+      },
+      "problems": []
+    },
+    {
+      "id": "ctl",
+      "title": "PUT: bare 404 is a plain failure",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "malformed",
+        "outcomeUnknown": false,
+        "status": 404,
+        "text": "Unexpected response from nexus-api: HTTP 404: body is not JSON"
+      },
+      "problems": []
+    },
+    {
+      "id": "ctl",
+      "title": "PUT: engine I/O error with outcome_unknown stays unknown",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "http",
+        "outcomeUnknown": true,
+        "status": 500,
+        "text": "io: write failed (outcome unknown)"
+      },
+      "problems": []
+    },
+    {
+      "id": "ctl",
+      "title": "GET: connection reset is a read failure, not an unknown write",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "network",
+        "outcomeUnknown": false,
+        "text": "Cannot reach nexus-api at http://127.0.0.1:49673"
+      },
+      "problems": []
+    },
+    {
+      "id": "ctl",
+      "title": "GET: timeout is not an unknown write",
+      "pass": true,
+      "sent": 1,
+      "got": {
+        "ok": false,
+        "kind": "timeout",
+        "outcomeUnknown": false,
+        "text": "nexus-api did not answer in time (0.4s)"
+      },
+      "problems": []
+    }
+  ]
+}

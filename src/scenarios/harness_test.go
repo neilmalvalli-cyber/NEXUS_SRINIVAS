@@ -312,7 +312,7 @@ func buildBinaries(t *testing.T) (kvdbBin, tortureBin string) {
 			bins.err = err
 			return
 		}
-		cmd := exec.Command(goBin, "build", "-o", dir+string(os.PathSeparator), "./src/cmd/kvdb", "./torture")
+		cmd := exec.Command(goBin, "build", "-o", dir+string(os.PathSeparator), "./src/cmd/kvdb", "./src/cmd/torture")
 		cmd.Dir = root
 		if out, err := cmd.CombinedOutput(); err != nil {
 			bins.err = fmt.Errorf("go build: %v\n%s", err, out)

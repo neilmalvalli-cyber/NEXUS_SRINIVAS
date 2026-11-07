@@ -14,7 +14,15 @@ export class ApiError extends Error {
   readonly status?: number;
   /** Engine/adapter error class: invalid, too-large, notfound, full, locked, closed, busy, ... */
   readonly errorClass?: string;
-  /** A write whose outcome is unknown (I/O error mid-write): it may or may not be durable. */
+  /**
+   * A write whose outcome is unknown: it may or may not be durable. Set when
+   * the engine reports an I/O error mid-write, and for any write request
+   * (PUT, DELETE, BATCH) that ended without a definite answer: timeout,
+   * connection lost, unreadable response, or a 5xx without an engine error.
+   * The server may have committed the write before the answer was lost, so
+   * the UI must never call these "failed". Mutations are never retried
+   * automatically (providers.tsx), so an unknown write is never duplicated.
+   */
   readonly outcomeUnknown: boolean;
 
   constructor(
@@ -48,11 +56,13 @@ export function describeError(e: unknown): string {
   if (!isApiError(e)) return e instanceof Error ? e.message : String(e);
   switch (e.kind) {
     case "network":
-      return `Cannot reach nexus-api at ${API_BASE_URL}`;
+      return e.outcomeUnknown
+        ? `Connection to nexus-api lost before an answer arrived (${e.message}) (outcome unknown)`
+        : `Cannot reach nexus-api at ${API_BASE_URL}`;
     case "timeout":
-      return `nexus-api did not answer in time (${e.message})`;
+      return `nexus-api did not answer in time (${e.message})${e.outcomeUnknown ? " (outcome unknown)" : ""}`;
     case "malformed":
-      return `Unexpected response from nexus-api: ${e.message}`;
+      return `Unexpected response from nexus-api: ${e.message}${e.outcomeUnknown ? " (outcome unknown)" : ""}`;
     case "unavailable-in-demo":
       return e.message;
     case "http":
@@ -66,12 +76,18 @@ export interface RequestOptions<S extends z.ZodType> {
   schema: S;
   timeoutMs?: number;
   signal?: AbortSignal;
+  /**
+   * The request changes stored data (PUT/DELETE key, BATCH). Any ending
+   * without a definite answer is then reported as outcomeUnknown.
+   */
+  write?: boolean;
 }
 
 export const DEFAULT_TIMEOUT_MS = 10_000;
 
 export async function request<S extends z.ZodType>(path: string, opts: RequestOptions<S>): Promise<z.infer<S>> {
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const unknown = { outcomeUnknown: opts.write === true };
   const ctrl = new AbortController();
   let timedOut = false;
   const timer = setTimeout(() => {
@@ -91,9 +107,11 @@ export async function request<S extends z.ZodType>(path: string, opts: RequestOp
       cache: "no-store",
     });
   } catch (err) {
-    if (timedOut) throw new ApiError("timeout", `${timeoutMs / 1000}s`);
+    if (timedOut) throw new ApiError("timeout", `${timeoutMs / 1000}s`, unknown);
     if (opts.signal?.aborted) throw err; // cancelled by TanStack Query; not an error to show
-    throw new ApiError("network", err instanceof Error ? err.message : "fetch failed");
+    // A browser cannot tell "connection refused" (never sent) from "reset
+    // after the server received the body", so a write is outcome-unknown.
+    throw new ApiError("network", err instanceof Error ? err.message : "fetch failed", unknown);
   } finally {
     clearTimeout(timer);
     opts.signal?.removeEventListener("abort", onAbort);
@@ -103,13 +121,16 @@ export async function request<S extends z.ZodType>(path: string, opts: RequestOp
   try {
     text = await res.text();
   } catch {
-    throw new ApiError("network", "connection closed while reading the response");
+    throw new ApiError("network", "connection closed while reading the response", unknown);
   }
   let json: unknown;
   try {
     json = text === "" ? undefined : JSON.parse(text);
   } catch {
-    throw new ApiError("malformed", `HTTP ${res.status}: body is not JSON`, { status: res.status });
+    throw new ApiError("malformed", `HTTP ${res.status}: body is not JSON`, {
+      status: res.status,
+      outcomeUnknown: unknown.outcomeUnknown && (res.ok || res.status >= 500),
+    });
   }
 
   if (!res.ok) {
@@ -121,14 +142,22 @@ export async function request<S extends z.ZodType>(path: string, opts: RequestOp
         outcomeUnknown: env.data.error.outcome_unknown,
       });
     }
-    throw new ApiError("http", `HTTP ${res.status} without an error body`, { status: res.status });
+    // nexus-api always sends an error envelope; a bare 5xx came from
+    // something in between (or a crash) after the request may have run.
+    throw new ApiError("http", `HTTP ${res.status} without an error body`, {
+      status: res.status,
+      outcomeUnknown: unknown.outcomeUnknown && res.status >= 500,
+    });
   }
 
   const parsed = opts.schema.safeParse(json);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
+    // HTTP 2xx from nexus-api is sent only after the durable write, but a
+    // response we cannot read is not an acknowledgement we can show.
     throw new ApiError("malformed", `${path}: ${issue ? `${issue.path.join(".") || "(root)"} ${issue.message}` : "schema mismatch"}`, {
       status: res.status,
+      ...unknown,
     });
   }
   return parsed.data;

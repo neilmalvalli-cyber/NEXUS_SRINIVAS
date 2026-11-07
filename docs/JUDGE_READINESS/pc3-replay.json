@@ -1,0 +1,247 @@
+{
+  "when": "2026-11-07T03:53:55.061Z",
+  "simulated": true,
+  "note": "Power-Cut Explorer replay check; fields from each report.json",
+  "runs": {
+    "run-a": {
+      "reproduce": "nexus-powercut --seed 11 --writers 4 --ops 60 --max-points 400 --max-variants 8",
+      "trace": {
+        "events": 300,
+        "by_op": {
+          "create": 4,
+          "move": 7,
+          "remove": 3,
+          "sync": 141,
+          "syncdir": 4,
+          "write": 141
+        },
+        "bytes_written": 765953,
+        "workload_ops": 240,
+        "acknowledged_ops": 240,
+        "by_kind": {
+          "batch": 41,
+          "compact": 3,
+          "delete": 30,
+          "hot": 52,
+          "put": 114
+        },
+        "frames_written": 137
+      },
+      "crash_points_tested": 301,
+      "images_validated": 1312,
+      "passed": 1312,
+      "failed": 0,
+      "outcomes": {
+        "opened-authority-rule-A3": 6,
+        "opened-authority-rule-A5": 4,
+        "opened-clean": 890,
+        "opened-new-empty-database": 9,
+        "opened-torn-tail-truncated-C1": 5,
+        "opened-torn-tail-truncated-C2": 38,
+        "opened-torn-tail-truncated-C4": 352,
+        "opened-torn-tail-truncated-C5": 8
+      },
+      "images_by_variant_family": {
+        "all-pending-persisted": 301,
+        "dir-prefix": 22,
+        "dir-synced-only+all-data": 77,
+        "only-synced-state": 283,
+        "prefix": 338,
+        "random-subset": 291
+      },
+      "controls_detected": 6
+    },
+    "run-b": {
+      "reproduce": "nexus-powercut --seed 11 --writers 4 --ops 60 --max-points 400 --max-variants 8",
+      "trace": {
+        "events": 302,
+        "by_op": {
+          "create": 4,
+          "move": 7,
+          "remove": 3,
+          "sync": 142,
+          "syncdir": 4,
+          "write": 142
+        },
+        "bytes_written": 648774,
+        "workload_ops": 240,
+        "acknowledged_ops": 240,
+        "by_kind": {
+          "batch": 41,
+          "compact": 3,
+          "delete": 30,
+          "hot": 52,
+          "put": 114
+        },
+        "frames_written": 138
+      },
+      "crash_points_tested": 303,
+      "images_validated": 1325,
+      "passed": 1325,
+      "failed": 0,
+      "outcomes": {
+        "opened-authority-rule-A3": 6,
+        "opened-authority-rule-A5": 4,
+        "opened-clean": 912,
+        "opened-new-empty-database": 9,
+        "opened-torn-tail-truncated-C1": 9,
+        "opened-torn-tail-truncated-C2": 42,
+        "opened-torn-tail-truncated-C4": 332,
+        "opened-torn-tail-truncated-C5": 11
+      },
+      "images_by_variant_family": {
+        "all-pending-persisted": 303,
+        "dir-prefix": 22,
+        "dir-synced-only+all-data": 83,
+        "only-synced-state": 290,
+        "prefix": 324,
+        "random-subset": 303
+      },
+      "controls_detected": 6
+    },
+    "run-c": {
+      "reproduce": "nexus-powercut --seed 11 --writers 4 --ops 60 --max-points 400 --max-variants 8",
+      "trace": {
+        "events": 280,
+        "by_op": {
+          "create": 4,
+          "move": 7,
+          "remove": 3,
+          "sync": 131,
+          "syncdir": 4,
+          "write": 131
+        },
+        "bytes_written": 626577,
+        "workload_ops": 240,
+        "acknowledged_ops": 240,
+        "by_kind": {
+          "batch": 41,
+          "compact": 3,
+          "delete": 30,
+          "hot": 52,
+          "put": 114
+        },
+        "frames_written": 127
+      },
+      "crash_points_tested": 281,
+      "images_validated": 1249,
+      "passed": 1249,
+      "failed": 0,
+      "outcomes": {
+        "opened-authority-rule-A3": 6,
+        "opened-authority-rule-A5": 4,
+        "opened-clean": 825,
+        "opened-new-empty-database": 9,
+        "opened-torn-tail-truncated-C1": 13,
+        "opened-torn-tail-truncated-C2": 31,
+        "opened-torn-tail-truncated-C4": 348,
+        "opened-torn-tail-truncated-C5": 13
+      },
+      "images_by_variant_family": {
+        "all-pending-persisted": 281,
+        "dir-prefix": 22,
+        "dir-synced-only+all-data": 73,
+        "only-synced-state": 270,
+        "prefix": 340,
+        "random-subset": 263
+      },
+      "controls_detected": 6
+    },
+    "w1-a": {
+      "reproduce": "nexus-powercut --seed 11 --writers 1 --ops 60 --max-points 400 --max-variants 8",
+      "trace": {
+        "events": 146,
+        "by_op": {
+          "create": 4,
+          "move": 7,
+          "remove": 3,
+          "sync": 64,
+          "syncdir": 4,
+          "write": 64
+        },
+        "bytes_written": 162711,
+        "workload_ops": 60,
+        "acknowledged_ops": 60,
+        "by_kind": {
+          "batch": 8,
+          "compact": 3,
+          "delete": 5,
+          "hot": 12,
+          "put": 32
+        },
+        "frames_written": 60
+      },
+      "crash_points_tested": 147,
+      "images_validated": 623,
+      "passed": 623,
+      "failed": 0,
+      "outcomes": {
+        "opened-authority-rule-A3": 6,
+        "opened-authority-rule-A5": 4,
+        "opened-clean": 444,
+        "opened-new-empty-database": 9,
+        "opened-torn-tail-truncated-C1": 6,
+        "opened-torn-tail-truncated-C2": 21,
+        "opened-torn-tail-truncated-C4": 130,
+        "opened-torn-tail-truncated-C5": 3
+      },
+      "images_by_variant_family": {
+        "all-pending-persisted": 147,
+        "dir-prefix": 22,
+        "dir-synced-only+all-data": 40,
+        "only-synced-state": 138,
+        "prefix": 130,
+        "random-subset": 146
+      },
+      "controls_detected": 6
+    },
+    "w1-b": {
+      "reproduce": "nexus-powercut --seed 11 --writers 1 --ops 60 --max-points 400 --max-variants 8",
+      "trace": {
+        "events": 146,
+        "by_op": {
+          "create": 4,
+          "move": 7,
+          "remove": 3,
+          "sync": 64,
+          "syncdir": 4,
+          "write": 64
+        },
+        "bytes_written": 162711,
+        "workload_ops": 60,
+        "acknowledged_ops": 60,
+        "by_kind": {
+          "batch": 8,
+          "compact": 3,
+          "delete": 5,
+          "hot": 12,
+          "put": 32
+        },
+        "frames_written": 60
+      },
+      "crash_points_tested": 147,
+      "images_validated": 623,
+      "passed": 623,
+      "failed": 0,
+      "outcomes": {
+        "opened-authority-rule-A3": 6,
+        "opened-authority-rule-A5": 4,
+        "opened-clean": 444,
+        "opened-new-empty-database": 9,
+        "opened-torn-tail-truncated-C1": 6,
+        "opened-torn-tail-truncated-C2": 21,
+        "opened-torn-tail-truncated-C4": 130,
+        "opened-torn-tail-truncated-C5": 3
+      },
+      "images_by_variant_family": {
+        "all-pending-persisted": 147,
+        "dir-prefix": 22,
+        "dir-synced-only+all-data": 40,
+        "only-synced-state": 138,
+        "prefix": 130,
+        "random-subset": 146
+      },
+      "controls_detected": 6
+    }
+  }
+}
