@@ -98,6 +98,12 @@ func TestMain(m *testing.M) {
 			code = 1
 		}
 	}
+	if p := os.Getenv("KVDB_SCENARIO_JSON"); p != "" {
+		if err := writeJSONReport(p); err != nil {
+			fmt.Fprintln(os.Stderr, "scenario JSON report:", err)
+			code = 1
+		}
+	}
 	if bins.dir != "" {
 		os.RemoveAll(bins.dir)
 	}
@@ -136,6 +142,50 @@ func writeReport(path string) error {
 			r.Duration.Seconds(), esc(strings.Join(r.Notes, "; ")))
 	}
 	return os.WriteFile(path, []byte(b.String()), 0o644)
+}
+
+// writeJSONReport writes the same results as writeReport, machine-readable
+// (KVDB_SCENARIO_JSON=path), for the dashboard's Judge Readiness page.
+// Only scenarios that actually ran are listed; nothing is filled in.
+func writeJSONReport(path string) error {
+	path = fromRoot(path)
+	resMu.Lock()
+	defer resMu.Unlock()
+	sort.Slice(results, func(i, j int) bool { return scenarioOrder(results[i].ID) < scenarioOrder(results[j].ID) })
+	type item struct {
+		ID         string   `json:"id"`
+		Title      string   `json:"title"`
+		Expected   string   `json:"expected"`
+		Method     string   `json:"method"`
+		Pass       bool     `json:"pass"`
+		DurationMs float64  `json:"duration_ms"`
+		Notes      []string `json:"notes"`
+	}
+	mode := "quick"
+	if full {
+		mode = "full"
+	}
+	out := struct {
+		Generated string `json:"generated"`
+		GOOS      string `json:"goos"`
+		GOARCH    string `json:"goarch"`
+		CPUs      int    `json:"cpus"`
+		Go        string `json:"go"`
+		Mode      string `json:"mode"`
+		Results   []item `json:"results"`
+	}{time.Now().Format(time.RFC3339), runtime.GOOS, runtime.GOARCH, runtime.NumCPU(), runtime.Version(), mode, []item{}}
+	for _, r := range results {
+		notes := r.Notes
+		if notes == nil {
+			notes = []string{}
+		}
+		out.Results = append(out.Results, item{r.ID, r.Title, r.Expected, r.Method, r.Pass, float64(r.Duration.Microseconds()) / 1000, notes})
+	}
+	b, err := json.MarshalIndent(out, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, append(b, '\n'), 0o644)
 }
 
 func scenarioOrder(id string) string {

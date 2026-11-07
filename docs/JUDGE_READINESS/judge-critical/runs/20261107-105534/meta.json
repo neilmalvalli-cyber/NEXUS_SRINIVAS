@@ -1,0 +1,1 @@
+{"stamp":"20261107-105534","command":"go test -count=1 -v -timeout 30m ./src/scenarios -run 'TestGroup[A-F]$/^(A2|A4|B2|B6|C1|C2|C3|C4|D2|E1|E2|E3|E4|E5|F2|F3)$'","mode":"quick","exit_code":0,"elapsed_s":57,"git_head":"babd089","uncommitted_files":2}

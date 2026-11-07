@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes, Database, FlaskConical, Gauge, GitCompareArrows, HardDrive, LayoutDashboard, LifeBuoy, Menu, Network, Presentation, ScanSearch, X, Zap } from "lucide-react";
+import { Boxes, Database, FlaskConical, Gauge, GitCompareArrows, HardDrive, LayoutDashboard, LifeBuoy, Menu, Network, Presentation, ScanSearch, ShieldCheck, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNexus } from "@/components/providers";
 import { useHealth, useOverview } from "@/lib/queries";
@@ -22,6 +22,7 @@ const NAV = [
   { href: "/benchmark", label: "Benchmark", icon: Gauge },
   { href: "/architecture", label: "Architecture", icon: Network },
   { href: "/comparison", label: "Database Comparison", icon: GitCompareArrows },
+  { href: "/judge-readiness", label: "Judge Readiness", icon: ShieldCheck },
 ] as const;
 
 function Logo() {
